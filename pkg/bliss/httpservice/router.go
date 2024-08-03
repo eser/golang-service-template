@@ -1,13 +1,15 @@
 package httpservice
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
 type Router struct {
-	Mux *http.ServeMux
+	Mux      *http.ServeMux
+	Handlers []Handler
 
 	Path string
 }
@@ -20,17 +22,6 @@ type Route struct {
 	Description string
 }
 
-// func CreateMiddlewareStack(xs ...httpservice.Middleware) httpservice.Middleware {
-// 	return func(next http.Handler) http.Handler {
-// 		for i := len(xs) - 1; i > 0; i-- {
-// 			x := xs[i]
-// 			next = x(next)
-// 		}
-
-// 		return next
-// 	}
-// }
-
 func NewRouter(path string) *Router {
 	mux := http.NewServeMux()
 
@@ -42,16 +33,16 @@ func (r *Router) Group(path string) *Router {
 }
 
 func (r *Router) Use(handlers ...Handler) {
+	r.Handlers = append(r.Handlers, handlers...)
 }
 
 func (r *Router) Route(pattern string, handlers ...Handler) *Route {
-	// TODO prepend middlewares
-	routeHandlers := lib.CreateCopy(handlers)
-
-	route := &Route{Pattern: pattern, Handlers: routeHandlers}
+	route := &Route{Pattern: pattern, Handlers: handlers}
 
 	// TODO r.Path+route.Pattern
 	r.Mux.HandleFunc(route.Pattern, func(responseWriter http.ResponseWriter, req *http.Request) {
+		routeHandlers := lib.CreateCopy(r.Handlers, route.Handlers)
+
 		ctx := &Context{
 			Request:        req,
 			ResponseWriter: responseWriter,
@@ -62,7 +53,10 @@ func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 		result := routeHandlers[0](ctx)
 
 		responseWriter.WriteHeader(result.StatusCode)
-		responseWriter.Write(result.Body)
+		_, err := responseWriter.Write(result.Body)
+		if err != nil {
+			fmt.Println("error writing response body: %w", err)
+		}
 	})
 
 	return route

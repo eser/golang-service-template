@@ -1,8 +1,18 @@
 package lib
 
-func CreateCopy[T any](items []T) []T {
-	newCopy := make([]T, len(items))
-	copy(newCopy, items)
+func CreateCopy[T any](items ...[]T) []T {
+	var totalLength int
+	for _, slice := range items {
+		totalLength += len(slice)
+	}
+
+	newCopy := make([]T, totalLength)
+
+	var currentIndex int
+	for _, slice := range items {
+		copy(newCopy[currentIndex:], slice)
+		currentIndex += len(slice)
+	}
 
 	return newCopy
 }

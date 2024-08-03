@@ -15,7 +15,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 func RegisterRoutes(routes *httpservice.Router) {
 	routes.
 		Route("GET /health-check", func(ctx *httpservice.Context) httpservice.Result {
-			return ctx.Results.Ok().WithBody("OK")
+			return ctx.Results.Ok()
 		}).
 		WithSummary("Health Check").
 		WithDescription("Health Check Endpoint")
