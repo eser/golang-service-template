@@ -1,0 +1,44 @@
+services:
+  go-service:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    develop:
+      watch:
+        - action: rebuild
+          files:
+            - ../**/*.go
+            - ../go.mod
+            - ../go.sum
+    env_file:
+      - ../.env
+      # - ../.env.development
+      # - ../.env.local
+      # - ../.env.development.local
+    environment:
+      PORT: 8080
+      POSTGRES_CONNSTR: postgres://postgres:s3cr3t@postgresql:5432/postgres
+    networks:
+      - go-service-network
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15.1
+    environment:
+      POSTGRES_PASSWORD: s3cr3t
+    healthcheck:
+      test: [ "CMD", "pg_isready" ,"-U", "postgres", "-h", "127.0.0.1", "-p", "5432" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - ./resources/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5435:5432
+
+networks:
+  go-service-network:
+    driver: bridge

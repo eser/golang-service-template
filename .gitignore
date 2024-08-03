@@ -1,0 +1,44 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor metadata
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+.idea/*
+
+# local API keys and secrets
+.env.local
+.env.*.local
+
+# sensitive files
+*.key
+*.pem
+*.swp
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries, coverage and testing tool outputs
+*.test
+*.out
+/cov_profile.lcov
+
+# Dependency directories (remove the comment below to include it)
+# /vendor/
+
+# Build output and temporary files
+__debug_bin
+build-errors.log
+/tmp/*
+!/tmp/.gitkeep
+/dist/*
+!/dist/.gitkeep

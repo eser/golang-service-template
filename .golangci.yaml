@@ -1,0 +1,49 @@
+run:
+  skip-dirs:
+    - docs
+
+output:
+  format: colored-line-number
+  sort-results: true
+
+linters:
+  enable-all: true
+  disable:
+    - maligned
+    - ifshort
+    - nosnakecase
+    - exhaustivestruct
+    - deadcode
+    - interfacer
+    - structcheck
+    - scopelint
+    - varcheck
+    - godox
+    - golint
+    - exhaustruct
+    - stylecheck
+
+linters-settings:
+  depguard:
+    rules:
+      main:
+        deny:
+          - pkg: io/ioutil
+            desc: The io/ioutil package has been deprecated, see https://go.dev/doc/go1.16#ioutil
+        allow:
+          - $gostd
+          - github.com/eser/go-service
+          - go.uber.org/fx
+          - github.com/oklog/ulid/v2
+          - github.com/mitchellh/mapstructure
+          - github.com/go-playground/validator/v10
+          - github.com/stretchr/testify
+          - github.com/go-faker/faker/v4
+  revive:
+    rules:
+      - name: var-naming
+        disabled: true
+        arguments: []
+
+issues:
+  fix: true

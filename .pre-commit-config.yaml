@@ -1,0 +1,70 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: forbid-new-submodules
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: pretty-format-json
+        args: ["--autofix", "--no-ensure-ascii", "--no-sort-keys"]
+      - id: trailing-whitespace
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.23.5
+    hooks:
+      - id: typos
+        verbose: true
+        args:
+          - "--config"
+          - ".github/typos.toml"
+        exclude: |
+          (?x)^(
+            go.mod
+          )$
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.3.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: []
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.55.2
+    hooks:
+      - id: golangci-lint
+  - repo: local
+    hooks:
+      - id: kebab-case-files-only
+        name: kebab-case files only
+        entry: filenames must be kebab-case only
+        language: fail
+        files: '(?!\_test\.go$)[^a-z0-9.\/\[\]@-]'
+        exclude: |
+          (?x)^(
+            .github/.*|
+            Dockerfile|
+            LICENSE|
+            Makefile|
+            README.md
+          )$
+      - id: run-tests
+        name: run tests
+        description: Run tests using Go's built-in test runner.
+        entry: make test-ci
+        types_or: [go, json]
+        pass_filenames: false
+        language: system

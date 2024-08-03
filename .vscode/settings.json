@@ -1,0 +1,42 @@
+{
+  "go.testFlags": [
+    "-v",
+    "-failfast"
+  ],
+  "go.toolsManagement.autoUpdate": true,
+  "go.useLanguageServer": true,
+  "go.lintFlags": [
+    "--build-tags=integration,unit"
+  ],
+  "go.lintOnSave": "package",
+  "go.lintTool": "golangci-lint",
+  "go.inlayHints.parameterNames": true,
+  "go.inlayHints.rangeVariableTypes": true,
+  "go.inlayHints.constantValues": true,
+  "go.inlayHints.functionTypeParameters": true,
+  "go.inlayHints.compositeLiteralTypes": true,
+  "go.inlayHints.compositeLiteralFields": true,
+  "go.inlayHints.assignVariableTypes": true,
+  "gopls": {
+    "build.buildFlags": [
+      "-tags=integration,unit"
+    ],
+    "ui.semanticTokens": true
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "./.github/workflows/*.yml"
+  },
+  "[codeowners]": {
+    "editor.defaultFormatter": "chdsbd.github-code-owners"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "files.associations": {
+    "*.mdoc": "markdown",
+    "*.mdx": "markdown"
+  }
+}

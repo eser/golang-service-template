@@ -1,0 +1,79 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Build Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+    # tags:
+    #   - v[0-9]+.[0-9]+.[0-9]+
+
+  pull_request:
+    types:
+      - opened
+      - edited # in case of base branch change
+      - synchronize
+      # - reopened
+      # - ready_for_review
+    branches:
+      - "**"
+
+  # schedule:
+  #   - cron: "18 21 * * 6"
+
+  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: Create a release
+        required: false
+        type: boolean
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integration:
+    name: Integration
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read # Needed to clone the repository
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          # - windows-latest
+          # - macOS-latest
+        golang-version:
+          - 1.22.5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Golang ${{ matrix.golang-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.golang-version }}
+          cache: true
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+
+      - name: Build
+        working-directory: ./
+        run: go build -v ./...
