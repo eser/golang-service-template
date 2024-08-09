@@ -23,13 +23,16 @@ func GenerateOpenApiSpec(identity *ApiIdentity, routes *httpservice.Router) any 
 
 	for _, route := range routes.Routes {
 		operation := &openapi3.Operation{}
+		operation.OperationID = route.Spec.OperationId
 		operation.Summary = route.Spec.Summary
 		operation.Description = route.Spec.Description
+		operation.Tags = route.Spec.Tags
+		operation.Deprecated = route.Spec.Deprecated
 
 		path := &openapi3.PathItem{}
-		path.SetOperation("GET", operation)
+		path.SetOperation(route.Pattern.Method, operation)
 
-		spec.Paths.Set(route.Pattern, path)
+		spec.Paths.Set(route.Pattern.Path, path)
 	}
 
 	return spec

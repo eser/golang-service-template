@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/eser/go-service/pkg/bliss/httpservice/uris"
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
@@ -30,7 +31,14 @@ func (r *Router) Use(handlers ...Handler) {
 }
 
 func (r *Router) Route(pattern string, handlers ...Handler) *Route {
-	route := &Route{Pattern: pattern, Handlers: handlers}
+	parsed, err := uris.ParsePattern(pattern)
+	if err != nil {
+		panic(err)
+	}
+
+	// parsed.method
+
+	route := &Route{Pattern: parsed, Handlers: handlers}
 	route.MuxHandlerFunc = func(responseWriter http.ResponseWriter, req *http.Request) {
 		routeHandlers := lib.CreateCopy(r.Handlers, route.Handlers)
 
@@ -51,7 +59,7 @@ func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 	}
 
 	// TODO r.Path+route.Pattern
-	r.Mux.HandleFunc(route.Pattern, route.MuxHandlerFunc)
+	r.Mux.HandleFunc(route.Pattern.Str, route.MuxHandlerFunc)
 
 	r.Routes = append(r.Routes, route)
 

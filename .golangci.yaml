@@ -18,6 +18,7 @@ linters:
     - structcheck
     - scopelint
     - varcheck
+    - varnamelen
     - godox
     - golint
     - exhaustruct
@@ -32,6 +33,7 @@ linters-settings:
             desc: The io/ioutil package has been deprecated, see https://go.dev/doc/go1.16#ioutil
         allow:
           - $gostd
+          - golang.org/x/net/http/httpguts
           - github.com/eser/go-service
           - go.uber.org/fx
           - github.com/oklog/ulid/v2
