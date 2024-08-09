@@ -1,6 +1,9 @@
 package httpservice
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 type Result struct {
 	StatusCode int
@@ -44,10 +47,19 @@ func (r *Results) PlainText(body string) Result {
 	}
 }
 
-func (r *Results) Json(body string) Result {
+func (r *Results) Json(body any) Result {
+	encoded, err := json.Marshal(body)
+	if err != nil {
+		// TODO(@eser): Log error
+		return r.Error(
+			http.StatusInternalServerError,
+			"Failed to encode JSON",
+		)
+	}
+
 	return Result{
 		StatusCode: http.StatusOK,
-		Body:       []byte(body),
+		Body:       encoded,
 	}
 }
 
@@ -73,10 +85,10 @@ func (r *Results) BadRequest() Result {
 	}
 }
 
-func (r *Results) Error(statusCode int, body string) Result {
+func (r *Results) Error(statusCode int, message string) Result {
 	return Result{
 		StatusCode: statusCode,
-		Body:       []byte(body),
+		Body:       []byte(message),
 	}
 }
 

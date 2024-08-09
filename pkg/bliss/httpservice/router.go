@@ -10,16 +10,9 @@ import (
 type Router struct {
 	Mux      *http.ServeMux
 	Handlers []Handler
+	Routes   []*Route
 
 	Path string
-}
-
-type Route struct {
-	Pattern  string
-	Handlers []Handler
-
-	Summary     string
-	Description string
 }
 
 func NewRouter(path string) *Router {
@@ -38,9 +31,7 @@ func (r *Router) Use(handlers ...Handler) {
 
 func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 	route := &Route{Pattern: pattern, Handlers: handlers}
-
-	// TODO r.Path+route.Pattern
-	r.Mux.HandleFunc(route.Pattern, func(responseWriter http.ResponseWriter, req *http.Request) {
+	route.MuxHandlerFunc = func(responseWriter http.ResponseWriter, req *http.Request) {
 		routeHandlers := lib.CreateCopy(r.Handlers, route.Handlers)
 
 		ctx := &Context{
@@ -57,19 +48,12 @@ func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 		if err != nil {
 			fmt.Println("error writing response body: %w", err)
 		}
-	})
+	}
+
+	// TODO r.Path+route.Pattern
+	r.Mux.HandleFunc(route.Pattern, route.MuxHandlerFunc)
+
+	r.Routes = append(r.Routes, route)
 
 	return route
-}
-
-func (r *Route) WithSummary(summary string) *Route {
-	r.Summary = summary
-
-	return r
-}
-
-func (r *Route) WithDescription(description string) *Route {
-	r.Description = description
-
-	return r
 }

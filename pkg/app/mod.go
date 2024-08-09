@@ -5,6 +5,7 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpservice"
 	"github.com/eser/go-service/pkg/bliss/httpservice/middlewares"
 	"github.com/eser/go-service/pkg/bliss/httpservice/modules/healthcheck"
+	"github.com/eser/go-service/pkg/bliss/httpservice/modules/openapi"
 	"go.uber.org/fx"
 )
 
@@ -14,6 +15,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 		RegisterRoutes,
 	),
 	healthcheck.Module,
+	openapi.Module,
 )
 
 func RegisterRoutes(routes *httpservice.Router) {
@@ -25,8 +27,8 @@ func RegisterRoutes(routes *httpservice.Router) {
 		Route("GET /", func(ctx *httpservice.Context) httpservice.Result {
 			return ctx.Results.PlainText("Hello, World!")
 		}).
-		WithSummary("Homepage").
-		WithDescription("This is the homepage of the service.")
+		HasSummary("Homepage").
+		HasDescription("This is the homepage of the service.")
 }
 
 func New() *fx.App {

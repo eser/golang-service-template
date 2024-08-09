@@ -7,6 +7,8 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpservice"
 )
 
+const ResponseTimeHeader = "X-Request-Time"
+
 func ResponseTimeMiddleware() httpservice.Handler {
 	return func(ctx *httpservice.Context) httpservice.Result {
 		startTime := time.Now()
@@ -19,7 +21,7 @@ func ResponseTimeMiddleware() httpservice.Handler {
 
 		log.Println(ctx.Request.Method, ctx.Request.URL.Path, duration)
 
-		ctx.ResponseWriter.Header().Set("X-Request-Time", durationText)
+		ctx.ResponseWriter.Header().Set(ResponseTimeHeader, durationText)
 
 		return result
 	}

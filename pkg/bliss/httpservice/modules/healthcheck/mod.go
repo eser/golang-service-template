@@ -17,6 +17,6 @@ func RegisterRoutes(routes *httpservice.Router) {
 		Route("GET /health-check", func(ctx *httpservice.Context) httpservice.Result {
 			return ctx.Results.Ok()
 		}).
-		WithSummary("Health Check").
-		WithDescription("Health Check Endpoint")
+		HasSummary("Health Check").
+		HasDescription("Health Check Endpoint")
 }
