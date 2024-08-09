@@ -1,6 +1,8 @@
 package app
 
 import (
+	"net/http"
+
 	"github.com/eser/go-service/pkg/bliss"
 	"github.com/eser/go-service/pkg/bliss/httpservice"
 	"github.com/eser/go-service/pkg/bliss/httpservice/middlewares"
@@ -22,13 +24,15 @@ func RegisterRoutes(routes *httpservice.Router) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())
+	routes.Use(middlewares.CorsMiddleware())
 
 	routes.
 		Route("GET /", func(ctx *httpservice.Context) httpservice.Result {
 			return ctx.Results.PlainText("Hello, World!")
 		}).
 		HasSummary("Homepage").
-		HasDescription("This is the homepage of the service.")
+		HasDescription("This is the homepage of the service.").
+		HasResponse(http.StatusOK)
 }
 
 func New() *fx.App {

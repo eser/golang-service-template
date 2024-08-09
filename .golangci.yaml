@@ -41,6 +41,7 @@ linters-settings:
           - github.com/go-playground/validator/v10
           - github.com/stretchr/testify
           - github.com/go-faker/faker/v4
+          - github.com/getkin/kin-openapi/openapi3
   revive:
     rules:
       - name: var-naming

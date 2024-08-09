@@ -6,12 +6,25 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpservice/uris"
 )
 
+type RouteOpenApiSpecRequest struct {
+	Model any
+}
+
+type RouteOpenApiSpecResponse struct {
+	StatusCode int
+	HasModel   bool
+	Model      any
+}
+
 type RouteOpenApiSpec struct {
 	OperationId string
 	Summary     string
 	Description string
 	Tags        []string
 	Deprecated  bool
+
+	Requests  []RouteOpenApiSpecRequest
+	Responses []RouteOpenApiSpecResponse
 }
 
 type Route struct {
@@ -61,9 +74,28 @@ func (r *Route) HasQueryParameter(name string, description string) *Route {
 }
 
 func (r *Route) HasRequestModel(model any) *Route {
+	r.Spec.Requests = append(r.Spec.Requests, RouteOpenApiSpecRequest{
+		Model: model,
+	})
+
+	return r
+}
+
+func (r *Route) HasResponse(statusCode int) *Route {
+	r.Spec.Responses = append(r.Spec.Responses, RouteOpenApiSpecResponse{
+		StatusCode: statusCode,
+		HasModel:   false,
+	})
+
 	return r
 }
 
 func (r *Route) HasResponseModel(statusCode int, model any) *Route {
+	r.Spec.Responses = append(r.Spec.Responses, RouteOpenApiSpecResponse{
+		StatusCode: statusCode,
+		HasModel:   true,
+		Model:      model,
+	})
+
 	return r
 }

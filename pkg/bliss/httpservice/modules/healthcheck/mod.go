@@ -1,6 +1,8 @@
 package healthcheck
 
 import (
+	"net/http"
+
 	"github.com/eser/go-service/pkg/bliss/httpservice"
 	"go.uber.org/fx"
 )
@@ -18,5 +20,6 @@ func RegisterRoutes(routes *httpservice.Router) {
 			return ctx.Results.Ok()
 		}).
 		HasSummary("Health Check").
-		HasDescription("Health Check Endpoint")
+		HasDescription("Health Check Endpoint").
+		HasResponse(http.StatusNoContent)
 }
