@@ -14,6 +14,15 @@ import (
 	"strings"
 )
 
+var (
+	ErrEmptyPattern                     = errors.New("empty pattern")
+	ErrPatternParsing                   = errors.New("unable to parse pattern")
+	ErrNonConnectPatternWithUncleanPath = errors.New("non-CONNECT pattern with unclean path can never match")
+	ErrInvalidWildcard                  = errors.New("invalid wildcard")
+	ErrEmptyWildcard                    = errors.New("empty wildcard")
+	ErrInvalidMethod                    = errors.New("invalid method")
+)
+
 // A pattern is something that can be matched against an HTTP request.
 // It has an optional method, an optional host, and a path.
 type Pattern struct {
@@ -80,7 +89,7 @@ type Segment struct {
 // Wildcard names in a path must be distinct.
 func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,cyclop
 	if len(s) == 0 {
-		return nil, errors.New("empty pattern") //nolint:goerr113
+		return nil, ErrEmptyPattern
 	}
 
 	off := 0 // offset into string
@@ -98,7 +107,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	}
 
 	if method != "" && !IsValidMethod(method) {
-		return nil, fmt.Errorf("invalid method %q", method) //nolint:goerr113
+		return nil, fmt.Errorf("invalid method %q: %w", method, ErrInvalidMethod)
 	}
 
 	p := &Pattern{Str: s, Method: method}
@@ -110,7 +119,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	i := strings.IndexByte(rest, '/')
 
 	if i < 0 {
-		return nil, errors.New("host/path missing /") //nolint:goerr113
+		return nil, fmt.Errorf("host/path missing /: %w", ErrPatternParsing)
 	}
 
 	p.Host = rest[:i]
@@ -119,7 +128,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	if j := strings.IndexByte(p.Host, '{'); j >= 0 {
 		off += j
 
-		return nil, errors.New("host contains '{' (missing initial '/'?)") //nolint:goerr113
+		return nil, fmt.Errorf("host contains '{' (missing initial '/'?): %w", ErrPatternParsing)
 	}
 	// At this point, rest is the path.
 	off += i
@@ -127,7 +136,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	// An unclean path with a method that is not CONNECT can never match,
 	// because paths are cleaned before matching.
 	if method != "" && method != "CONNECT" && rest != CleanPath(rest) {
-		return nil, errors.New("non-CONNECT pattern with unclean path can never match") //nolint:goerr113
+		return nil, ErrNonConnectPatternWithUncleanPath
 	}
 
 	p.Path = rest
@@ -161,18 +170,18 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 		} else {
 			// Wildcard.
 			if i != 0 {
-				return nil, errors.New("bad wildcard segment (must start with '{')") //nolint:goerr113
+				return nil, fmt.Errorf("bad wildcard segment (must start with '{'): %w", ErrInvalidWildcard)
 			}
 
 			if seg[len(seg)-1] != '}' {
-				return nil, errors.New("bad wildcard segment (must end with '}')") //nolint:goerr113
+				return nil, fmt.Errorf("bad wildcard segment (must end with '}'): %w", ErrInvalidWildcard)
 			}
 
 			name := seg[1 : len(seg)-1]
 
 			if name == "$" {
 				if len(rest) != 0 {
-					return nil, errors.New("{$} not at end") //nolint:goerr113
+					return nil, fmt.Errorf("{$} wildcard not at end: %w", ErrInvalidWildcard)
 				}
 
 				p.Segments = append(p.Segments, Segment{s: "/"})
@@ -183,19 +192,19 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 			name, multi := strings.CutSuffix(name, "...")
 
 			if multi && len(rest) != 0 {
-				return nil, errors.New("{...} wildcard not at end") //nolint:goerr113
+				return nil, fmt.Errorf("{...} wildcard not at end: %w", ErrInvalidWildcard)
 			}
 
 			if name == "" {
-				return nil, errors.New("empty wildcard") //nolint:goerr113
+				return nil, ErrEmptyWildcard
 			}
 
 			if !isValidWildcardName(name) {
-				return nil, fmt.Errorf("bad wildcard name %q", name) //nolint:goerr113
+				return nil, fmt.Errorf("bad wildcard name %q: %w", name, ErrInvalidWildcard)
 			}
 
 			if seenNames[name] {
-				return nil, fmt.Errorf("duplicate wildcard name %q", name) //nolint:goerr113
+				return nil, fmt.Errorf("duplicate wildcard name %q: %w", name, ErrInvalidWildcard)
 			}
 
 			seenNames[name] = true

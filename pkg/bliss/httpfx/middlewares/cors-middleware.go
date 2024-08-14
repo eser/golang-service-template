@@ -1,13 +1,13 @@
 package middlewares
 
 import (
-	"github.com/eser/go-service/pkg/bliss/httpservice"
+	"github.com/eser/go-service/pkg/bliss/httpfx"
 )
 
 const AccessControlAllowOriginHeader = "Access-Control-Allow-Origin"
 
-func CorsMiddleware() httpservice.Handler {
-	return func(ctx *httpservice.Context) httpservice.Result {
+func CorsMiddleware() httpfx.Handler {
+	return func(ctx *httpfx.Context) httpfx.Response {
 		result := ctx.Next()
 
 		ctx.ResponseWriter.Header().Set(AccessControlAllowOriginHeader, "*")

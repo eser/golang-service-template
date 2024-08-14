@@ -4,13 +4,13 @@ import (
 	"log"
 	"time"
 
-	"github.com/eser/go-service/pkg/bliss/httpservice"
+	"github.com/eser/go-service/pkg/bliss/httpfx"
 )
 
 const ResponseTimeHeader = "X-Request-Time"
 
-func ResponseTimeMiddleware() httpservice.Handler {
-	return func(ctx *httpservice.Context) httpservice.Result {
+func ResponseTimeMiddleware() httpfx.Handler {
+	return func(ctx *httpfx.Context) httpfx.Response {
 		startTime := time.Now()
 
 		result := ctx.Next()

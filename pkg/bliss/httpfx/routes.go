@@ -1,9 +1,9 @@
-package httpservice
+package httpfx
 
 import (
 	"net/http"
 
-	"github.com/eser/go-service/pkg/bliss/httpservice/uris"
+	"github.com/eser/go-service/pkg/bliss/httpfx/uris"
 )
 
 type RouteOpenApiSpecRequest struct {

@@ -37,7 +37,6 @@ linters-settings:
           - github.com/eser/go-service
           - go.uber.org/fx
           - github.com/oklog/ulid/v2
-          - github.com/mitchellh/mapstructure
           - github.com/go-playground/validator/v10
           - github.com/stretchr/testify
           - github.com/go-faker/faker/v4

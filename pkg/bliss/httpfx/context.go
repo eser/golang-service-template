@@ -1,4 +1,4 @@
-package httpservice
+package httpfx
 
 import (
 	"net/http"
@@ -20,7 +20,7 @@ type Context struct {
 	// isAborted bool
 }
 
-func (c *Context) Next() Result {
+func (c *Context) Next() Response {
 	c.index++
 
 	for c.index < len(c.handlers) {

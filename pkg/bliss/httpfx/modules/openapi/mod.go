@@ -1,7 +1,7 @@
 package openapi
 
 import (
-	"github.com/eser/go-service/pkg/bliss/httpservice"
+	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"go.uber.org/fx"
 )
 
@@ -17,9 +17,9 @@ var Module = fx.Module( //nolint:gochecknoglobals
 	),
 )
 
-func RegisterRoutes(routes *httpservice.Router) {
+func RegisterRoutes(routes *httpfx.Router) {
 	routes.
-		Route("GET /openapi.json", func(ctx *httpservice.Context) httpservice.Result {
+		Route("GET /openapi.json", func(ctx *httpfx.Context) httpfx.Response {
 			spec := &ApiIdentity{
 				name:    "golang-service",
 				version: "0.0.0",

@@ -4,7 +4,7 @@
 // Copyright (c) 2023-present Eser Ozvataf
 // Copyright (c) 2013 John Barton
 
-package config
+package envparser
 
 import (
 	"bytes"
@@ -34,8 +34,8 @@ var (
 	ErrUnterminatedQuotedValue = errors.New("unterminated quoted value")
 )
 
-func parseBytes(src []byte, out *map[string]string) error {
-	src = bytes.ReplaceAll(src, []byte("\r\n"), []byte("\n"))
+func ParseBytes(data []byte, out *map[string]string) error {
+	src := bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
 	cutset := src
 
 	for {
@@ -267,7 +267,7 @@ func isCharFunc(char rune) func(rune) bool {
 // this differs from unicode.IsSpace, which also applies line break as space.
 func isSpace(r rune) bool {
 	switch r {
-	case '\t', '\v', '\f', '\r', ' ', 0x85, 0xA0: //nolint:gomnd
+	case '\t', '\v', '\f', '\r', ' ', 0x85, 0xA0: //nolint:gomnd,mnd
 		return true
 	}
 
@@ -308,7 +308,7 @@ func expandVariables(v string, m *map[string]string) string { //nolint:varnamele
 	})
 }
 
-func Parse(envMap *map[string]string, r io.Reader) error {
+func Parse(m *map[string]string, r io.Reader) error {
 	var buf bytes.Buffer
 
 	_, err := io.Copy(&buf, r)
@@ -316,17 +316,27 @@ func Parse(envMap *map[string]string, r io.Reader) error {
 		return fmt.Errorf("parsing error: %w", err)
 	}
 
-	return parseBytes(buf.Bytes(), envMap)
+	return ParseBytes(buf.Bytes(), m)
 }
 
-func TryParseFiles(envMap *map[string]string, filenames ...string) {
+func TryParseFiles(m *map[string]string, filenames ...string) error {
 	for _, filename := range filenames {
 		file, err := os.Open(filename)
 		if err != nil {
-			continue
+			if os.IsNotExist(err) {
+				continue
+			}
+
+			return err //nolint:wrapcheck
 		}
+
 		defer file.Close()
 
-		_ = Parse(envMap, file)
+		err = Parse(m, file)
+		if err != nil {
+			return err
+		}
 	}
+
+	return nil
 }

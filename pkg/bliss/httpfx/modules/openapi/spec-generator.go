@@ -1,11 +1,11 @@
 package openapi
 
 import (
-	"github.com/eser/go-service/pkg/bliss/httpservice"
+	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-func GenerateOpenApiSpec(identity *ApiIdentity, routes *httpservice.Router) any {
+func GenerateOpenApiSpec(identity *ApiIdentity, routes *httpfx.Router) any {
 	spec := &openapi3.T{
 		OpenAPI: "3.0.0",
 		Info: &openapi3.Info{

@@ -1,14 +1,14 @@
 package middlewares
 
 import (
-	"github.com/eser/go-service/pkg/bliss/httpservice"
+	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
 const CorrelationIdHeader = "X-Correlation-Id"
 
-func CorrelationIdMiddleware() httpservice.Handler {
-	return func(ctx *httpservice.Context) httpservice.Result {
+func CorrelationIdMiddleware() httpfx.Handler {
+	return func(ctx *httpfx.Context) httpfx.Response {
 		correlationId := ctx.Request.Header.Get(CorrelationIdHeader)
 		if correlationId == "" {
 			correlationId = lib.GenerateUniqueId()

@@ -1,10 +1,10 @@
-package httpservice
+package httpfx
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/eser/go-service/pkg/bliss/httpservice/uris"
+	"github.com/eser/go-service/pkg/bliss/httpfx/uris"
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
