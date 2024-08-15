@@ -26,7 +26,7 @@ type Result struct {
 	fx.Out
 
 	HttpService *HttpService
-	Routes      *Router
+	Routes      Router
 }
 
 type HttpService struct {
@@ -34,7 +34,7 @@ type HttpService struct {
 
 	Config *Config
 
-	Routes *Router
+	Routes Router
 }
 
 func New() (Result, error) {
@@ -53,11 +53,11 @@ func New() (Result, error) {
 
 		Addr: config.Addr,
 
-		Handler: routes.Mux,
+		Handler: routes.GetMux(),
 	}
 
 	return Result{
-		HttpService: &HttpService{server, config, routes},
+		HttpService: &HttpService{Server: server, Config: config, Routes: routes},
 		Routes:      routes,
 	}, nil
 }

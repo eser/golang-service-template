@@ -5,7 +5,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-func GenerateOpenApiSpec(identity *ApiIdentity, routes *httpfx.Router) any {
+func GenerateOpenApiSpec(identity *ApiIdentity, routes httpfx.Router) any {
 	spec := &openapi3.T{
 		OpenAPI: "3.0.0",
 		Info: &openapi3.Info{
@@ -21,7 +21,7 @@ func GenerateOpenApiSpec(identity *ApiIdentity, routes *httpfx.Router) any {
 		Extensions: map[string]any{},
 	}
 
-	for _, route := range routes.Routes {
+	for _, route := range routes.GetRoutes() {
 		operation := &openapi3.Operation{}
 		operation.OperationID = route.Spec.OperationId
 		operation.Summary = route.Spec.Summary

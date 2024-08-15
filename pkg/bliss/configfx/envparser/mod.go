@@ -34,7 +34,7 @@ var (
 	ErrUnterminatedQuotedValue = errors.New("unterminated quoted value")
 )
 
-func ParseBytes(data []byte, out *map[string]string) error {
+func ParseBytes(data []byte, out *map[string]any) error {
 	src := bytes.ReplaceAll(data, []byte("\r\n"), []byte("\n"))
 	cutset := src
 
@@ -136,7 +136,7 @@ func locateKeyName(src []byte) (string, []byte, error) {
 	return key, cutset, nil
 }
 
-func extractUnquotedVarValue(src []byte, vars *map[string]string) (string, []byte, error) {
+func extractUnquotedVarValue(src []byte, vars *map[string]any) (string, []byte, error) {
 	// unquoted value - read until end of line
 	endOfLine := bytes.IndexFunc(src, isLineEnd)
 
@@ -175,7 +175,7 @@ func extractUnquotedVarValue(src []byte, vars *map[string]string) (string, []byt
 	return expandVariables(trimmed, vars), src[endOfLine:], nil
 }
 
-func extractQuotedVarValue(src []byte, vars *map[string]string, quote byte) (string, []byte, error) {
+func extractQuotedVarValue(src []byte, vars *map[string]any, quote byte) (string, []byte, error) {
 	// lookup quoted string terminator
 	for i := 1; i < len(src); i++ { //nolint:varnamelen
 		if char := src[i]; char != quote {
@@ -210,7 +210,7 @@ func extractQuotedVarValue(src []byte, vars *map[string]string, quote byte) (str
 }
 
 // extractVarValue extracts variable value and returns rest of slice.
-func extractVarValue(src []byte, vars *map[string]string) (string, []byte, error) {
+func extractVarValue(src []byte, vars *map[string]any) (string, []byte, error) {
 	quote, hasPrefix := hasQuotePrefix(src)
 
 	if !hasPrefix {
@@ -288,7 +288,7 @@ var (
 	unescapeCharsRegex = regexp.MustCompile(`\\([^$])`)
 )
 
-func expandVariables(v string, m *map[string]string) string { //nolint:varnamelen
+func expandVariables(v string, m *map[string]any) string { //nolint:varnamelen
 	return expandVarRegex.ReplaceAllStringFunc(v, func(s string) string { //nolint:varnamelen
 		submatch := expandVarRegex.FindStringSubmatch(s)
 
@@ -301,14 +301,14 @@ func expandVariables(v string, m *map[string]string) string { //nolint:varnamele
 		}
 
 		if submatch[4] != "" {
-			return (*m)[submatch[4]]
+			return (*m)[submatch[4]].(string)
 		}
 
 		return s
 	})
 }
 
-func Parse(m *map[string]string, r io.Reader) error {
+func Parse(m *map[string]any, r io.Reader) error {
 	var buf bytes.Buffer
 
 	_, err := io.Copy(&buf, r)
@@ -319,7 +319,7 @@ func Parse(m *map[string]string, r io.Reader) error {
 	return ParseBytes(buf.Bytes(), m)
 }
 
-func TryParseFiles(m *map[string]string, filenames ...string) error {
+func TryParseFiles(m *map[string]any, filenames ...string) error {
 	for _, filename := range filenames {
 		file, err := os.Open(filename)
 		if err != nil {

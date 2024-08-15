@@ -19,7 +19,7 @@ var Module = fx.Module(
 type Result struct {
 	fx.Out
 
-	ConfigLoader *ConfigLoader
+	ConfigLoader ConfigLoader
 }
 
 type BaseConfig struct {
@@ -53,6 +53,6 @@ func New() (Result, error) {
 	// // }
 
 	return Result{
-		ConfigLoader: &ConfigLoader{},
+		ConfigLoader: NewConfigLoader(),
 	}, nil
 }

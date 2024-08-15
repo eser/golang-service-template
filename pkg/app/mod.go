@@ -24,11 +24,17 @@ var Module = fx.Module( //nolint:gochecknoglobals
 	openapi.Module,
 )
 
-func LoadConfig(conf *configfx.ConfigLoader) {
-	conf.Load(&appConfig)
+func LoadConfig(conf configfx.ConfigLoader) {
+	conf.Load(
+		&appConfig,
+
+		conf.FromJsonFile("config.json"),
+		conf.FromEnvFile(".env"),
+		conf.FromSystemEnv(),
+	)
 }
 
-func RegisterRoutes(routes *httpfx.Router) {
+func RegisterRoutes(routes httpfx.Router) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())

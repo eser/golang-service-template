@@ -8,29 +8,56 @@ import (
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
-type Router struct {
-	Mux      *http.ServeMux
-	Handlers []Handler
-	Routes   []*Route
+type Router interface {
+	GetMux() *http.ServeMux
+	GetPath() string
+	GetHandlers() []Handler
+	GetRoutes() []*Route
 
-	Path string
+	Group(path string) Router
+	Use(handlers ...Handler)
+	Route(pattern string, handlers ...Handler) *Route
 }
 
-func NewRouter(path string) *Router {
+type RouterImpl struct {
+	mux  *http.ServeMux
+	path string
+
+	handlers []Handler
+	routes   []*Route
+}
+
+func NewRouter(path string) Router {
 	mux := http.NewServeMux()
 
-	return &Router{Mux: mux, Path: path}
+	return &RouterImpl{mux: mux, path: path}
 }
 
-func (r *Router) Group(path string) *Router {
-	return NewRouter(r.Path + path)
+func (r *RouterImpl) GetMux() *http.ServeMux {
+	return r.mux
 }
 
-func (r *Router) Use(handlers ...Handler) {
-	r.Handlers = append(r.Handlers, handlers...)
+func (r *RouterImpl) GetPath() string {
+	return r.path
 }
 
-func (r *Router) Route(pattern string, handlers ...Handler) *Route {
+func (r *RouterImpl) GetHandlers() []Handler {
+	return r.handlers
+}
+
+func (r *RouterImpl) GetRoutes() []*Route {
+	return r.routes
+}
+
+func (r *RouterImpl) Group(path string) Router {
+	return NewRouter(r.path + path)
+}
+
+func (r *RouterImpl) Use(handlers ...Handler) {
+	r.handlers = append(r.handlers, handlers...)
+}
+
+func (r *RouterImpl) Route(pattern string, handlers ...Handler) *Route {
 	parsed, err := uris.ParsePattern(pattern)
 	if err != nil {
 		panic(err)
@@ -40,7 +67,7 @@ func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 
 	route := &Route{Pattern: parsed, Handlers: handlers}
 	route.MuxHandlerFunc = func(responseWriter http.ResponseWriter, req *http.Request) {
-		routeHandlers := lib.ArraysCopy(r.Handlers, route.Handlers)
+		routeHandlers := lib.ArraysCopy(r.handlers, route.Handlers)
 
 		ctx := &Context{
 			Request:        req,
@@ -59,9 +86,9 @@ func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 	}
 
 	// TODO r.Path+route.Pattern
-	r.Mux.HandleFunc(route.Pattern.Str, route.MuxHandlerFunc)
+	r.mux.HandleFunc(route.Pattern.Str, route.MuxHandlerFunc)
 
-	r.Routes = append(r.Routes, route)
+	r.routes = append(r.routes, route)
 
 	return route
 }

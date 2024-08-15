@@ -17,7 +17,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 	),
 )
 
-func RegisterRoutes(routes *httpfx.Router) {
+func RegisterRoutes(routes httpfx.Router) {
 	routes.
 		Route("GET /openapi.json", func(ctx *httpfx.Context) httpfx.Response {
 			spec := &ApiIdentity{
