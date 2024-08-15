@@ -3,11 +3,11 @@ package app
 import (
 	"time"
 
-	"github.com/eser/go-service/pkg/bliss/configfx"
+	"github.com/eser/go-service/pkg/bliss"
 )
 
 type AppConfig struct {
-	configfx.BaseConfig
+	bliss.BaseConfig
 
 	AppName  string `conf:"name" default:"go-service"`
 	Postgres struct {

@@ -3,7 +3,6 @@ package app
 import (
 	"net/http"
 
-	"github.com/eser/go-service/pkg/bliss"
 	"github.com/eser/go-service/pkg/bliss/configfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx/middlewares"
@@ -12,26 +11,30 @@ import (
 	"go.uber.org/fx"
 )
 
-var appConfig = AppConfig{}
-
 var Module = fx.Module( //nolint:gochecknoglobals
 	"app",
 	fx.Invoke(
-		LoadConfig,
 		RegisterRoutes,
+	),
+	fx.Provide(
+		LoadConfig,
 	),
 	healthcheck.Module,
 	openapi.Module,
 )
 
-func LoadConfig(conf configfx.ConfigLoader) {
+func LoadConfig(conf configfx.ConfigLoader) *AppConfig {
+	appConfig := &AppConfig{}
+
 	conf.Load(
-		&appConfig,
+		appConfig,
 
 		conf.FromJsonFile("config.json"),
 		conf.FromEnvFile(".env"),
 		conf.FromSystemEnv(),
 	)
+
+	return appConfig
 }
 
 func RegisterRoutes(routes httpfx.Router) {
@@ -47,12 +50,4 @@ func RegisterRoutes(routes httpfx.Router) {
 		HasSummary("Homepage").
 		HasDescription("This is the homepage of the service.").
 		HasResponse(http.StatusOK)
-}
-
-func New() *fx.App {
-	return fx.New(
-		// fx.WithLogger(bliss.GetFxLogger),
-		bliss.Module,
-		Module,
-	)
 }
