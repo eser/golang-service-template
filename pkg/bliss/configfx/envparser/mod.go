@@ -114,7 +114,7 @@ func trimExportPrefix(src []byte) []byte {
 		newSrc = src
 	}
 
-	return lib.TrimLeadingSpaceFromBytes(newSrc)
+	return lib.StringsTrimLeadingSpaceFromBytes(newSrc)
 }
 
 // locateKeyName locates and parses key name and returns rest of slice.
@@ -130,8 +130,8 @@ func locateKeyName(src []byte) (string, []byte, error) {
 		return "", nil, ErrZeroLengthString
 	}
 
-	key = lib.TrimTrailingSpace(key)
-	cutset := lib.TrimLeadingSpaceFromBytes(src[offset:])
+	key = lib.StringsTrimTrailingSpace(key)
+	cutset := lib.StringsTrimLeadingSpaceFromBytes(src[offset:])
 
 	return key, cutset, nil
 }

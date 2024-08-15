@@ -1,14 +1,14 @@
-package configfx_test
+package lib_test
 
 import (
 	"os"
 	"testing"
 
-	"github.com/eser/go-service/pkg/bliss/configfx"
+	"github.com/eser/go-service/pkg/bliss/lib"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetCurrentEnv(t *testing.T) {
+func TestEnvGetCurrent(t *testing.T) {
 	t.Run("should return current environment", func(t *testing.T) {
 		oldEnv, oldEnvOk := os.LookupEnv("ENV")
 		defer func() {
@@ -22,13 +22,13 @@ func TestGetCurrentEnv(t *testing.T) {
 		t.Setenv("ENV", "production")
 
 		expected := "production"
-		actual := configfx.GetCurrentEnv()
+		actual := lib.EnvGetCurrent()
 
 		assert.Equal(t, expected, actual)
 	})
 }
 
-func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
+func TestEnvAwareFilenames(t *testing.T) { //nolint:funlen
 	t.Parallel()
 
 	t.Run("should populate .env files for development environment", func(t *testing.T) {
@@ -41,7 +41,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			".env.development.local",
 		}
 
-		actual := configfx.GetFilenamesForEnv("development", ".env")
+		actual := lib.EnvAwareFilenames("development", ".env")
 
 		assert.ElementsMatch(t, expected, actual)
 	})
@@ -55,7 +55,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			".env.test.local",
 		}
 
-		actual := configfx.GetFilenamesForEnv("test", ".env")
+		actual := lib.EnvAwareFilenames("test", ".env")
 
 		assert.ElementsMatch(t, expected, actual)
 	})
@@ -70,7 +70,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			"../.env.development.local",
 		}
 
-		actual := configfx.GetFilenamesForEnv("development", "../.env")
+		actual := lib.EnvAwareFilenames("development", "../.env")
 
 		assert.ElementsMatch(t, expected, actual)
 	})
@@ -85,7 +85,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			"testdata/.env.development.local",
 		}
 
-		actual := configfx.GetFilenamesForEnv("development", "testdata/.env")
+		actual := lib.EnvAwareFilenames("development", "testdata/.env")
 
 		assert.ElementsMatch(t, expected, actual)
 	})
@@ -100,7 +100,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			"config.development.local.json",
 		}
 
-		actual := configfx.GetFilenamesForEnv("development", "config.json")
+		actual := lib.EnvAwareFilenames("development", "config.json")
 
 		assert.ElementsMatch(t, expected, actual)
 	})
@@ -114,7 +114,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			"config.test.local.json",
 		}
 
-		actual := configfx.GetFilenamesForEnv("test", "config.json")
+		actual := lib.EnvAwareFilenames("test", "config.json")
 
 		assert.ElementsMatch(t, expected, actual)
 	})
@@ -129,7 +129,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			"../config.development.local.json",
 		}
 
-		actual := configfx.GetFilenamesForEnv("development", "../config.json")
+		actual := lib.EnvAwareFilenames("development", "../config.json")
 
 		assert.ElementsMatch(t, expected, actual)
 	})
@@ -144,7 +144,7 @@ func TestGetFilenamesForEnv(t *testing.T) { //nolint:funlen
 			"testdata/config.development.local.json",
 		}
 
-		actual := configfx.GetFilenamesForEnv("development", "testdata/config.json")
+		actual := lib.EnvAwareFilenames("development", "testdata/config.json")
 
 		assert.ElementsMatch(t, expected, actual)
 	})

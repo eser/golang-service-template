@@ -29,38 +29,38 @@ type Config struct {
 	Addr string
 }
 
-func NewConfig() (Config, error) {
+func NewConfig() (*Config, error) {
 	readHeaderTimeout, err := time.ParseDuration(DefaultReadHeaderTimeout)
 	if err != nil {
-		return Config{}, fmt.Errorf("error parsing read header timeout: %w", err)
+		return &Config{}, fmt.Errorf("error parsing read header timeout: %w", err)
 	}
 
 	readTimeout, err := time.ParseDuration(DefaultReadTimeout)
 	if err != nil {
-		return Config{}, fmt.Errorf("error parsing read timeout: %w", err)
+		return &Config{}, fmt.Errorf("error parsing read timeout: %w", err)
 	}
 
 	writeTimeout, err := time.ParseDuration(DefaultWriteTimeout)
 	if err != nil {
-		return Config{}, fmt.Errorf("error parsing write timeout: %w", err)
+		return &Config{}, fmt.Errorf("error parsing write timeout: %w", err)
 	}
 
 	idleTimeout, err := time.ParseDuration(DefaultIdleTimeout)
 	if err != nil {
-		return Config{}, fmt.Errorf("error parsing idle timeout: %w", err)
+		return &Config{}, fmt.Errorf("error parsing idle timeout: %w", err)
 	}
 
 	initializationTimeout, err := time.ParseDuration(DefaultInitializationTimeout)
 	if err != nil {
-		return Config{}, fmt.Errorf("error parsing initialization timeout: %w", err)
+		return &Config{}, fmt.Errorf("error parsing initialization timeout: %w", err)
 	}
 
 	gracefulShutdownTimeout, err := time.ParseDuration(DefaultGracefulShutdownTimeout)
 	if err != nil {
-		return Config{}, fmt.Errorf("error parsing graceful shutdown timeout: %w", err)
+		return &Config{}, fmt.Errorf("error parsing graceful shutdown timeout: %w", err)
 	}
 
-	return Config{
+	return &Config{
 		ReadHeaderTimeout: readHeaderTimeout,
 		ReadTimeout:       readTimeout,
 		WriteTimeout:      writeTimeout,

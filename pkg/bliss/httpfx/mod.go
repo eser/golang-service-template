@@ -32,7 +32,7 @@ type Result struct {
 type HttpService struct {
 	Server *http.Server
 
-	Config Config
+	Config *Config
 
 	Routes *Router
 }

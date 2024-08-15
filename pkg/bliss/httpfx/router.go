@@ -40,7 +40,7 @@ func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 
 	route := &Route{Pattern: parsed, Handlers: handlers}
 	route.MuxHandlerFunc = func(responseWriter http.ResponseWriter, req *http.Request) {
-		routeHandlers := lib.CreateCopy(r.Handlers, route.Handlers)
+		routeHandlers := lib.ArraysCopy(r.Handlers, route.Handlers)
 
 		ctx := &Context{
 			Request:        req,

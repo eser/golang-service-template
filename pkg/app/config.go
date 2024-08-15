@@ -7,7 +7,7 @@ import (
 )
 
 type AppConfig struct {
-	configfx.Config
+	configfx.BaseConfig
 
 	AppName  string `conf:"name" default:"go-service"`
 	Postgres struct {

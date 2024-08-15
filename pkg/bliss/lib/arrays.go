@@ -1,6 +1,6 @@
 package lib
 
-func CreateCopy[T any](items ...[]T) []T {
+func ArraysCopy[T any](items ...[]T) []T {
 	var totalLength int
 	for _, slice := range items {
 		totalLength += len(slice)

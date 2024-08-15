@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/eser/go-service/pkg/bliss"
+	"github.com/eser/go-service/pkg/bliss/configfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx/middlewares"
 	"github.com/eser/go-service/pkg/bliss/httpfx/modules/healthcheck"
@@ -13,16 +14,19 @@ import (
 
 var appConfig = AppConfig{}
 
-// configfx.Load(&appConfig)
-
 var Module = fx.Module( //nolint:gochecknoglobals
 	"app",
 	fx.Invoke(
+		LoadConfig,
 		RegisterRoutes,
 	),
 	healthcheck.Module,
 	openapi.Module,
 )
+
+func LoadConfig(conf *configfx.ConfigLoader) {
+	conf.Load(&appConfig)
+}
 
 func RegisterRoutes(routes *httpfx.Router) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
