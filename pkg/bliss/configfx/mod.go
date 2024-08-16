@@ -23,7 +23,7 @@ type Result struct {
 }
 
 func New() (Result, error) {
-	return Result{
+	return Result{ //nolint:exhaustruct
 		ConfigLoader: NewConfigLoader(),
 	}, nil
 }

@@ -267,7 +267,7 @@ func isCharFunc(char rune) func(rune) bool {
 // this differs from unicode.IsSpace, which also applies line break as space.
 func isSpace(r rune) bool {
 	switch r {
-	case '\t', '\v', '\f', '\r', ' ', 0x85, 0xA0: //nolint:gomnd,mnd
+	case '\t', '\v', '\f', '\r', ' ', 0x85, 0xA0: //nolint:mnd
 		return true
 	}
 
@@ -301,7 +301,7 @@ func expandVariables(v string, m *map[string]any) string { //nolint:varnamelen
 		}
 
 		if submatch[4] != "" {
-			return (*m)[submatch[4]].(string)
+			return (*m)[submatch[4]].(string) //nolint:forcetypeassert
 		}
 
 		return s

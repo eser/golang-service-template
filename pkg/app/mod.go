@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/eser/go-service/pkg/bliss/configfx"
@@ -23,18 +24,21 @@ var Module = fx.Module( //nolint:gochecknoglobals
 	openapi.Module,
 )
 
-func LoadConfig(conf configfx.ConfigLoader) *AppConfig {
-	appConfig := &AppConfig{}
+func LoadConfig(conf configfx.ConfigLoader) (*AppConfig, error) {
+	appConfig := &AppConfig{} //nolint:exhaustruct
 
-	conf.Load(
+	err := conf.Load(
 		appConfig,
 
 		conf.FromJsonFile("config.json"),
 		conf.FromEnvFile(".env"),
 		conf.FromSystemEnv(),
 	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
+	}
 
-	return appConfig
+	return appConfig, nil
 }
 
 func RegisterRoutes(routes httpfx.Router) {

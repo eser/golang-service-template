@@ -35,7 +35,7 @@ func EnvAwareFilenames(env string, filename string) []string {
 
 func EnvOverrideVariables(m *map[string]any) {
 	for _, e := range os.Environ() {
-		pair := strings.SplitN(e, "=", 2) //nolint:gomnd,mnd
+		pair := strings.SplitN(e, "=", 2) //nolint:mnd
 		(*m)[pair[0]] = pair[1]
 	}
 }

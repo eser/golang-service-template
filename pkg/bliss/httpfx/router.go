@@ -27,10 +27,16 @@ type RouterImpl struct {
 	routes   []*Route
 }
 
-func NewRouter(path string) Router {
+func NewRouter(path string) Router { //nolint:ireturn
 	mux := http.NewServeMux()
 
-	return &RouterImpl{mux: mux, path: path}
+	return &RouterImpl{
+		mux:  mux,
+		path: path,
+
+		handlers: []Handler{},
+		routes:   []*Route{},
+	}
 }
 
 func (r *RouterImpl) GetMux() *http.ServeMux {
@@ -49,7 +55,7 @@ func (r *RouterImpl) GetRoutes() []*Route {
 	return r.routes
 }
 
-func (r *RouterImpl) Group(path string) Router {
+func (r *RouterImpl) Group(path string) Router { //nolint:ireturn
 	return NewRouter(r.path + path)
 }
 
@@ -65,27 +71,32 @@ func (r *RouterImpl) Route(pattern string, handlers ...Handler) *Route {
 
 	// parsed.method
 
-	route := &Route{Pattern: parsed, Handlers: handlers}
+	route := &Route{Pattern: parsed, Handlers: handlers} //nolint:exhaustruct
 	route.MuxHandlerFunc = func(responseWriter http.ResponseWriter, req *http.Request) {
 		routeHandlers := lib.ArraysCopy(r.handlers, route.Handlers)
 
 		ctx := &Context{
 			Request:        req,
 			ResponseWriter: responseWriter,
-			routeDef:       route,
-			handlers:       routeHandlers,
+
+			Results: Results{},
+
+			routeDef: route,
+			handlers: routeHandlers,
+			index:    0,
 		}
 
 		result := routeHandlers[0](ctx)
 
 		responseWriter.WriteHeader(result.StatusCode)
+
 		_, err := responseWriter.Write(result.Body)
 		if err != nil {
 			fmt.Println("error writing response body: %w", err)
 		}
 	}
 
-	// TODO r.Path+route.Pattern
+	// TODO(@eser) r.Path+route.Pattern
 	r.mux.HandleFunc(route.Pattern.Str, route.MuxHandlerFunc)
 
 	r.routes = append(r.routes, route)

@@ -45,7 +45,7 @@ func New() (Result, error) {
 		return Result{}, fmt.Errorf("error creating new config: %w", err)
 	}
 
-	server := &http.Server{
+	server := &http.Server{ //nolint:exhaustruct
 		ReadHeaderTimeout: config.ReadHeaderTimeout,
 		ReadTimeout:       config.ReadTimeout,
 		WriteTimeout:      config.WriteTimeout,
@@ -56,7 +56,7 @@ func New() (Result, error) {
 		Handler: routes.GetMux(),
 	}
 
-	return Result{
+	return Result{ //nolint:exhaustruct
 		HttpService: &HttpService{Server: server, Config: config, Routes: routes},
 		Routes:      routes,
 	}, nil

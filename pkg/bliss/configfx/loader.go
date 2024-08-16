@@ -48,13 +48,18 @@ func NewConfigLoader() ConfigLoader { //nolint:ireturn
 
 func (dcl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
 	r := reflect.ValueOf(i).Elem()
+
 	children, err := reflectMeta(r)
 	if err != nil {
 		return ConfigItemMeta{}, err
 	}
 
 	return ConfigItemMeta{
-		Name:     "root",
+		Name:            "root",
+		Type:            nil,
+		HasDefaultValue: false,
+		DefaultValue:    "",
+
 		Children: children,
 	}, nil
 }

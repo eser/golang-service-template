@@ -1,28 +1,16 @@
-run:
-  skip-dirs:
-    - docs
-
 output:
-  format: colored-line-number
+  formats:
+    - format: colored-line-number
   sort-results: true
 
 linters:
   enable-all: true
   disable:
-    - maligned
-    - ifshort
-    - nosnakecase
-    - exhaustivestruct
-    - deadcode
-    - interfacer
-    - structcheck
-    - scopelint
-    - varcheck
-    - varnamelen
-    - godox
-    - golint
-    - exhaustruct
+    # - exhaustruct
+    # - godox
+    - gomnd
     - stylecheck
+    - varnamelen
 
 linters-settings:
   depguard:
@@ -49,3 +37,5 @@ linters-settings:
 
 issues:
   fix: true
+  exclude-dirs:
+    - docs

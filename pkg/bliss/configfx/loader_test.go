@@ -23,7 +23,7 @@ func TestLoadMeta(t *testing.T) {
 	t.Run("should get config meta", func(t *testing.T) {
 		t.Parallel()
 
-		config := TestConfig{}
+		config := TestConfig{} //nolint:exhaustruct
 
 		cl := configfx.NewConfigLoader()
 		meta, err := cl.LoadMeta(&config)
@@ -34,6 +34,8 @@ func TestLoadMeta(t *testing.T) {
 				Type:            reflect.TypeFor[string](),
 				HasDefaultValue: true,
 				DefaultValue:    "localhost",
+
+				Children: nil,
 			},
 		}
 
@@ -48,7 +50,7 @@ func TestLoadMeta(t *testing.T) {
 	t.Run("should get config meta from nested definition", func(t *testing.T) {
 		t.Parallel()
 
-		config := TestConfigNested{}
+		config := TestConfigNested{} //nolint:exhaustruct
 
 		cl := configfx.NewConfigLoader()
 		meta, err := cl.LoadMeta(&config)
@@ -59,12 +61,16 @@ func TestLoadMeta(t *testing.T) {
 				Type:            reflect.TypeFor[string](),
 				HasDefaultValue: true,
 				DefaultValue:    "localhost",
+
+				Children: nil,
 			},
 			{
 				Name:            "port",
 				Type:            reflect.TypeFor[int](),
 				HasDefaultValue: true,
 				DefaultValue:    "8080",
+
+				Children: nil,
 			},
 		}
 

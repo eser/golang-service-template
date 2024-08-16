@@ -27,21 +27,21 @@ func (r Response) WithBody(body string) Response {
 type Results struct{}
 
 func (r *Results) Ok() Response {
-	return Response{
+	return Response{ //nolint:exhaustruct
 		StatusCode: http.StatusNoContent,
 		Body:       []byte{},
 	}
 }
 
 func (r *Results) Bytes(body []byte) Response {
-	return Response{
+	return Response{ //nolint:exhaustruct
 		StatusCode: http.StatusOK,
 		Body:       body,
 	}
 }
 
 func (r *Results) PlainText(body string) Response {
-	return Response{
+	return Response{ //nolint:exhaustruct
 		StatusCode: http.StatusOK,
 		Body:       []byte(body),
 	}
@@ -57,7 +57,7 @@ func (r *Results) Json(body any) Response {
 		)
 	}
 
-	return Response{
+	return Response{ //nolint:exhaustruct
 		StatusCode: http.StatusOK,
 		Body:       encoded,
 	}
@@ -72,27 +72,27 @@ func (r *Results) Redirect(uri string) Response {
 }
 
 func (r *Results) NotFound() Response {
-	return Response{
+	return Response{ //nolint:exhaustruct
 		StatusCode: http.StatusNotFound,
 		Body:       []byte("Not Found"),
 	}
 }
 
 func (r *Results) BadRequest() Response {
-	return Response{
+	return Response{ //nolint:exhaustruct
 		StatusCode: http.StatusBadRequest,
 		Body:       []byte("Bad Request"),
 	}
 }
 
 func (r *Results) Error(statusCode int, message string) Response {
-	return Response{
+	return Response{ //nolint:exhaustruct
 		StatusCode: statusCode,
 		Body:       []byte(message),
 	}
 }
 
 func (r *Results) Abort() Response {
-	// TODO
-	return Response{}
+	// TODO(@eser) implement this
+	return Response{} //nolint:exhaustruct
 }
