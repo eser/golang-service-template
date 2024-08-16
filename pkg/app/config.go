@@ -9,9 +9,9 @@ import (
 type AppConfig struct {
 	bliss.BaseConfig
 
-	AppName  string `conf:"name" default:"go-service"`
+	AppName  string `conf:"NAME" default:"go-service"`
 	Postgres struct {
-		dsn string `conf:"dsn" default:"postgres://localhost:5432"`
-	} `conf:"postgres"`
-	ReadTimeout time.Duration `conf:"read_timeout" default:"5s"`
+		dsn string `conf:"DSN" default:"postgres://localhost:5432"`
+	} `conf:"POSTGRES"`
+	ReadTimeout time.Duration `conf:"READ_TIMEOUT" default:"5s"`
 }

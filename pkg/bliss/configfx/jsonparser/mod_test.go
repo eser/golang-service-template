@@ -17,7 +17,8 @@ func TestTryParseFiles(t *testing.T) {
 		err := jsonparser.TryParseFiles(&m, "./testdata/config.json")
 
 		if assert.NoError(t, err) {
-			assert.Equal(t, "env", m["test"])
+			assert.Equal(t, "env", m["TEST"])
+			assert.Equal(t, "env!", m["TEST2__TEST3"])
 		}
 	})
 
@@ -28,7 +29,8 @@ func TestTryParseFiles(t *testing.T) {
 		err := jsonparser.TryParseFiles(&m, "./testdata/config.json", "./testdata/config.development.json")
 
 		if assert.NoError(t, err) {
-			assert.Equal(t, "env-development", m["test"])
+			assert.Equal(t, "env-development", m["TEST"])
+			assert.Equal(t, "env!!", m["TEST2__TEST3"])
 		}
 	})
 }

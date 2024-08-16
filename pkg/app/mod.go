@@ -41,7 +41,7 @@ func LoadConfig(conf configfx.ConfigLoader) (*AppConfig, error) {
 	return appConfig, nil
 }
 
-func RegisterRoutes(routes httpfx.Router) {
+func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())
@@ -49,7 +49,9 @@ func RegisterRoutes(routes httpfx.Router) {
 
 	routes.
 		Route("GET /", func(ctx *httpfx.Context) httpfx.Response {
-			return ctx.Results.PlainText("Hello, World!")
+			message := fmt.Sprintf("Hello from %s!", appConfig.AppName)
+
+			return ctx.Results.PlainText(message)
 		}).
 		HasSummary("Homepage").
 		HasDescription("This is the homepage of the service.").

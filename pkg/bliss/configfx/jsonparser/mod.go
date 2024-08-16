@@ -6,10 +6,20 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 func ParseBytes(data []byte, out *map[string]any) error {
-	return json.Unmarshal(data, out) //nolint:wrapcheck
+	var raw map[string]any
+
+	err := json.Unmarshal(data, &raw)
+	if err != nil {
+		return fmt.Errorf("parsing error: %w", err)
+	}
+
+	flattenJSON(raw, "", out)
+
+	return nil
 }
 
 func Parse(m *map[string]any, r io.Reader) error {
@@ -43,4 +53,20 @@ func TryParseFiles(m *map[string]any, filenames ...string) error {
 	}
 
 	return nil
+}
+
+func flattenJSON(input map[string]any, prefix string, out *map[string]any) {
+	for key, value := range input {
+		mapValue, isMap := value.(map[string]any)
+
+		if isMap {
+			// Eğer değer bir map ise, recursive olarak çağırıyoruz
+			flattenJSON(mapValue, prefix+strings.ToUpper(key)+"__", out)
+
+			continue
+		}
+
+		// Eğer değer map değilse, anahtarı ekliyoruz
+		(*out)[prefix+strings.ToUpper(key)] = fmt.Sprintf("%v", value)
+	}
 }

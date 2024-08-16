@@ -1,42 +1,66 @@
 package configfx
 
-import "github.com/eser/go-service/pkg/bliss/configfx/envparser"
+import (
+	"fmt"
 
-func (dcl *ConfigLoaderImpl) FromEnvFileSingle(filenames ...string) ConfigResource {
-	return func(meta ConfigItemMeta, target *map[string]any) error {
-		err := envparser.TryParseFiles(target, filenames...)
+	"github.com/eser/go-service/pkg/bliss/configfx/envparser"
+	"github.com/eser/go-service/pkg/bliss/configfx/jsonparser"
+	"github.com/eser/go-service/pkg/bliss/lib"
+)
 
-		return err
+func (dcl *ConfigLoaderImpl) FromEnvFileSingle(filename string) ConfigResource {
+	return func(target *map[string]any) error {
+		err := envparser.TryParseFiles(target, filename)
+		if err != nil {
+			return fmt.Errorf("failed to parse env file: %w", err)
+		}
+
+		return nil
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromEnvFile(filenames ...string) ConfigResource {
-	return func(meta ConfigItemMeta, target *map[string]any) error {
-		// TODO(@eser): Implement this function
+func (dcl *ConfigLoaderImpl) FromEnvFile(filename string) ConfigResource {
+	return func(target *map[string]any) error {
+		env := lib.EnvGetCurrent()
+		filenames := lib.EnvAwareFilenames(env, filename)
+
+		err := envparser.TryParseFiles(target, filenames...)
+		if err != nil {
+			return fmt.Errorf("failed to parse env file: %w", err)
+		}
 
 		return nil
 	}
 }
 
 func (dcl *ConfigLoaderImpl) FromSystemEnv() ConfigResource {
-	return func(meta ConfigItemMeta, target *map[string]any) error {
-		// TODO(@eser): Implement this function
+	return func(target *map[string]any) error {
+		lib.EnvOverrideVariables(target)
 
 		return nil
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromJsonFileSingle(filenames ...string) ConfigResource {
-	return func(meta ConfigItemMeta, target *map[string]any) error {
-		// TODO(@eser): Implement this function
+func (dcl *ConfigLoaderImpl) FromJsonFileSingle(filename string) ConfigResource {
+	return func(target *map[string]any) error {
+		err := jsonparser.TryParseFiles(target, filename)
+		if err != nil {
+			return fmt.Errorf("failed to parse json file: %w", err)
+		}
 
 		return nil
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromJsonFile(filenames ...string) ConfigResource {
-	return func(meta ConfigItemMeta, target *map[string]any) error {
-		// TODO(@eser): Implement this function
+func (dcl *ConfigLoaderImpl) FromJsonFile(filename string) ConfigResource {
+	return func(target *map[string]any) error {
+		env := lib.EnvGetCurrent()
+		filenames := lib.EnvAwareFilenames(env, filename)
+
+		err := jsonparser.TryParseFiles(target, filenames...)
+		if err != nil {
+			return fmt.Errorf("failed to parse json file: %w", err)
+		}
 
 		return nil
 	}

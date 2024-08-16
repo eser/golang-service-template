@@ -4,10 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-
-	"github.com/eser/go-service/pkg/bliss/configfx/envparser"
-	"github.com/eser/go-service/pkg/bliss/configfx/jsonparser"
-	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
 const (
@@ -26,18 +22,19 @@ type ConfigItemMeta struct {
 	Children []ConfigItemMeta
 }
 
-type ConfigResource func(meta ConfigItemMeta, target *map[string]any) error
+type ConfigResource func(target *map[string]any) error
 
 type ConfigLoader interface {
 	LoadMeta(i any) (ConfigItemMeta, error)
+	LoadMap(resources ...ConfigResource) (*map[string]any, error)
 	Load(i any, resources ...ConfigResource) error
 
-	FromEnvFileSingle(filenames ...string) ConfigResource
-	FromEnvFile(filenames ...string) ConfigResource
+	FromEnvFileSingle(filename string) ConfigResource
+	FromEnvFile(filename string) ConfigResource
 	FromSystemEnv() ConfigResource
 
-	FromJsonFileSingle(filenames ...string) ConfigResource
-	FromJsonFile(filenames ...string) ConfigResource
+	FromJsonFileSingle(filename string) ConfigResource
+	FromJsonFile(filename string) ConfigResource
 }
 
 type ConfigLoaderImpl struct{}
@@ -64,8 +61,26 @@ func (dcl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
 	}, nil
 }
 
+func (dcl *ConfigLoaderImpl) LoadMap(resources ...ConfigResource) (*map[string]any, error) {
+	target := map[string]any{}
+
+	for _, resource := range resources {
+		err := resource(&target)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &target, nil
+}
+
 func (dcl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
 	meta, err := dcl.LoadMeta(i)
+	if err != nil {
+		return err
+	}
+
+	target, err := dcl.LoadMap(resources...)
 	if err != nil {
 		return err
 	}
@@ -73,32 +88,7 @@ func (dcl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
 	for _, child := range meta.Children {
 		fmt.Println(child)
 	}
-
-	return nil
-}
-
-func tryLoadEnv(m *map[string]any) error {
-	env := lib.EnvGetCurrent()
-	filenames := lib.EnvAwareFilenames(env, ".env")
-
-	err := envparser.TryParseFiles(m, filenames...)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
-
-	lib.EnvOverrideVariables(m)
-
-	return nil
-}
-
-func tryLoadJson(m *map[string]any) error {
-	env := lib.EnvGetCurrent()
-	filenames := lib.EnvAwareFilenames(env, "config.json")
-
-	err := jsonparser.TryParseFiles(m, filenames...)
-	if err != nil {
-		return err //nolint:wrapcheck
-	}
+	fmt.Println(target)
 
 	return nil
 }
