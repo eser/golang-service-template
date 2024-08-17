@@ -92,6 +92,7 @@ func (r *RouterImpl) Route(pattern string, handlers ...Handler) *Route {
 
 		_, err := responseWriter.Write(result.Body)
 		if err != nil {
+			// TODO(@eser) replace it with logger
 			fmt.Println("error writing response body: %w", err)
 		}
 	}

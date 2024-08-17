@@ -37,13 +37,8 @@ type HttpService struct {
 	Routes Router
 }
 
-func New() (Result, error) {
+func New(config *Config) (Result, error) {
 	routes := NewRouter("/")
-
-	config, err := NewConfig()
-	if err != nil {
-		return Result{}, fmt.Errorf("error creating new config: %w", err)
-	}
 
 	server := &http.Server{ //nolint:exhaustruct
 		ReadHeaderTimeout: config.ReadHeaderTimeout,
@@ -66,7 +61,7 @@ func New() (Result, error) {
 func RegisterHooks(lc fx.Lifecycle, hs *HttpService) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			// logger.Info("HttpService is starting...", log.String("env", conf.Env), log.String("port", conf.Port))
+			// logger.Info("HttpService is starting...", log.String("addr", hs.Config.Addr))
 
 			// serverErr := make(chan error, 1)
 

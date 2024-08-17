@@ -90,7 +90,7 @@ func (dcl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
 		return err
 	}
 
-	reflectSet(i, meta, target)
+	reflectSet(meta, "", target)
 
 	return nil
 }
@@ -132,7 +132,7 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 		if structFieldType.Type.Kind() == reflect.Struct {
 			var err error
 
-			children, err = reflectMeta(r.Field(i))
+			children, err = reflectMeta(structField)
 			if err != nil {
 				return nil, err
 			}
@@ -153,10 +153,19 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 	return result, nil
 }
 
-func reflectSet(i any, meta ConfigItemMeta, target *map[string]any) { //nolint:unusedparams
+func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) { //nolint:unusedparams
 	for _, child := range meta.Children {
+		key := prefix + child.Name
+
+		if child.Type.Kind() == reflect.Struct {
+			reflectSet(child, key+"__", target)
+
+			continue
+		}
+
 		// Check if the target map has the key with the child name
-		if _, ok := (*target)[child.Name]; !ok {
+		value, valueOk := (*target)[key].(string)
+		if !valueOk {
 			if child.HasDefaultValue {
 				reflectSetField(child.Field, child.Type, child.DefaultValue)
 
@@ -170,12 +179,7 @@ func reflectSet(i any, meta ConfigItemMeta, target *map[string]any) { //nolint:u
 			continue
 		}
 
-		if child.Type.Kind() == reflect.Struct {
-			// TODO(@eser): skip nested structs for now
-			continue
-		}
-
-		reflectSetField(child.Field, child.Type, (*target)[child.Name].(string))
+		reflectSetField(child.Field, child.Type, value)
 	}
 }
 

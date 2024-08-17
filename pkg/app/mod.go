@@ -19,6 +19,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 	),
 	fx.Provide(
 		LoadConfig,
+		RegisterHttpConfig,
 	),
 	healthcheck.Module,
 	openapi.Module,
@@ -41,11 +42,14 @@ func LoadConfig(conf configfx.ConfigLoader) (*AppConfig, error) {
 	return appConfig, nil
 }
 
+func RegisterHttpConfig(appConfig *AppConfig) *httpfx.Config {
+	return &appConfig.Http
+}
+
 func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())
-	routes.Use(middlewares.AuthMiddleware())
 	routes.Use(middlewares.CorsMiddleware())
 
 	routes.
@@ -56,5 +60,15 @@ func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 		}).
 		HasSummary("Homepage").
 		HasDescription("This is the homepage of the service.").
+		HasResponse(http.StatusOK)
+
+	routes.
+		Route("GET /protected", middlewares.AuthMiddleware(), func(ctx *httpfx.Context) httpfx.Response {
+			message := fmt.Sprintf("Hello from %s! this endpoint is protected!", appConfig.AppName)
+
+			return ctx.Results.PlainText(message)
+		}).
+		HasSummary("Protected page").
+		HasDescription("A page protected with JWT auth.").
 		HasResponse(http.StatusOK)
 }

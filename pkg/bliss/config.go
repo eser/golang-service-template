@@ -1,7 +1,13 @@
 package bliss
 
+import (
+	"github.com/eser/go-service/pkg/bliss/httpfx"
+)
+
 type BaseConfig struct {
-	Env string `conf:"env" default:"development"`
+	Env string `conf:"ENV" default:"development"`
+
+	Http httpfx.Config `conf:"HTTP"`
 
 	// AppName           string `conf:"APP_NAME" default:"go-service"`
 	// LogTarget         string `conf:"LOG_TARGET" default:"stdout"`
