@@ -91,7 +91,9 @@ Before running any command, please make sure that you have configured your envir
 
 ```bash
 $ go run ./cmd/service-cli/
-[debug] Listening and serving HTTP on :8080
+[Fx] PROVIDE	fx.Lifecycle <= ...
+...
+[Fx] RUNNING
 ```
 
 - You can access http://localhost:8080/ to check if the project is running
