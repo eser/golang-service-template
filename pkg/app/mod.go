@@ -45,6 +45,7 @@ func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())
+	routes.Use(middlewares.AuthMiddleware())
 	routes.Use(middlewares.CorsMiddleware())
 
 	routes.
