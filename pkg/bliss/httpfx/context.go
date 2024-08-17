@@ -1,6 +1,7 @@
 package httpfx
 
 import (
+	"context"
 	"net/http"
 )
 
@@ -34,4 +35,8 @@ func (c *Context) Next() Response {
 	}
 
 	return c.Results.Ok()
+}
+
+func (c *Context) UpdateContext(ctx context.Context) {
+	c.Request = c.Request.WithContext(ctx)
 }

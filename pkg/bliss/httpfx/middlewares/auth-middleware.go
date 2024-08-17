@@ -1,12 +1,19 @@
 package middlewares
 
 import (
+	"context"
 	"errors"
 	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
+)
+
+type ContextKey string
+
+const (
+	KeyClaims ContextKey = "claims"
 )
 
 var ErrInvalidSigningMethod = errors.New("Invalid signing method")
@@ -46,6 +53,12 @@ func AuthMiddleware() httpfx.Handler {
 				return ctx.Results.Unauthorized("Token is expired")
 			}
 		}
+
+		ctx.UpdateContext(context.WithValue(
+			ctx.Request.Context(),
+			KeyClaims,
+			claims,
+		))
 
 		return ctx.Next()
 	}
