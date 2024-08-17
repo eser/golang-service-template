@@ -31,7 +31,9 @@ func TestLoadMeta(t *testing.T) {
 		expected := []configfx.ConfigItemMeta{
 			{
 				Name:            "host",
+				Field:           meta.Children[0].Field,
 				Type:            reflect.TypeFor[string](),
+				IsRequired:      false,
 				HasDefaultValue: true,
 				DefaultValue:    "localhost",
 
@@ -58,7 +60,9 @@ func TestLoadMeta(t *testing.T) {
 		expected := []configfx.ConfigItemMeta{
 			{
 				Name:            "host",
+				Field:           meta.Children[0].Field,
 				Type:            reflect.TypeFor[string](),
+				IsRequired:      false,
 				HasDefaultValue: true,
 				DefaultValue:    "localhost",
 
@@ -66,7 +70,9 @@ func TestLoadMeta(t *testing.T) {
 			},
 			{
 				Name:            "port",
+				Field:           meta.Children[1].Field,
 				Type:            reflect.TypeFor[int](),
+				IsRequired:      false,
 				HasDefaultValue: true,
 				DefaultValue:    "8080",
 

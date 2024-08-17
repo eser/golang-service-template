@@ -14,7 +14,7 @@ const (
 	DefaultInitializationTimeout   = "25s"
 	DefaultGracefulShutdownTimeout = "5s"
 
-	DefaultAddr = ":8000"
+	DefaultAddr = ":8080"
 )
 
 type Config struct {

@@ -78,6 +78,13 @@ func (r *Results) NotFound() Response {
 	}
 }
 
+func (r *Results) Unauthorized(body string) Response {
+	return Response{ //nolint:exhaustruct
+		StatusCode: http.StatusUnauthorized,
+		Body:       []byte(body),
+	}
+}
+
 func (r *Results) BadRequest() Response {
 	return Response{ //nolint:exhaustruct
 		StatusCode: http.StatusBadRequest,

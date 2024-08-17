@@ -2,20 +2,23 @@ package configfx
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
+	"time"
 )
 
 const (
-	tagConf    = "conf"
-	tagDefault = "default"
+	tagConf     = "conf"
+	tagDefault  = "default"
+	tagRequired = "required"
 )
 
 var ErrNotStruct = errors.New("not a struct")
 
 type ConfigItemMeta struct {
 	Name            string
+	Field           reflect.Value
 	Type            reflect.Type
+	IsRequired      bool
 	HasDefaultValue bool
 	DefaultValue    string
 
@@ -53,7 +56,9 @@ func (dcl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
 
 	return ConfigItemMeta{
 		Name:            "root",
+		Field:           r,
 		Type:            nil,
+		IsRequired:      false,
 		HasDefaultValue: false,
 		DefaultValue:    "",
 
@@ -85,10 +90,7 @@ func (dcl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
 		return err
 	}
 
-	for _, child := range meta.Children {
-		fmt.Println(child)
-	}
-	fmt.Println(target)
+	reflectSet(i, meta, target)
 
 	return nil
 }
@@ -101,10 +103,11 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 	}
 
 	for i := range r.NumField() {
-		fieldType := r.Type().Field(i)
+		structField := r.Field(i)
+		structFieldType := r.Type().Field(i)
 
-		if fieldType.Anonymous {
-			children, err := reflectMeta(r.Field(i))
+		if structFieldType.Anonymous {
+			children, err := reflectMeta(structField)
 			if err != nil {
 				return nil, err
 			}
@@ -116,16 +119,17 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 			continue
 		}
 
-		tag, hasTag := fieldType.Tag.Lookup(tagConf)
+		tag, hasTag := structFieldType.Tag.Lookup(tagConf)
 		if !hasTag {
 			continue
 		}
 
-		defaultValue, hasDefaultValue := fieldType.Tag.Lookup(tagDefault)
+		_, isRequired := structFieldType.Tag.Lookup(tagRequired)
+		defaultValue, hasDefaultValue := structFieldType.Tag.Lookup(tagDefault)
 
 		var children []ConfigItemMeta = nil
 
-		if fieldType.Type.Kind() == reflect.Struct {
+		if structFieldType.Type.Kind() == reflect.Struct {
 			var err error
 
 			children, err = reflectMeta(r.Field(i))
@@ -136,7 +140,9 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 
 		result = append(result, ConfigItemMeta{
 			Name:            tag,
-			Type:            fieldType.Type,
+			Field:           structField,
+			Type:            structFieldType.Type,
+			IsRequired:      isRequired,
 			HasDefaultValue: hasDefaultValue,
 			DefaultValue:    defaultValue,
 
@@ -145,4 +151,82 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 	}
 
 	return result, nil
+}
+
+func reflectSet(i any, meta ConfigItemMeta, target *map[string]any) { //nolint:unusedparams
+	for _, child := range meta.Children {
+		// Check if the target map has the key with the child name
+		if _, ok := (*target)[child.Name]; !ok {
+			if child.HasDefaultValue {
+				reflectSetField(child.Field, child.Type, child.DefaultValue)
+
+				continue
+			}
+
+			if child.IsRequired {
+				panic("missing required config value: " + child.Name)
+			}
+
+			continue
+		}
+
+		if child.Type.Kind() == reflect.Struct {
+			// TODO(@eser): skip nested structs for now
+			continue
+		}
+
+		reflectSetField(child.Field, child.Type, (*target)[child.Name].(string))
+	}
+}
+
+func reflectSetField(field reflect.Value, fieldType reflect.Type, value string) {
+	var finalValue reflect.Value
+
+	switch fieldType {
+	case reflect.TypeFor[string]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[int]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[int8]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[int16]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[int32]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[int64]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[uint]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[uint8]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[uint16]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[uint32]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[uint64]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[float32]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[float64]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[bool]():
+		finalValue = reflect.ValueOf(value)
+	case reflect.TypeFor[time.Duration]():
+		durationValue, _ := time.ParseDuration(value)
+		finalValue = reflect.ValueOf(durationValue)
+	default:
+		return
+	}
+
+	if field.Kind() == reflect.Ptr {
+		// Handle pointer types by allocating a new instance
+		ptr := reflect.New(fieldType.Elem())
+		ptr.Elem().Set(finalValue)
+		field.Set(ptr)
+
+		return
+	}
+
+	// Set the field directly
+	field.Set(finalValue)
 }
