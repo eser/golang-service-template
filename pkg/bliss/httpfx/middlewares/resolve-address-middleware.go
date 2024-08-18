@@ -105,14 +105,14 @@ func DetectLocalNetwork(requestAddr string) (bool, error) {
 }
 
 func GetClientAddrs(req *http.Request) string {
-	requester, hasHeader := req.Header["True-Client-IP"]
+	requester, hasHeader := req.Header["True-Client-IP"] //nolint:staticcheck
 
 	if !hasHeader {
 		requester, hasHeader = req.Header["X-Forwarded-For"]
 	}
 
 	if !hasHeader {
-		requester, hasHeader = req.Header["X-Real-IP"]
+		requester, hasHeader = req.Header["X-Real-IP"] //nolint:staticcheck
 	}
 
 	// if the requester is still empty, use the hard-coded address from the socket
@@ -122,5 +122,13 @@ func GetClientAddrs(req *http.Request) string {
 
 	// split comma delimited list into a slice
 	// (this happens when proxied via elastic load balancer then again through nginx)
-	return strings.Join(requester, ",")
+	var addrs []string
+
+	for _, addr := range requester {
+		for _, entry := range strings.Split(addr, ",") {
+			addrs = append(addrs, strings.Trim(entry, " "))
+		}
+	}
+
+	return strings.Join(addrs, ", ")
 }
