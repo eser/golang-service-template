@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -58,10 +59,10 @@ func New(config *Config) (Result, error) {
 }
 
 // , conf *config.Config, logger *log.Logger.
-func RegisterHooks(lc fx.Lifecycle, hs *HttpService) {
+func RegisterHooks(lc fx.Lifecycle, hs *HttpService, logger *slog.Logger) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			// logger.Info("HttpService is starting...", log.String("addr", hs.Config.Addr))
+			logger.Info("HttpService is starting...", slog.String("addr", hs.Config.Addr))
 
 			// serverErr := make(chan error, 1)
 
@@ -92,7 +93,7 @@ func RegisterHooks(lc fx.Lifecycle, hs *HttpService) {
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			// logger.Info("HttpService is stopping...")
+			logger.Info("HttpService is stopping...")
 
 			shutdownCtx, cancel := context.WithTimeout(ctx, hs.Config.GracefulShutdownTimeout)
 			defer cancel()
@@ -103,7 +104,7 @@ func RegisterHooks(lc fx.Lifecycle, hs *HttpService) {
 			}
 
 			<-shutdownCtx.Done()
-			// logger.Info("HttpService has stopped...")
+			logger.Info("HttpService has stopped...")
 
 			return nil
 		},

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/eser/go-service/pkg/bliss"
 	"github.com/eser/go-service/pkg/bliss/configfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx/middlewares"
@@ -18,32 +19,27 @@ var Module = fx.Module( //nolint:gochecknoglobals
 		RegisterRoutes,
 	),
 	fx.Provide(
-		LoadConfig,
-		RegisterHttpConfig,
+		bliss.LoadConfig[AppConfig](LoadConfig),
 	),
 	healthcheck.Module,
 	openapi.Module,
 )
 
-func LoadConfig(conf configfx.ConfigLoader) (*AppConfig, error) {
+func LoadConfig(cl configfx.ConfigLoader) (*AppConfig, error) {
 	appConfig := &AppConfig{} //nolint:exhaustruct
 
-	err := conf.Load(
+	err := cl.Load(
 		appConfig,
 
-		conf.FromJsonFile("config.json"),
-		conf.FromEnvFile(".env"),
-		conf.FromSystemEnv(),
+		cl.FromJsonFile("config.json"),
+		cl.FromEnvFile(".env"),
+		cl.FromSystemEnv(),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
 	return appConfig, nil
-}
-
-func RegisterHttpConfig(appConfig *AppConfig) *httpfx.Config {
-	return &appConfig.Http
 }
 
 func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {

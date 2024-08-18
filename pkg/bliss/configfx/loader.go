@@ -3,6 +3,7 @@ package configfx
 import (
 	"errors"
 	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -214,7 +215,8 @@ func reflectSetField(field reflect.Value, fieldType reflect.Type, value string) 
 	case reflect.TypeFor[float64]():
 		finalValue = reflect.ValueOf(value)
 	case reflect.TypeFor[bool]():
-		finalValue = reflect.ValueOf(value)
+		boolValue, _ := strconv.ParseBool(value)
+		finalValue = reflect.ValueOf(boolValue)
 	case reflect.TypeFor[time.Duration]():
 		durationValue, _ := time.ParseDuration(value)
 		finalValue = reflect.ValueOf(durationValue)
