@@ -1,4 +1,4 @@
-.PHONY: dev build multiarch-build run run-docker clean test test-cov test-ci dep lint container-start container-rebuild container-restart container-stop container-destroy container-update container-dev container-ps container-logs-all container-logs container-cli
+.PHONY: dev build multiarch-build run clean test test-cov test-ci dep lint container-start container-start-prod container-rebuild container-rebuild-prod container-restart container-restart-prod container-stop container-stop-prod container-destroy container-destroy-prod container-update container-update-prod container-dev container-ps container-ps-prod container-logs-all container-logs-all-prod container-logs container-logs-prod container-cli container-cli-prod
 # .RECIPEPREFIX := $(.RECIPEPREFIX)<space>
 BINARY_NAME=service-cli
 TESTCOVERAGE_THRESHOLD=0
@@ -56,20 +56,38 @@ lint:
 container-start:
 	docker compose --file ./deployments/compose.yml up --detach
 
+container-start-prod:
+	docker compose --file ./deployments/compose.production.yml up --detach
+
 container-rebuild:
 	docker compose --file ./deployments/compose.yml up --detach --build
+
+container-rebuild-prod:
+	docker compose --file ./deployments/compose.production.yml up --detach --build
 
 container-restart:
 	docker compose --file ./deployments/compose.yml restart
 
+container-restart-prod:
+	docker compose --file ./deployments/compose.production.yml restart
+
 container-stop:
 	docker compose --file ./deployments/compose.yml stop
+
+container-stop-prod:
+	docker compose --file ./deployments/compose.production.yml stop
 
 container-destroy:
 	docker compose --file ./deployments/compose.yml down
 
+container-destroy-prod:
+	docker compose --file ./deployments/compose.production.yml down
+
 container-update:
 	docker compose --file ./deployments/compose.yml pull
+
+container-update-prod:
+	docker compose --file ./deployments/compose.production.yml pull
 
 container-dev:
 	docker compose --file ./deployments/compose.yml watch
@@ -77,11 +95,23 @@ container-dev:
 container-ps:
 	docker compose --file ./deployments/compose.yml ps --all
 
+container-ps-prod:
+	docker compose --file ./deployments/compose.production.yml ps --all
+
 container-logs-all:
 	docker compose --file ./deployments/compose.yml logs
+
+container-logs-all-prod:
+	docker compose --file ./deployments/compose.production.yml logs
 
 container-logs:
 	docker compose --file ./deployments/compose.yml logs go-service
 
+container-logs-prod:
+	docker compose --file ./deployments/compose.production.yml logs go-service
+
 container-cli:
 	docker compose --file ./deployments/compose.yml exec go-service bash
+
+container-cli-prod:
+	docker compose --file ./deployments/compose.production.yml exec go-service bash

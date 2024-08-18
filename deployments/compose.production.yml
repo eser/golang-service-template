@@ -6,16 +6,7 @@ services:
     build:
       context: ../
       dockerfile: ./Dockerfile
-      target: runner-development
-    develop:
-      watch:
-        - action: sync+restart
-          path: ../
-          target: /app/
-          ignore:
-            - .*
-            - docs/
-            - tmp/
+      target: runner-production
     environment:
       PORT: 8080
       POSTGRES_CONNSTR: postgres://postgres:s3cr3t@postgresql:5432/postgres
