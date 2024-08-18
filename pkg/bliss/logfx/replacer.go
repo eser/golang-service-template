@@ -15,18 +15,23 @@ type (
 	}
 )
 
-func replaceAttr(groups []string, attr slog.Attr) slog.Attr {
-	switch attr.Value.Kind() { //nolint:gocritic,wsl,exhaustive
-	// other cases
-
-	case slog.KindAny:
-		switch v := attr.Value.Any().(type) { //nolint:gocritic
-		case error:
-			attr.Value = fmtErr(v)
+func replacerGenerator(prettyMode bool) func([]string, slog.Attr) slog.Attr {
+	return func(groups []string, attr slog.Attr) slog.Attr {
+		if prettyMode {
+			if attr.Key == slog.TimeKey || attr.Key == slog.LevelKey || attr.Key == slog.MessageKey {
+				return slog.Attr{} //nolint:exhaustruct
+			}
 		}
-	}
 
-	return attr
+		if attr.Value.Kind() == slog.KindAny {
+			switch v := attr.Value.Any().(type) { //nolint:gocritic
+			case error:
+				attr.Value = fmtErr(v)
+			}
+		}
+
+		return attr
+	}
 }
 
 // fmtErr returns a slog.GroupValue with keys "msg" and "trace". If the error
