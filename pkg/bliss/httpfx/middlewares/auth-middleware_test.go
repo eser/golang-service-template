@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx/middlewares"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func createToken(secret string, exp time.Time) string {

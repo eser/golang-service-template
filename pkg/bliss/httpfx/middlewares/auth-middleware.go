@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 const (
