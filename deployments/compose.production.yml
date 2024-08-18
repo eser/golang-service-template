@@ -1,3 +1,5 @@
+name: production
+
 services:
   go-service:
     tty: true

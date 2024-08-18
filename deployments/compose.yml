@@ -1,3 +1,5 @@
+name: development
+
 services:
   go-service:
     tty: true
