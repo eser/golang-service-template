@@ -36,7 +36,7 @@ Thumbs.db
 # /vendor/
 
 # Build output and temporary files
-__debug_bin
+__debug_bin*
 build-errors.log
 /tmp/*
 !/tmp/.gitkeep

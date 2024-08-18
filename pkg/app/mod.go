@@ -44,13 +44,19 @@ func LoadConfig(cl configfx.ConfigLoader) (*AppConfig, error) {
 
 func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
+	routes.Use(middlewares.ResolveAddressMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())
 	routes.Use(middlewares.CorsMiddleware())
 
 	routes.
 		Route("GET /", func(ctx *httpfx.Context) httpfx.Response {
-			message := fmt.Sprintf("Hello from %s!", appConfig.AppName)
+			message := fmt.Sprintf(
+				"Hello %s (%s) from %s!",
+				ctx.Request.Context().Value(middlewares.ClientAddr),
+				ctx.Request.Context().Value(middlewares.ClientAddrOrigin),
+				appConfig.AppName,
+			)
 
 			return ctx.Results.PlainText(message)
 		}).

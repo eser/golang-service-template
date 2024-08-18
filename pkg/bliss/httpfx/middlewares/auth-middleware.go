@@ -10,10 +10,8 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 )
 
-type ContextKey string
-
 const (
-	KeyClaims ContextKey = "claims"
+	AuthClaims httpfx.ContextKey = "claims"
 )
 
 var ErrInvalidSigningMethod = errors.New("Invalid signing method")
@@ -56,7 +54,7 @@ func AuthMiddleware() httpfx.Handler {
 
 		ctx.UpdateContext(context.WithValue(
 			ctx.Request.Context(),
-			KeyClaims,
+			AuthClaims,
 			claims,
 		))
 
