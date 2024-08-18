@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"net/http"
 	"strings"
@@ -63,11 +64,19 @@ func ResolveAddressMiddleware() httpfx.Handler {
 }
 
 func DetectLocalNetwork(requestAddr string) (bool, error) {
-	requestAddrs := strings.SplitN(requestAddr, ",", 2)
+	var requestIp string
 
-	requestIp, _, err := net.SplitHostPort(requestAddrs[0])
-	if err != nil {
-		return false, err
+	requestAddrs := strings.SplitN(requestAddr, ",", 2) //nolint:mnd
+
+	if strings.ContainsRune(requestAddrs[0], ':') {
+		host, _, err := net.SplitHostPort(requestAddrs[0])
+		if err != nil {
+			return false, fmt.Errorf("failed to split host and port: %w", err)
+		}
+
+		requestIp = host
+	} else {
+		requestIp = requestAddrs[0]
 	}
 
 	addrs, err := net.InterfaceAddrs()
@@ -113,5 +122,5 @@ func GetClientAddrs(req *http.Request) string {
 
 	// split comma delimited list into a slice
 	// (this happens when proxied via elastic load balancer then again through nginx)
-	return strings.Join(requester, ", ")
+	return strings.Join(requester, ",")
 }
