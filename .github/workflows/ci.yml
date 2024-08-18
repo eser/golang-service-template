@@ -71,6 +71,12 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
 
+      - name: Setup govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Setup gcov2lcov
+        run: go install github.com/jandelgado/gcov2lcov@latest
+
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
