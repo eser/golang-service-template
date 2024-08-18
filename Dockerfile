@@ -51,6 +51,7 @@ COPY . .
 
 FROM builder-base AS runner-development
 
+EXPOSE 8080
 ENTRYPOINT ["go", "run", "./cmd/service-cli/"]
 
 # ------------------------
@@ -74,5 +75,5 @@ COPY --from=builder-production --chown=nonroot:nonroot /app/service-cli /
 # Run as a non-root user
 USER nonroot
 
-EXPOSE 80
+EXPOSE 8080
 ENTRYPOINT ["/service-cli"]
