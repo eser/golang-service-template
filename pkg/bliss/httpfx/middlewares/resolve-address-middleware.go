@@ -17,15 +17,15 @@ const (
 
 func ResolveAddressMiddleware() httpfx.Handler {
 	return func(ctx *httpfx.Context) httpfx.Response {
-		addrs := GetClientAddrs(ctx.Request)
+		addr := GetClientAddrs(ctx.Request)
 
 		newContext := context.WithValue(
 			ctx.Request.Context(),
 			ClientAddr,
-			addrs,
+			addr,
 		)
 
-		isLocal, err := DetectLocalNetwork(addrs[0])
+		isLocal, err := DetectLocalNetwork(addr)
 		if err != nil {
 			return ctx.Results.Error(http.StatusInternalServerError, err.Error())
 		}
@@ -38,7 +38,7 @@ func ResolveAddressMiddleware() httpfx.Handler {
 			)
 
 			ctx.ResponseWriter.Header().
-				Set("X-Request-Origin", "local: "+strings.Join(addrs, ", "))
+				Set("X-Request-Origin", "local: "+addr)
 
 			ctx.UpdateContext(newContext)
 
@@ -54,7 +54,7 @@ func ResolveAddressMiddleware() httpfx.Handler {
 		)
 
 		ctx.ResponseWriter.Header().
-			Set("X-Request-Origin", strings.Join(addrs, ", "))
+			Set("X-Request-Origin", addr)
 
 		ctx.UpdateContext(newContext)
 
@@ -63,7 +63,9 @@ func ResolveAddressMiddleware() httpfx.Handler {
 }
 
 func DetectLocalNetwork(requestAddr string) (bool, error) {
-	requestIp, _, err := net.SplitHostPort(requestAddr)
+	requestAddrs := strings.SplitN(requestAddr, ",", 2)
+
+	requestIp, _, err := net.SplitHostPort(requestAddrs[0])
 	if err != nil {
 		return false, err
 	}
@@ -93,25 +95,23 @@ func DetectLocalNetwork(requestAddr string) (bool, error) {
 	return false, nil
 }
 
-func GetClientAddrs(req *http.Request) []string {
-	// first check the X-Forwarded-For header
-	requester := req.Header.Get("True-Client-IP")
+func GetClientAddrs(req *http.Request) string {
+	requester, hasHeader := req.Header["True-Client-IP"]
 
-	if len(requester) == 0 {
-		requester = req.Header.Get("X-Forwarded-For")
+	if !hasHeader {
+		requester, hasHeader = req.Header["X-Forwarded-For"]
 	}
 
-	// if empty, check the Real-IP header
-	if len(requester) == 0 {
-		requester = req.Header.Get("X-Real-IP")
+	if !hasHeader {
+		requester, hasHeader = req.Header["X-Real-IP"]
 	}
 
 	// if the requester is still empty, use the hard-coded address from the socket
-	if len(requester) == 0 {
-		requester = req.RemoteAddr
+	if !hasHeader {
+		requester = []string{req.RemoteAddr}
 	}
 
 	// split comma delimited list into a slice
 	// (this happens when proxied via elastic load balancer then again through nginx)
-	return strings.Split(requester, ",")
+	return strings.Join(requester, ", ")
 }

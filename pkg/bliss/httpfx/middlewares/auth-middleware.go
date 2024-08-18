@@ -18,18 +18,13 @@ var ErrInvalidSigningMethod = errors.New("Invalid signing method")
 
 func AuthMiddleware() httpfx.Handler {
 	return func(ctx *httpfx.Context) httpfx.Response {
-		authHeader := ctx.Request.Header.Get("Authorization")
+		tokenString, hasToken := getBearerToken(ctx)
 
-		if authHeader == "" {
-			return ctx.Results.Unauthorized("Authorization header is missing")
+		if !hasToken {
+			return ctx.Results.Unauthorized("No suitable authorization header found")
 		}
 
-		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
-		if tokenString == "" {
-			return ctx.Results.Unauthorized("Token is missing")
-		}
-
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, ErrInvalidSigningMethod
 			}
@@ -60,4 +55,16 @@ func AuthMiddleware() httpfx.Handler {
 
 		return ctx.Next()
 	}
+}
+
+func getBearerToken(ctx *httpfx.Context) (string, bool) {
+	for _, authHeader := range ctx.Request.Header["Authorization"] {
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+			return tokenString, true
+		}
+	}
+
+	return "", false
 }
