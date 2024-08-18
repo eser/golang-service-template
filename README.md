@@ -1,10 +1,24 @@
 # Golang Service Template
 
-not yet.
+`Golang Service Template` project is designed to provide a robust foundation that is always ready to be open-sourced, accelerating development and fostering a unified understanding across disciplines. It empowers teams to quickly adopt best practices and streamline the project setup, ensuring consistency and clarity from the very start.
+
 
 ## Local development
 
 Clone this repository into your projects folder
+
+
+### Structure
+
+This project inherits the [Standard Go Project Layout](https://github.com/golang-standards/project-layout) structure but includes its own interpretation.
+
+
+### Directories
+
+- The `pkg` directory contains packages for project modules. The absence of a direct `internal` folder helps us maintain a mentally isolated modular structure.
+- The `deployment` directory contains local and remote infrastructure configuration files, such as `compose.yml`.
+- The `cmd` directory contains the entrypoint for the project binaries.
+
 
 ### Installation
 
@@ -31,22 +45,10 @@ Clone this repository into your projects folder
 
 
 - 2️⃣ Install prerequisites
-  - Install golangci-lint
-
-  ```bash
-  $ curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
-  golangci/golangci-lint info checking GitHub for latest tag
-  golangci/golangci-lint info found version: 0.0.0 for v0.0.0/os/arch64
-  golangci/golangci-lint info installed ~/go/0.0.0/packages/bin/golangci-lint
-  ```
-
-  - Install gcov2lcov
-
-  ```bash
-  $ go install github.com/jandelgado/gcov2lcov@latest
-  ```
-
-  - Install pre-commit
+  - Install and enable [pre-commit](https://pre-commit.com/#install)
+  - Install [GNU make](https://www.gnu.org/software/make/)
+  - Install [govulncheck](https://go.googlesource.com/vuln)
+  - Install [gcov2lcov](https://github.com/jandelgado/gcov2lcov?tab=readme-ov-file#installation)
 
   ```bash
   $ brew install pre-commit
@@ -54,9 +56,27 @@ Clone this repository into your projects folder
   ==> Fetching pre-commit
   ==> Installing dependencies for pre-commit
   ==> Installing pre-commit
+  ...
+
+  $ brew install make
+  ==> Fetching dependencies for make
+  ==> Fetching make
+  ==> Installing dependencies for make
+  ==> Installing make
+  ...
+
+  $ pre-commit install
+  pre-commit installed at .git/hooks/pre-commit
+
+  $ go install golang.org/x/vuln/cmd/govulncheck@latest
+  go: downloading golang.org/x/vuln/cmd/govulncheck v0.0.0
+
+  $ go install github.com/jandelgado/gcov2lcov@latest
+  go: downloading github.com/jandelgado/gcov2lcov v0.0.0
   ```
 
-- 3️⃣ Ensure that you can access private dependencies
+
+- 3️⃣ (Optional) Ensure that you can access private dependencies
 
   You need to get a Personal Access Token from your GitHub account in order to
   download private dependencies.
@@ -71,48 +91,58 @@ Clone this repository into your projects folder
   machine github.com login <your-github-username> password <your-github-access-token>
   ```
 
+
 - 4️⃣ Download required modules for the project
 
   ```bash
-  $ go mod download
+  $ make dep
   ```
 
-- 5️⃣ Install pre-commit hooks
+
+- 5️⃣ (Optional) Check installation via pre-commit scripts
 
   ```bash
-  $ pre-commit install
+  $ pre-commit run --all-files
   ```
 
 ### Execution
 
-#### Running the project in test mode
+#### Running the project
 
 Before running any command, please make sure that you have configured your environment regarding your own settings first. You may found the related entries that can be configured in `.env` file.
 
 ```bash
-$ go run ./cmd/service-cli/
-[Fx] PROVIDE	fx.Lifecycle <= ...
-...
-[Fx] RUNNING
+$ make run
+17:05:20.311 INFO HttpService is starting... {"addr":":8080"}
 ```
 
 - You can access http://localhost:8080/ to check if the project is running
 
+
+### Running the project (with hot-reloading development mode)
+
+```bash
+$ make dev
+```
+
+
 ### Testing the project
 
 ```bash
-$ go test -v --coverpkg=./... ./...
+$ make test
 ```
+
 
 ### Development (with Docker Compose)
 
 ```bash
 # first start freshly built containers in background (daemon mode)
-$ docker compose up --build -d
+$ make container-start
 
 # then launch watch mode to reflect changes on time
-$ docker compose watch
+$ make container-dev
 ```
+
 
 ### Contribution
 

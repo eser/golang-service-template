@@ -25,7 +25,7 @@ repos:
         args: ["--autofix", "--no-ensure-ascii", "--no-sort-keys"]
       - id: trailing-whitespace
   - repo: https://github.com/crate-ci/typos
-    rev: v1.23.5
+    rev: v1.23.6
     hooks:
       - id: typos
         verbose: true
@@ -37,17 +37,24 @@ repos:
             go.mod
           )$
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.3.0
+    rev: v3.4.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.55.2
+    rev: v1.60.1
     hooks:
       - id: golangci-lint
   - repo: local
     hooks:
+      - id: govulncheck
+        name: govulncheck
+        entry: govulncheck ./...
+        language: golang
+        pass_filenames: false
+        types:
+        - go
       - id: kebab-case-files-only
         name: kebab-case files only
         entry: filenames must be kebab-case only
