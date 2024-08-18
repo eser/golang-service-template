@@ -47,9 +47,22 @@ func (h *Handler) Handle(ctx context.Context, rec slog.Record) error {
 	if h.config.PrettyMode {
 		out := strings.Builder{}
 
-		out.WriteString(rec.Time.Format("2006-01-02 15:04:05"))
+		out.WriteString(Colored(ColorDimGray, rec.Time.Format("15:04:05.000")))
 		out.WriteRune(' ')
-		out.WriteString(rec.Level.String())
+
+		switch rec.Level {
+		case slog.LevelDebug:
+			out.WriteString(Colored(ColorLightBlue, "DEBUG"))
+		case slog.LevelInfo:
+			out.WriteString(Colored(ColorGreen, "INFO"))
+		case slog.LevelWarn:
+			out.WriteString(Colored(ColorYellow, "WARN"))
+		case slog.LevelError:
+			out.WriteString(Colored(ColorRed, "ERROR"))
+		default:
+			out.WriteString(rec.Level.String())
+		}
+
 		out.WriteRune(' ')
 		out.WriteString(rec.Message)
 		out.WriteRune(' ')
