@@ -9,7 +9,6 @@
 package uris
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -29,7 +28,6 @@ func CommonPath(p1, p2 *Pattern) string {
 			writeSegment(&b, s1)
 		}
 	}
-	fmt.Println(segs1, segs2)
 
 	if len(segs1) > 0 {
 		writeMatchingPath(&b, segs1)

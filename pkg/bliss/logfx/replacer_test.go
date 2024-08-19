@@ -120,7 +120,7 @@ func TestTraceLines(t *testing.T) {
 		return pc[:n]
 	}
 
-	stackGeneratorWithUnkownFunctionAddr := func() []uintptr {
+	stackGeneratorWithUnknownFunctionAddr := func() []uintptr {
 		var pc [32]uintptr
 		n := runtime.Callers(0, pc[:])
 		pc[0] = 0
@@ -154,7 +154,7 @@ func TestTraceLines(t *testing.T) {
 		},
 		{
 			name:  "Non-Empty Stack with Unknown Function Address",
-			stack: stackGeneratorWithUnkownFunctionAddr(),
+			stack: stackGeneratorWithUnknownFunctionAddr(),
 			expected: []string{
 				"unknown",
 				fmt.Sprint("github.com/eser/go-service/pkg/bliss/logfx.TestTraceLines ", pwd(), ":147"),
