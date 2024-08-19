@@ -17,7 +17,7 @@ func GetFxLogger(logger *slog.Logger) fxevent.Logger { //nolint:ireturn
 }
 
 func (l FxLogger) LogEvent(event fxevent.Event) { //nolint:cyclop
-	switch e := event.(type) { //nolint:varnamelen
+	switch e := event.(type) {
 	case *fxevent.OnStartExecuting:
 		l.logOnStartExecuting(e)
 	case *fxevent.OnStartExecuted:
@@ -49,7 +49,7 @@ func (l *FxLogger) logOnStartExecuting(e *fxevent.OnStartExecuting) {
 	)
 }
 
-func (l *FxLogger) logOnStartExecuted(e *fxevent.OnStartExecuted) { //nolint:varnamelen
+func (l *FxLogger) logOnStartExecuted(e *fxevent.OnStartExecuted) {
 	if e.Err != nil {
 		l.Logger.Debug(
 			"OnStart hook failed: ",
@@ -77,7 +77,7 @@ func (l *FxLogger) logOnStopExecuting(e *fxevent.OnStopExecuting) {
 	)
 }
 
-func (l *FxLogger) logOnStopExecuted(e *fxevent.OnStopExecuted) { //nolint:varnamelen
+func (l *FxLogger) logOnStopExecuted(e *fxevent.OnStopExecuted) {
 	if e.Err != nil {
 		l.Logger.Debug(
 			"OnStop hook failed: ",

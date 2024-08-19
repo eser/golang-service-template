@@ -101,5 +101,8 @@ func (r *Results) Error(statusCode int, message string) Response {
 
 func (r *Results) Abort() Response {
 	// TODO(@eser) implement this
-	return Response{} //nolint:exhaustruct
+	return Response{ //nolint:exhaustruct
+		StatusCode: http.StatusNotImplemented,
+		Body:       []byte("Not Implemented"),
+	}
 }

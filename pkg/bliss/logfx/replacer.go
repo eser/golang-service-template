@@ -19,13 +19,15 @@ func ReplacerGenerator(prettyMode bool) func([]string, slog.Attr) slog.Attr {
 	return func(groups []string, attr slog.Attr) slog.Attr {
 		if prettyMode {
 			if attr.Key == slog.TimeKey || attr.Key == slog.LevelKey || attr.Key == slog.MessageKey {
-				return slog.Attr{} //nolint:exhaustruct
+				return slog.Attr{
+					Key:   "",
+					Value: slog.Value{},
+				}
 			}
 		}
 
 		if attr.Value.Kind() == slog.KindAny {
-			switch v := attr.Value.Any().(type) { //nolint:gocritic
-			case error:
+			if v, ok := attr.Value.Any().(error); ok {
 				attr.Value = fmtErr(v)
 			}
 		}
@@ -71,7 +73,7 @@ func TraceLines(frames StackTrace) []string {
 		skipping       bool = true
 	)
 
-	for i := len(frames) - 1; i >= 0; i-- { //nolint:varnamelen
+	for i := len(frames) - 1; i >= 0; i-- {
 		// Adapted from errors.Frame.MarshalText(), but avoiding repeated
 		// calls to FuncForPC and FileLine.
 		programCounter := frames[i] - 1

@@ -66,7 +66,7 @@ func RegisterHooks(lc fx.Lifecycle, hs *HttpService, logger *slog.Logger) {
 			// serverErr := make(chan error, 1)
 
 			go func() {
-				ln, lnErr := net.Listen("tcp", hs.Server.Addr) //nolint:varnamelen
+				ln, lnErr := net.Listen("tcp", hs.Server.Addr)
 
 				if lnErr != nil {
 					// serverErr <- fmt.Errorf("HttpService Net Listen error: %w", lnErr)
