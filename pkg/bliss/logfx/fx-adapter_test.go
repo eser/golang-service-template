@@ -3,7 +3,6 @@ package logfx_test
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"log/slog"
 	"os"
 	"sync"
@@ -156,7 +155,6 @@ func TestFxLogger_LogEvent(t *testing.T) {
 				scanner := bufio.NewScanner(os.Stdin)
 				for scanner.Scan() {
 					if scanner.Text() == tt.want {
-						fmt.Println("Test passed")
 					} else {
 						t.Errorf("LogEvent() = %v, want %v", scanner.Text(), tt.want)
 					}

@@ -30,7 +30,7 @@ func TestCommonPath(t *testing.T) {
 			expected: "/bar",
 		},
 		{
-			name:     "WilcardAndMultipleSegments",
+			name:     "WildcardAndMultipleSegments",
 			p1:       Pattern{Segments: []Segment{{wild: true, s: "foo", multi: true}}},
 			p2:       Pattern{Segments: []Segment{{wild: false, s: "bar"}}},
 			expected: "/bar",

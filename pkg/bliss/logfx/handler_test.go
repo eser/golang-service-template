@@ -151,7 +151,6 @@ func TestHandler_Handle(t *testing.T) {
 			PrettyMode: true,
 		})
 		err := handler.Handle(context.Background(), slog.NewRecord(time.Time{}, slog.LevelInfo, "test", 0))
-		fmt.Println(err)
 		assert.EqualError(t, err, "failed to write log: failed to write")
 	})
 }
