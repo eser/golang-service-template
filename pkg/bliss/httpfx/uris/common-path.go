@@ -8,7 +8,10 @@
 
 package uris
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // commonPath returns a path that both p1 and p2 match.
 // It assumes there is such a path.
@@ -26,6 +29,7 @@ func CommonPath(p1, p2 *Pattern) string {
 			writeSegment(&b, s1)
 		}
 	}
+	fmt.Println(segs1, segs2)
 
 	if len(segs1) > 0 {
 		writeMatchingPath(&b, segs1)
