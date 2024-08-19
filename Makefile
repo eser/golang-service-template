@@ -31,6 +31,10 @@ test-cov:
 	go test -failfast -count 1 -coverpkg=./... -coverprofile=${TMPDIR}cov_profile.out ./...
 	# `go env GOPATH`/bin/gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
 
+test-view-html:
+	go tool cover -html ${TMPDIR}cov_profile.out -o ${TMPDIR}cov_profile.html
+	open ${TMPDIR}cov_profile.html
+
 test-ci: test-cov
 	$(eval ACTUAL_COVERAGE := $(shell go tool cover -func=${TMPDIR}cov_profile.out | grep total | grep -Eo '[0-9]+\.[0-9]+'))
 

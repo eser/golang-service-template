@@ -8,26 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEnvGetCurrent(t *testing.T) {
-	t.Run("should return current environment", func(t *testing.T) {
-		oldEnv, oldEnvOk := os.LookupEnv("ENV")
-		defer func() {
-			if oldEnvOk {
-				os.Setenv("ENV", oldEnv)
-			} else {
-				os.Unsetenv("ENV")
-			}
-		}()
-
-		t.Setenv("ENV", "production")
-
-		expected := "production"
-		actual := lib.EnvGetCurrent()
-
-		assert.Equal(t, expected, actual)
-	})
-}
-
 func TestEnvAwareFilenames(t *testing.T) { //nolint:funlen
 	t.Parallel()
 
@@ -148,4 +128,91 @@ func TestEnvAwareFilenames(t *testing.T) { //nolint:funlen
 
 		assert.ElementsMatch(t, expected, actual)
 	})
+}
+func TestEnvGetCurrent(t *testing.T) {
+	tests := []struct {
+		name     string
+		envValue string
+		expected string
+	}{
+		{
+			name:     "should return development when ENV is empty",
+			envValue: "",
+			expected: "development",
+		},
+		{
+			name:     "should return lowercase value of ENV",
+			envValue: "PRODUCTION",
+			expected: "production",
+		},
+		{
+			name:     "should return lowercase value of ENV with leading/trailing spaces",
+			envValue: "STAGING",
+			expected: "staging",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			oldEnv, oldEnvOk := os.LookupEnv("ENV")
+			defer func() {
+				if oldEnvOk {
+					os.Setenv("ENV", oldEnv)
+				} else {
+					os.Unsetenv("ENV")
+				}
+			}()
+
+			os.Setenv("ENV", tt.envValue)
+
+			actual := lib.EnvGetCurrent()
+
+			assert.Equal(t, tt.expected, actual)
+		})
+	}
+}
+
+func TestEnvOverrideVariables(t *testing.T) {
+	tests := []struct {
+		name         string
+		env          map[string]any
+		expectedArgs map[string]any
+	}{
+		{
+			name: "should override variables",
+			env:  map[string]any{"ENV": "development"},
+			expectedArgs: map[string]any{
+				"ENV": "development",
+			},
+		},
+		{
+			name: "should override multiple variables",
+			env:  map[string]any{"ENV": "development", "DEBUG": "true", "PORT": "8080"},
+			expectedArgs: map[string]any{
+				"ENV":   "development",
+				"DEBUG": "true",
+				"PORT":  "8080",
+			},
+		},
+		{
+			name:         "should handle empty environment",
+			env:          map[string]any{},
+			expectedArgs: map[string]any{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := make(map[string]any)
+			os.Clearenv()
+
+			for k, v := range tt.env {
+				os.Setenv(k, v.(string))
+			}
+
+			lib.EnvOverrideVariables(&m)
+
+			assert.Equal(t, tt.expectedArgs, m)
+		})
+	}
 }
