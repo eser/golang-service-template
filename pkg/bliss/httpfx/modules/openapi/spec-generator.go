@@ -17,7 +17,9 @@ func GenerateOpenApiSpec(identity *ApiIdentity, routes httpfx.Router) any {
 			Schemas:    make(openapi3.Schemas),
 			Extensions: map[string]any{},
 		},
-		Paths:      &openapi3.Paths{}, //nolint:exhaustruct
+		Paths: &openapi3.Paths{
+			Extensions: map[string]any{},
+		},
 		Extensions: map[string]any{},
 	}
 

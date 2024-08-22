@@ -73,17 +73,26 @@ func (h *Handler) Handle(ctx context.Context, rec slog.Record) error {
 		}
 	}
 
-	return h.InnerHandler.Handle(ctx, rec)
+	err := h.InnerHandler.Handle(ctx, rec)
+	if err != nil {
+		return fmt.Errorf("failed to handle log: %w", err)
+	}
+
+	return nil
 }
 
 func (h *Handler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	return &Handler{
 		InnerHandler: h.InnerHandler.WithAttrs(attrs),
+		writer:       h.writer,
+		config:       h.config,
 	}
 }
 
 func (h *Handler) WithGroup(name string) slog.Handler {
 	return &Handler{
 		InnerHandler: h.InnerHandler.WithGroup(name),
+		writer:       h.writer,
+		config:       h.config,
 	}
 }

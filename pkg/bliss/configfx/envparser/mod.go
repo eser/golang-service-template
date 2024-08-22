@@ -87,7 +87,7 @@ func getStatementStart(src []byte) []byte {
 }
 
 func extractKeyName(src []byte) (string, int, error) {
-	for i, char := range src { //nolint:varnamelen
+	for i, char := range src {
 		rchar := rune(char)
 		if !unicode.IsSpace(rchar) && (unicode.IsLetter(rchar) || unicode.IsNumber(rchar) || char == '_' || char == '.') {
 			continue
@@ -178,7 +178,7 @@ func extractUnquotedVarValue(src []byte, vars *map[string]any) (string, []byte, 
 
 func extractQuotedVarValue(src []byte, vars *map[string]any, quote byte) (string, []byte, error) {
 	// lookup quoted string terminator
-	for i := 1; i < len(src); i++ { //nolint:varnamelen
+	for i := 1; i < len(src); i++ {
 		if char := src[i]; char != quote {
 			continue
 		}
@@ -289,8 +289,8 @@ var (
 	unescapeCharsRegex = regexp.MustCompile(`\\([^$])`)
 )
 
-func expandVariables(v string, m *map[string]any) string { //nolint:varnamelen
-	return expandVarRegex.ReplaceAllStringFunc(v, func(s string) string { //nolint:varnamelen
+func expandVariables(v string, m *map[string]any) string {
+	return expandVarRegex.ReplaceAllStringFunc(v, func(s string) string {
 		submatch := expandVarRegex.FindStringSubmatch(s)
 
 		if submatch == nil {

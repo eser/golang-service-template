@@ -85,6 +85,7 @@ func (r *Route) HasResponse(statusCode int) *Route {
 	r.Spec.Responses = append(r.Spec.Responses, RouteOpenApiSpecResponse{
 		StatusCode: statusCode,
 		HasModel:   false,
+		Model:      nil,
 	})
 
 	return r
