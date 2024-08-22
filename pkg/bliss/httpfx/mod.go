@@ -12,8 +12,7 @@ import (
 	"go.uber.org/fx"
 )
 
-//nolint:gochecknoglobals
-var Module = fx.Module(
+var Module = fx.Module( //nolint:gochecknoglobals
 	"httpservice",
 	fx.Provide(
 		New,

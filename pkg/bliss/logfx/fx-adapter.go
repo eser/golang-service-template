@@ -13,7 +13,7 @@ type (
 )
 
 func GetFxLogger(logger *slog.Logger) fxevent.Logger { //nolint:ireturn
-	return FxLogger{logger}
+	return &FxLogger{logger}
 }
 
 func (l FxLogger) LogEvent(event fxevent.Event) { //nolint:cyclop

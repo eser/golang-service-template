@@ -1,37 +1,39 @@
-package logfx
+package logfx_test
 
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"runtime"
 	"strings"
 	"testing"
 
-	"log/slog"
-
+	"github.com/eser/go-service/pkg/bliss/logfx"
 	"github.com/stretchr/testify/assert"
 )
 
-type mockErr struct {
+type mockError struct {
 	msg   string
 	stack []uintptr
 }
 
-func (m *mockErr) StackTrace() []uintptr {
+func (m *mockError) StackTrace() []uintptr {
 	return m.stack
 }
 
-func (m *mockErr) Error() string {
+func (m *mockError) Error() string {
 	return m.msg
 }
 
-func (m *mockErr) Add(ptr uintptr) *mockErr {
+func (m *mockError) Add(ptr uintptr) *mockError {
 	m.stack = append(m.stack, ptr)
+
 	return m
 }
 
 func TestReplacerGenerator(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name       string
 		prettyMode bool
@@ -96,17 +98,19 @@ func TestReplacerGenerator(t *testing.T) {
 			expected:   slog.Attr{Key: slog.TimeKey, Value: slog.GroupValue(slog.String("msg", "test error"))},
 		},
 		{
-			name:       "PrettyMode=false, Key=slog.TimeKey, Value=error with mockErr",
+			name:       "PrettyMode=false, Key=slog.TimeKey, Value=error with mockError",
 			prettyMode: false,
 			groups:     []string{},
-			attr:       slog.Attr{Key: slog.TimeKey, Value: slog.AnyValue(&mockErr{msg: "test error"})},
+			attr:       slog.Attr{Key: slog.TimeKey, Value: slog.AnyValue(&mockError{msg: "test error"})},
 			expected:   slog.Attr{Key: slog.TimeKey, Value: slog.GroupValue(slog.String("msg", "test error"), slog.Any("trace", []string{}))},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := replacerGenerator(tt.prettyMode)(tt.groups, tt.attr)
+			t.Parallel()
+
+			result := logfx.ReplacerGenerator(tt.prettyMode)(tt.groups, tt.attr)
 			assert.Equal(t, tt.expected, result)
 		})
 	}
@@ -114,6 +118,7 @@ func TestReplacerGenerator(t *testing.T) {
 
 func TestTraceLines(t *testing.T) {
 	t.Parallel()
+
 	stackGenerator := func() []uintptr {
 		var pc [32]uintptr
 		n := runtime.Callers(0, pc[:])
@@ -147,8 +152,8 @@ func TestTraceLines(t *testing.T) {
 			stack: stackGenerator(),
 			expected: []string{
 				"runtime.Callers /usr/local/go/src/runtime/extern.go:331",
-				fmt.Sprint("github.com/eser/go-service/pkg/bliss/logfx.TestTraceLines.func1 ", pwd(), ":117"),
-				fmt.Sprint("github.com/eser/go-service/pkg/bliss/logfx.TestTraceLines ", pwd(), ":145"),
+				fmt.Sprint("github.com/eser/go-service/pkg/bliss/logfx_test.TestTraceLines.func1 ", pwd(), ":117"),
+				fmt.Sprint("github.com/eser/go-service/pkg/bliss/logfx_test.TestTraceLines ", pwd(), ":145"),
 				"testing.tRunner /usr/local/go/src/testing/testing.go:1690",
 			},
 		},
@@ -157,19 +162,23 @@ func TestTraceLines(t *testing.T) {
 			stack: stackGeneratorWithUnknownFunctionAddr(),
 			expected: []string{
 				"unknown",
-				fmt.Sprint("github.com/eser/go-service/pkg/bliss/logfx.TestTraceLines ", pwd(), ":147"),
+				fmt.Sprint("github.com/eser/go-service/pkg/bliss/logfx_test.TestTraceLines ", pwd(), ":147"),
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := traceLines(tt.stack)
+			t.Parallel()
+
+			result := logfx.TraceLines(tt.stack)
+
 			if len(tt.expected) == 0 {
 				assert.Equal(t, tt.expected, result)
 			} else {
 				for i := range tt.expected {
 					ext := strings.Split(tt.expected[i], " ")
+
 					assert.Contains(t, result[i], ext[0])
 				}
 			}

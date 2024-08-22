@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -33,20 +34,26 @@ func Parse(m *map[string]any, r io.Reader) error {
 	return ParseBytes(buf.Bytes(), m)
 }
 
-func TryParseFiles(m *map[string]any, filenames ...string) error {
-	for _, filename := range filenames {
-		file, err := os.Open(filename)
-		if err != nil {
-			if os.IsNotExist(err) {
-				continue
-			}
-
-			return err //nolint:wrapcheck
+func tryParseFile(m *map[string]any, filename string) (err error) {
+	file, fileErr := os.Open(filepath.Clean(filename))
+	if fileErr != nil {
+		if os.IsNotExist(fileErr) {
+			return nil
 		}
 
-		defer file.Close()
+		return fmt.Errorf("parsing error: %w", fileErr)
+	}
 
-		err = Parse(m, file)
+	defer func() {
+		err = file.Close()
+	}()
+
+	return Parse(m, file)
+}
+
+func TryParseFiles(m *map[string]any, filenames ...string) error {
+	for _, filename := range filenames {
+		err := tryParseFile(m, filename)
 		if err != nil {
 			return err
 		}

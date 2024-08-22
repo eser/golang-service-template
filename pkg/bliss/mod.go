@@ -8,10 +8,8 @@ import (
 	"go.uber.org/fx"
 )
 
-//nolint:gochecknoglobals
-var Module = fx.Module(
+var Module = fx.Module( //nolint:gochecknoglobals
 	"bliss",
-	// fx.WithLogger(logfx.GetFxLogger),
 	logfx.Module,
 	configfx.Module,
 	httpfx.Module,

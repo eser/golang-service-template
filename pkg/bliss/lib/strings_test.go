@@ -7,6 +7,8 @@ import (
 )
 
 func TestStringsTrimLeadingSpaceFromBytes(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		src  []byte
@@ -32,7 +34,10 @@ func TestStringsTrimLeadingSpaceFromBytes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := lib.StringsTrimLeadingSpaceFromBytes(tt.src)
+
 			if string(got) != string(tt.want) {
 				t.Errorf("got %s, want %s", got, tt.want)
 			}
@@ -41,6 +46,8 @@ func TestStringsTrimLeadingSpaceFromBytes(t *testing.T) {
 }
 
 func TestStringsTrimTrailingSpaceFromBytes(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		src  []byte
@@ -66,7 +73,10 @@ func TestStringsTrimTrailingSpaceFromBytes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := lib.StringsTrimTrailingSpaceFromBytes(tt.src)
+
 			if string(got) != string(tt.want) {
 				t.Errorf("got %s, want %s", got, tt.want)
 			}
@@ -75,6 +85,8 @@ func TestStringsTrimTrailingSpaceFromBytes(t *testing.T) {
 }
 
 func TestStringsTrimLeadingSpace(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		src  string
@@ -100,7 +112,10 @@ func TestStringsTrimLeadingSpace(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := lib.StringsTrimLeadingSpace(tt.src)
+
 			if got != tt.want {
 				t.Errorf("got %s, want %s", got, tt.want)
 			}
@@ -109,6 +124,8 @@ func TestStringsTrimLeadingSpace(t *testing.T) {
 }
 
 func TestStringsTrimTrailingSpace(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 		src  string
@@ -134,7 +151,10 @@ func TestStringsTrimTrailingSpace(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := lib.StringsTrimTrailingSpace(tt.src)
+
 			if got != tt.want {
 				t.Errorf("got %s, want %s", got, tt.want)
 			}

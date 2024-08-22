@@ -25,7 +25,7 @@ func NewHandler(w io.Writer, config *Config) (*Handler, error) {
 
 	opts := &slog.HandlerOptions{
 		Level:       level,
-		ReplaceAttr: replacerGenerator(config.PrettyMode),
+		ReplaceAttr: ReplacerGenerator(config.PrettyMode),
 		AddSource:   config.AddSource,
 	}
 

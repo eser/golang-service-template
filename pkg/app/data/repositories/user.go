@@ -13,7 +13,7 @@ type UserRepository interface {
 
 type UserRepositoryImpl struct{}
 
-func NewUserRepository() UserRepository { //nolint:ireturn
+func NewUserRepository() *UserRepositoryImpl {
 	return &UserRepositoryImpl{}
 }
 

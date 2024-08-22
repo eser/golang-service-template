@@ -5,6 +5,7 @@ import (
 
 	"github.com/eser/go-service/pkg/bliss/logfx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRegisterLogger(t *testing.T) {
@@ -40,13 +41,16 @@ func TestRegisterLogger(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			logger, err := logfx.RegisterLogger(tt.config)
+
 			if tt.wantErr {
-				assert.Error(t, err)
+				require.Error(t, err)
 				assert.Nil(t, logger)
 				assert.Equal(t, tt.expectedErr, err.Error())
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.NotNil(t, logger)
 			}
 		})

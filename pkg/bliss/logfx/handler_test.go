@@ -10,6 +10,7 @@ import (
 
 	"github.com/eser/go-service/pkg/bliss/logfx"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type mockFailWriter struct{}
@@ -20,6 +21,7 @@ func (m *mockFailWriter) Write(p []byte) (n int, err error) {
 
 func TestNewHandler(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name        string
 		writer      *bytes.Buffer
@@ -50,13 +52,15 @@ func TestNewHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			handler, err := logfx.NewHandler(tt.writer, tt.config)
 
 			if tt.expectedErr != "" {
-				assert.EqualError(t, err, tt.expectedErr)
+				require.EqualError(t, err, tt.expectedErr)
 				assert.Nil(t, handler)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 				assert.NotNil(t, handler)
 			}
 		})
@@ -65,6 +69,7 @@ func TestNewHandler(t *testing.T) {
 
 func TestHandler_Enabled(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name     string
 		level    string
@@ -84,16 +89,20 @@ func TestHandler_Enabled(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			handler, _ := logfx.NewHandler(&bytes.Buffer{}, &logfx.Config{
 				Level: tt.level,
 			})
-			assert.Equal(t, tt.expected, handler.Enabled(nil, 0))
+
+			assert.Equal(t, tt.expected, handler.Enabled(context.Background(), 0))
 		})
 	}
 }
 
 func TestHandler_Handle(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name     string
 		level    string
@@ -134,12 +143,17 @@ func TestHandler_Handle(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			writer := &bytes.Buffer{}
 			handler, _ := logfx.NewHandler(writer, &logfx.Config{
 				Level:      tt.level,
 				PrettyMode: true,
 			})
-			handler.Handle(context.Background(), tt.record)
+
+			err := handler.Handle(context.Background(), tt.record)
+			require.NoError(t, err)
+
 			assert.Contains(t, writer.String(), tt.expected)
 		})
 	}

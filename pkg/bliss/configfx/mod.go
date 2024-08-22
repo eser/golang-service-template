@@ -8,8 +8,7 @@ import (
 
 var ErrConfigDecoding = errors.New("config decoding error")
 
-//nolint:gochecknoglobals
-var Module = fx.Module(
+var Module = fx.Module( //nolint:gochecknoglobals
 	"config",
 	fx.Provide(
 		New,

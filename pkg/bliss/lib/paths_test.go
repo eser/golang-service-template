@@ -7,6 +7,8 @@ import (
 )
 
 func TestPathsSplit(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		filename string
@@ -46,13 +48,18 @@ func TestPathsSplit(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotDir, gotFile, gotExt := lib.PathsSplit(tt.filename)
+
 			if gotDir != tt.wantDir {
 				t.Errorf("gotDir = %s, wantDir = %s", gotDir, tt.wantDir)
 			}
+
 			if gotFile != tt.wantFile {
 				t.Errorf("gotFile = %s, wantFile = %s", gotFile, tt.wantFile)
 			}
+
 			if gotExt != tt.wantExt {
 				t.Errorf("gotExt = %s, wantExt = %s", gotExt, tt.wantExt)
 			}

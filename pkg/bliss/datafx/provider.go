@@ -6,6 +6,6 @@ type DataProvider interface {
 
 type DataProviderImpl struct{}
 
-func NewDataProvider() DataProvider { //nolint:ireturn
+func NewDataProvider() *DataProviderImpl {
 	return &DataProviderImpl{}
 }

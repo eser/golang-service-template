@@ -1,83 +1,87 @@
-package uris
+package uris_test
 
 import (
 	"testing"
+
+	"github.com/eser/go-service/pkg/bliss/httpfx/uris"
 )
 
 func TestCommonPath(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
-		p1       Pattern
-		p2       Pattern
+		p1       uris.Pattern
+		p2       uris.Pattern
 		expected string
 	}{
 		{
 			name:     "SameSegments",
-			p1:       Pattern{Segments: []Segment{{wild: false, s: "foo"}}},
-			p2:       Pattern{Segments: []Segment{{wild: false, s: "foo"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}},
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}},
 			expected: "/foo",
 		},
 		{
 			name:     "DifferentSegments",
-			p1:       Pattern{Segments: []Segment{{wild: false, s: "foo"}}},
-			p2:       Pattern{Segments: []Segment{{wild: false, s: "bar"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}},
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}},
 			expected: "/foo",
 		},
 		{
 			name:     "DifferentSegmentsWithWildcard",
-			p1:       Pattern{Segments: []Segment{{wild: true, s: "foo"}}},
-			p2:       Pattern{Segments: []Segment{{wild: false, s: "bar"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: true, Str: "foo"}}},
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}},
 			expected: "/bar",
 		},
 		{
 			name:     "WildcardAndMultipleSegments",
-			p1:       Pattern{Segments: []Segment{{wild: true, s: "foo", multi: true}}},
-			p2:       Pattern{Segments: []Segment{{wild: false, s: "bar"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: true, Str: "foo", Multi: true}}},
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}},
 			expected: "/bar",
 		},
 		{
 			name: "FourSegments",
-			p1: Pattern{Segments: []Segment{
-				{wild: true, s: "foo"},
-				{wild: true, s: "bar"},
-				{wild: true, s: "baz"},
-				{wild: true, s: "qux"},
+			p1: uris.Pattern{Segments: []uris.Segment{
+				{Wild: true, Str: "foo"},
+				{Wild: true, Str: "bar"},
+				{Wild: true, Str: "baz"},
+				{Wild: true, Str: "qux"},
 			}},
-			p2: Pattern{Segments: []Segment{
-				{wild: true, s: "foo"},
-				{wild: true, s: "bar"},
-				{wild: true, s: "baz"},
-				{wild: true, s: "qux"},
+			p2: uris.Pattern{Segments: []uris.Segment{
+				{Wild: true, Str: "foo"},
+				{Wild: true, Str: "bar"},
+				{Wild: true, Str: "baz"},
+				{Wild: true, Str: "qux"},
 			}},
 			expected: "/foo/bar/baz/qux",
 		},
 		{
 			name: "FourP1SegmentWithThreeP2Segment",
-			p1: Pattern{Segments: []Segment{
-				{wild: true, s: "foo"},
-				{wild: true, s: "bar"},
-				{wild: true, s: "baz"},
-				{wild: true, s: "qux"},
+			p1: uris.Pattern{Segments: []uris.Segment{
+				{Wild: true, Str: "foo"},
+				{Wild: true, Str: "bar"},
+				{Wild: true, Str: "baz"},
+				{Wild: true, Str: "qux"},
 			}},
-			p2: Pattern{Segments: []Segment{
-				{wild: true, s: "foo"},
-				{wild: true, s: "bar"},
-				{wild: true, s: "test"},
+			p2: uris.Pattern{Segments: []uris.Segment{
+				{Wild: true, Str: "foo"},
+				{Wild: true, Str: "bar"},
+				{Wild: true, Str: "test"},
 			}},
 			expected: "/foo/bar/test/qux",
 		},
 		{
 			name: "ThreeP1SegmentWithFourP2Segment",
-			p1: Pattern{Segments: []Segment{
-				{wild: true, s: "foo"},
-				{wild: true, s: "bar"},
-				{wild: true, s: "baz"},
+			p1: uris.Pattern{Segments: []uris.Segment{
+				{Wild: true, Str: "foo"},
+				{Wild: true, Str: "bar"},
+				{Wild: true, Str: "baz"},
 			}},
-			p2: Pattern{Segments: []Segment{
-				{wild: true, s: "foo"},
-				{wild: true, s: "bar"},
-				{wild: true, s: "baz"},
-				{wild: true, s: "qux"},
+			p2: uris.Pattern{Segments: []uris.Segment{
+				{Wild: true, Str: "foo"},
+				{Wild: true, Str: "bar"},
+				{Wild: true, Str: "baz"},
+				{Wild: true, Str: "qux"},
 			}},
 			expected: "/foo/bar/baz/qux",
 		},
@@ -85,7 +89,10 @@ func TestCommonPath(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := CommonPath(&tt.p1, &tt.p2)
+			t.Parallel()
+
+			result := uris.CommonPath(&tt.p1, &tt.p2)
+
 			if result != tt.expected {
 				t.Errorf("CommonPath() = %v, want %v", result, tt.expected)
 			}

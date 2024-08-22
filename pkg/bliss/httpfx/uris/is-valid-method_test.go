@@ -4,9 +4,12 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/httpfx/uris"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsValidMethod(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name     string
 		method   string
@@ -41,10 +44,11 @@ func TestIsValidMethod(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			result := uris.IsValidMethod(tt.method)
-			if result != tt.expected {
-				t.Errorf("IsValidMethod() = %v, want %v", result, tt.expected)
-			}
+
+			assert.Equal(t, tt.expected, result, "IsValidMethod() = %v, want %v", result, tt.expected)
 		})
 	}
 }

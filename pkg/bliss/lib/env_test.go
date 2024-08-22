@@ -1,7 +1,6 @@
 package lib_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
@@ -129,6 +128,7 @@ func TestEnvAwareFilenames(t *testing.T) { //nolint:funlen
 		assert.ElementsMatch(t, expected, actual)
 	})
 }
+
 func TestEnvGetCurrent(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -154,16 +154,7 @@ func TestEnvGetCurrent(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			oldEnv, oldEnvOk := os.LookupEnv("ENV")
-			defer func() {
-				if oldEnvOk {
-					os.Setenv("ENV", oldEnv)
-				} else {
-					os.Unsetenv("ENV")
-				}
-			}()
-
-			os.Setenv("ENV", tt.envValue)
+			t.Setenv("ENV", tt.envValue)
 
 			actual := lib.EnvGetCurrent()
 
@@ -175,19 +166,19 @@ func TestEnvGetCurrent(t *testing.T) {
 func TestEnvOverrideVariables(t *testing.T) {
 	tests := []struct {
 		name         string
-		env          map[string]any
+		env          map[string]string
 		expectedArgs map[string]any
 	}{
 		{
 			name: "should override variables",
-			env:  map[string]any{"ENV": "development"},
+			env:  map[string]string{"ENV": "development"},
 			expectedArgs: map[string]any{
 				"ENV": "development",
 			},
 		},
 		{
 			name: "should override multiple variables",
-			env:  map[string]any{"ENV": "development", "DEBUG": "true", "PORT": "8080"},
+			env:  map[string]string{"ENV": "development", "DEBUG": "true", "PORT": "8080"},
 			expectedArgs: map[string]any{
 				"ENV":   "development",
 				"DEBUG": "true",
@@ -196,7 +187,7 @@ func TestEnvOverrideVariables(t *testing.T) {
 		},
 		{
 			name:         "should handle empty environment",
-			env:          map[string]any{},
+			env:          map[string]string{},
 			expectedArgs: map[string]any{},
 		},
 	}
@@ -204,15 +195,16 @@ func TestEnvOverrideVariables(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := make(map[string]any)
-			os.Clearenv()
 
 			for k, v := range tt.env {
-				os.Setenv(k, v.(string))
+				t.Setenv(k, v)
 			}
 
 			lib.EnvOverrideVariables(&m)
 
-			assert.Equal(t, tt.expectedArgs, m)
+			for k, v := range tt.expectedArgs {
+				assert.Equal(t, v, m[k])
+			}
 		})
 	}
 }

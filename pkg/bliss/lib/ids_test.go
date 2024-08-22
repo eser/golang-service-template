@@ -7,6 +7,8 @@ import (
 )
 
 func TestIdsGenerateUnique(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name string
 	}{
@@ -21,10 +23,14 @@ func TestIdsGenerateUnique(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := lib.IdsGenerateUnique()
+
 			if len(got) != 26 {
 				t.Errorf("unexpected length of generated ID, got: %d, want: 26", len(got))
 			}
+
 			// Add more assertions as needed
 		})
 	}

@@ -27,7 +27,7 @@ type RouterImpl struct {
 	routes   []*Route
 }
 
-func NewRouter(path string) Router { //nolint:ireturn
+func NewRouter(path string) *RouterImpl {
 	mux := http.NewServeMux()
 
 	return &RouterImpl{
@@ -55,7 +55,7 @@ func (r *RouterImpl) GetRoutes() []*Route {
 	return r.routes
 }
 
-func (r *RouterImpl) Group(path string) Router { //nolint:ireturn
+func (r *RouterImpl) Group(path string) Router {
 	return NewRouter(r.path + path)
 }
 

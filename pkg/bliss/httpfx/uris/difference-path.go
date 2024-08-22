@@ -23,23 +23,23 @@ func DifferencePath(p1, p2 *Pattern) string { //nolint:funlen,gocognit,cyclop
 		s1 := segs1[0]
 		s2 := segs2[0]
 
-		if s1.multi && s2.multi {
+		if s1.Multi && s2.Multi {
 			// From here the patterns match the same paths, so we must have found a difference earlier.
 			b.WriteByte('/')
 
 			return b.String()
 		}
 
-		if s1.multi && !s2.multi {
+		if s1.Multi && !s2.Multi {
 			// s1 ends in a "..." wildcard but s2 does not.
 			// A trailing slash will distinguish them, unless s2 ends in "{$}",
 			// in which case any segment will do; prefer the wildcard name if
 			// it has one.
 			b.WriteByte('/')
 
-			if s2.s == "/" {
-				if s1.s != "" {
-					b.WriteString(s1.s)
+			if s2.Str == "/" {
+				if s1.Str != "" {
+					b.WriteString(s1.Str)
 				} else {
 					b.WriteString("x")
 				}
@@ -48,30 +48,30 @@ func DifferencePath(p1, p2 *Pattern) string { //nolint:funlen,gocognit,cyclop
 			return b.String()
 		}
 
-		if !s1.multi && s2.multi { //nolint:gocritic,nestif
+		if !s1.Multi && s2.Multi { //nolint:gocritic,nestif
 			writeSegment(&b, s1)
-		} else if s1.wild && s2.wild {
+		} else if s1.Wild && s2.Wild {
 			// Both patterns will match whatever we put here; use
 			// the first wildcard name.
 			writeSegment(&b, s1)
-		} else if s1.wild && !s2.wild {
+		} else if s1.Wild && !s2.Wild {
 			// s1 is a wildcard, s2 is a literal.
 			// Any segment other than s2.s will work.
 			// Prefer the wildcard name, but if it's the same as the literal,
 			// tweak the literal.
-			if s1.s != s2.s {
+			if s1.Str != s2.Str {
 				writeSegment(&b, s1)
 			} else {
 				b.WriteByte('/')
-				b.WriteString(s2.s + "x")
+				b.WriteString(s2.Str + "x")
 			}
-		} else if !s1.wild && s2.wild {
+		} else if !s1.Wild && s2.Wild {
 			writeSegment(&b, s1)
 		} else {
 			// Both are literals. A precondition of this function is that the
 			// patterns overlap, so they must be the same literal. Use it.
-			if s1.s != s2.s {
-				panic(fmt.Sprintf("literals differ: %q and %q", s1.s, s2.s))
+			if s1.Str != s2.Str {
+				panic(fmt.Sprintf("literals differ: %q and %q", s1.Str, s2.Str))
 			}
 
 			writeSegment(&b, s1)

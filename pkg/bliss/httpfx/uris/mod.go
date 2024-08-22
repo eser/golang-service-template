@@ -48,7 +48,7 @@ func writeMatchingPath(b *strings.Builder, segs []Segment) {
 func writeSegment(b *strings.Builder, s Segment) {
 	b.WriteByte('/')
 
-	if !s.multi && s.s != "/" {
-		b.WriteString(s.s)
+	if !s.Multi && s.Str != "/" {
+		b.WriteString(s.Str)
 	}
 }

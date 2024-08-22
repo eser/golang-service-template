@@ -8,6 +8,8 @@ import (
 )
 
 func TestArraysCopy(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name  string
 		items [][]int
@@ -33,7 +35,10 @@ func TestArraysCopy(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := lib.ArraysCopy(tt.items...)
+
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("got %v, want %v", got, tt.want)
 			}

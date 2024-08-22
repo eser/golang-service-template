@@ -15,7 +15,7 @@ type (
 	}
 )
 
-func replacerGenerator(prettyMode bool) func([]string, slog.Attr) slog.Attr {
+func ReplacerGenerator(prettyMode bool) func([]string, slog.Attr) slog.Attr {
 	return func(groups []string, attr slog.Attr) slog.Attr {
 		if prettyMode {
 			if attr.Key == slog.TimeKey || attr.Key == slog.LevelKey || attr.Key == slog.MessageKey {
@@ -54,14 +54,14 @@ func fmtErr(err error) slog.Value {
 
 	if stackTraceable != nil {
 		groupValues = append(groupValues,
-			slog.Any("trace", traceLines(stackTraceable.StackTrace())),
+			slog.Any("trace", TraceLines(stackTraceable.StackTrace())),
 		)
 	}
 
 	return slog.GroupValue(groupValues...)
 }
 
-func traceLines(frames StackTrace) []string {
+func TraceLines(frames StackTrace) []string {
 	traceLines := make([]string, len(frames))
 
 	// Iterate in reverse to skip uninteresting, consecutive runtime frames at

@@ -65,9 +65,9 @@ func (p *Pattern) String() string { return p.Str }
 //
 //	"{rest...}" => segment{s: "rest", wild: true, multi: true}
 type Segment struct {
-	s     string // literal or wildcard name or "/" for "/{$}".
-	wild  bool
-	multi bool // "..." wildcard
+	Str   string // literal or wildcard name or "/" for "/{$}".
+	Wild  bool
+	Multi bool // "..." wildcard
 }
 
 // parsePattern parses a string into a Pattern.
@@ -149,7 +149,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 
 		if len(rest) == 0 {
 			// Trailing slash.
-			p.Segments = append(p.Segments, Segment{wild: true, multi: true})
+			p.Segments = append(p.Segments, Segment{Wild: true, Multi: true})
 
 			break
 		}
@@ -166,7 +166,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 		if i := strings.IndexByte(seg, '{'); i < 0 { //nolint:nestif
 			// Literal.
 			seg = tryPathUnescape(seg)
-			p.Segments = append(p.Segments, Segment{s: seg})
+			p.Segments = append(p.Segments, Segment{Str: seg})
 		} else {
 			// Wildcard.
 			if i != 0 {
@@ -184,7 +184,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 					return nil, fmt.Errorf("{$} wildcard not at end: %w", ErrInvalidWildcard)
 				}
 
-				p.Segments = append(p.Segments, Segment{s: "/"})
+				p.Segments = append(p.Segments, Segment{Str: "/"})
 
 				break
 			}
@@ -208,7 +208,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 			}
 
 			seenNames[name] = true
-			p.Segments = append(p.Segments, Segment{s: name, wild: true, multi: multi})
+			p.Segments = append(p.Segments, Segment{Str: name, Wild: true, Multi: multi})
 		}
 	}
 

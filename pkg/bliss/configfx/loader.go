@@ -43,7 +43,7 @@ type ConfigLoader interface {
 
 type ConfigLoaderImpl struct{}
 
-func NewConfigLoader() ConfigLoader { //nolint:ireturn
+func NewConfigLoader() *ConfigLoaderImpl {
 	return &ConfigLoaderImpl{}
 }
 
@@ -154,7 +154,7 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 	return result, nil
 }
 
-func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) { //nolint:unusedparams
+func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) {
 	for _, child := range meta.Children {
 		key := prefix + child.Name
 

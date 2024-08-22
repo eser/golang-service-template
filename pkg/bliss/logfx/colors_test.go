@@ -4,10 +4,12 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/logfx"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestColored_ColorReset(t *testing.T) {
 	t.Parallel()
+
 	tests := []struct {
 		name     string
 		color    logfx.Color
@@ -32,11 +34,12 @@ func TestColored_ColorReset(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			result := logfx.Colored(tt.color, "test message")
 			expect := string(tt.color) + "test message" + string(logfx.ColorReset)
-			if result != expect {
-				t.Errorf("Colored() = %v, want %v", result, tt.expected)
-			}
+
+			assert.Equal(t, expect, result, "Colored() = %v, want %v", result, tt.expected)
 		})
 	}
 }

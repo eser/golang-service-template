@@ -19,14 +19,18 @@ func (m *MockReader) Read(p []byte) (n int, err error) {
 	if m.fail {
 		return 0, fmt.Errorf("mock read error")
 	}
+
 	// Simulate successful read
 	for i := range p {
 		p[i] = byte(i)
 	}
+
 	return len(p), nil
 }
 
 func TestCryptoGetRandomBytes(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name          string
 		mockReader    *MockReader
@@ -46,8 +50,12 @@ func TestCryptoGetRandomBytes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			originalRand := rand.Reader
-			defer func() { rand.Reader = originalRand }() // Restore original rand.Reader
+			defer func() {
+				rand.Reader = originalRand
+			}() // Restore original rand.Reader
 
 			if tt.mockReader.fail {
 				rand.Reader = tt.mockReader
@@ -57,6 +65,7 @@ func TestCryptoGetRandomBytes(t *testing.T) {
 
 			if (err != nil) != tt.expectedError {
 				t.Errorf("CryptoGetRandomBytes() error = %v, wantErr %v", err, tt.expectedError)
+
 				return
 			}
 
