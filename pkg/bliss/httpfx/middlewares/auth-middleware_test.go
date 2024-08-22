@@ -10,6 +10,7 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx/middlewares"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/stretchr/testify/assert"
 )
 
 func createToken(secret string, exp time.Time) string {
@@ -78,24 +79,18 @@ func TestAuthMiddleware(t *testing.T) {
 			result := middleware(&httpCtx)
 
 			if result.StatusCode != tt.expectedStatusCode {
-				t.Errorf("Expected status code %d, got %d", tt.expectedStatusCode, result.StatusCode)
+				assert.Equal(t, tt.expectedStatusCode, result.StatusCode)
 			}
 
 			if tt.expectedStatusCode == http.StatusOK || tt.expectedStatusCode == http.StatusNoContent {
 				claims, claimsOk := httpCtx.Request.Context().Value(middlewares.AuthClaims).(jwt.MapClaims)
 
-				if !claimsOk {
-					t.Error("Claims are missing in context")
-				}
+				assert.True(t, claimsOk, "Claims are missing in context")
 
-				if claims["exp"] == nil {
-					t.Error("exp claim is missing")
-				}
+				assert.NotNil(t, claims["exp"], "exp claim is missing")
 
 				if exp, ok := claims["exp"].(float64); ok {
-					if time.Unix(int64(exp), 0).Before(time.Now()) {
-						t.Error("exp claim is not valid")
-					}
+					assert.False(t, time.Unix(int64(exp), 0).Before(time.Now()), "exp claim is not valid")
 				}
 			}
 		})

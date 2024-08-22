@@ -158,14 +158,10 @@ func TestFxLogger_LogEvent(t *testing.T) { //nolint:paralleltest
 				scanner := bufio.NewScanner(os.Stdin)
 
 				for scanner.Scan() {
-					if scanner.Text() != tt.want {
-						t.Errorf("LogEvent() = %v, want %v", scanner.Text(), tt.want)
-					}
+					assert.Equal(t, tt.want, scanner.Text())
 				}
 
-				if scanner.Err() != nil {
-					t.Errorf("LogEvent() error = %v", scanner.Err())
-				}
+				assert.NoError(t, scanner.Err())
 			}()
 
 			fxLogger.LogEvent(tt.event)

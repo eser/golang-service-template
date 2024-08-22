@@ -12,7 +12,7 @@ type (
 	}
 )
 
-func GetFxLogger(logger *slog.Logger) fxevent.Logger { //nolint:ireturn
+func GetFxLogger(logger *slog.Logger) fxevent.Logger {
 	return &FxLogger{logger}
 }
 

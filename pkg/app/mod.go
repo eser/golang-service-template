@@ -50,7 +50,7 @@ func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 	routes.Use(middlewares.CorsMiddleware())
 
 	routes.
-		Route("GET /", func(ctx *httpfx.Context) httpfx.Response {
+		Route("GET /", func(ctx *httpfx.Context) httpfx.ResponseResult {
 			message := fmt.Sprintf(
 				"Hello %s (%s) from %s!",
 				ctx.Request.Context().Value(middlewares.ClientAddr),
@@ -65,7 +65,7 @@ func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 		HasResponse(http.StatusOK)
 
 	routes.
-		Route("GET /protected", middlewares.AuthMiddleware(), func(ctx *httpfx.Context) httpfx.Response {
+		Route("GET /protected", middlewares.AuthMiddleware(), func(ctx *httpfx.Context) httpfx.ResponseResult {
 			message := fmt.Sprintf("Hello from %s! this endpoint is protected!", appConfig.AppName)
 
 			return ctx.Results.PlainText(message)

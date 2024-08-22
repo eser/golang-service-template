@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/httpfx/uris"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDifferencePath(t *testing.T) {
@@ -106,17 +107,17 @@ func TestDifferencePath(t *testing.T) {
 			t.Parallel()
 
 			defer func() {
-				if r := recover(); r != nil {
-					if tt.want != "" {
-						t.Errorf("DifferencePath() panicked: %v, want %q", r, tt.want)
-					}
+				r := recover()
+
+				if tt.want == "" {
+					assert.NotNil(t, r, "DifferencePath() did not panic")
+				} else {
+					assert.Nil(t, r, "DifferencePath() panicked: %v", r)
 				}
 			}()
 
 			got := uris.DifferencePath(tt.p1, tt.p2)
-			if got != tt.want {
-				t.Errorf("DifferencePath() = %q, want %q", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

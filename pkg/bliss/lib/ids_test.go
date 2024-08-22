@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIdsGenerateUnique(t *testing.T) {
@@ -18,7 +19,6 @@ func TestIdsGenerateUnique(t *testing.T) {
 		{
 			name: "Test 2",
 		},
-		// Add more test cases as needed
 	}
 
 	for _, tt := range tests {
@@ -27,11 +27,7 @@ func TestIdsGenerateUnique(t *testing.T) {
 
 			got := lib.IdsGenerateUnique()
 
-			if len(got) != 26 {
-				t.Errorf("unexpected length of generated ID, got: %d, want: 26", len(got))
-			}
-
-			// Add more assertions as needed
+			assert.Len(t, got, 26)
 		})
 	}
 }

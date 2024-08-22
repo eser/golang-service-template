@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/httpfx/uris"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCommonPath(t *testing.T) {
@@ -93,9 +94,7 @@ func TestCommonPath(t *testing.T) {
 
 			result := uris.CommonPath(&tt.p1, &tt.p2)
 
-			if result != tt.expected {
-				t.Errorf("CommonPath() = %v, want %v", result, tt.expected)
-			}
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }

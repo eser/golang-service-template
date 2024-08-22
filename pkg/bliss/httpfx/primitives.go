@@ -1,7 +1,7 @@
 package httpfx
 
 type (
-	Handler      func(*Context) Response
+	Handler      func(*Context) ResponseResult
 	HandlerChain []Handler
 	Middleware   func() Handler
 )

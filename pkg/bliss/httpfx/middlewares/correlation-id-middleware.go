@@ -8,7 +8,7 @@ import (
 const CorrelationIdHeader = "X-Correlation-Id"
 
 func CorrelationIdMiddleware() httpfx.Handler {
-	return func(ctx *httpfx.Context) httpfx.Response {
+	return func(ctx *httpfx.Context) httpfx.ResponseResult {
 		// FIXME(@eser): no need to check if the header is specified
 		correlationId := ctx.Request.Header.Get(CorrelationIdHeader)
 		if correlationId == "" {

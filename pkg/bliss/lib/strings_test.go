@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStringsTrimLeadingSpaceFromBytes(t *testing.T) {
@@ -29,7 +30,6 @@ func TestStringsTrimLeadingSpaceFromBytes(t *testing.T) {
 			src:  []byte("   Hello, World!"),
 			want: []byte("Hello, World!"),
 		},
-		// Add more test cases as needed
 	}
 
 	for _, tt := range tests {
@@ -38,9 +38,7 @@ func TestStringsTrimLeadingSpaceFromBytes(t *testing.T) {
 
 			got := lib.StringsTrimLeadingSpaceFromBytes(tt.src)
 
-			if string(got) != string(tt.want) {
-				t.Errorf("got %s, want %s", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -68,7 +66,6 @@ func TestStringsTrimTrailingSpaceFromBytes(t *testing.T) {
 			src:  []byte("Hello, World!   "),
 			want: []byte("Hello, World!"),
 		},
-		// Add more test cases as needed
 	}
 
 	for _, tt := range tests {
@@ -77,9 +74,7 @@ func TestStringsTrimTrailingSpaceFromBytes(t *testing.T) {
 
 			got := lib.StringsTrimTrailingSpaceFromBytes(tt.src)
 
-			if string(got) != string(tt.want) {
-				t.Errorf("got %s, want %s", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -107,7 +102,6 @@ func TestStringsTrimLeadingSpace(t *testing.T) {
 			src:  "   Hello, World!",
 			want: "Hello, World!",
 		},
-		// Add more test cases as needed
 	}
 
 	for _, tt := range tests {
@@ -116,9 +110,7 @@ func TestStringsTrimLeadingSpace(t *testing.T) {
 
 			got := lib.StringsTrimLeadingSpace(tt.src)
 
-			if got != tt.want {
-				t.Errorf("got %s, want %s", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -146,7 +138,6 @@ func TestStringsTrimTrailingSpace(t *testing.T) {
 			src:  "Hello, World!   ",
 			want: "Hello, World!",
 		},
-		// Add more test cases as needed
 	}
 
 	for _, tt := range tests {
@@ -155,9 +146,7 @@ func TestStringsTrimTrailingSpace(t *testing.T) {
 
 			got := lib.StringsTrimTrailingSpace(tt.src)
 
-			if got != tt.want {
-				t.Errorf("got %s, want %s", got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

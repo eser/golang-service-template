@@ -122,6 +122,7 @@ func TestTraceLines(t *testing.T) {
 	stackGenerator := func() []uintptr {
 		var pc [32]uintptr
 		n := runtime.Callers(0, pc[:])
+
 		return pc[:n]
 	}
 
@@ -129,11 +130,13 @@ func TestTraceLines(t *testing.T) {
 		var pc [32]uintptr
 		n := runtime.Callers(0, pc[:])
 		pc[0] = 0
+
 		return pc[:n]
 	}
 
 	pwd := func() string {
 		_, file, _, _ := runtime.Caller(0)
+
 		return file
 	}
 

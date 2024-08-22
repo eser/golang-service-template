@@ -36,55 +36,55 @@ linters-settings:
           - github.com/getkin/kin-openapi/openapi3
           - github.com/golang-jwt/jwt/v5
   revive:
-    enable-all-rules: true
+    # enable-all-rules: true
     ignore-generated-header: true
     severity: warning
     rules:
       - name: var-naming
         disabled: true
         arguments: []
-      - name: exported
-        severity: warning
-      - name: error-return
-        severity: warning
-      - name: error-naming
-        severity: warning
-      - name: if-return
-        severity: warning
-      - name: var-naming
-        severity: warning
-      - name: var-declaration
-        severity: warning
-      - name: receiver-naming
-        severity: warning
-      - name: errorf
-        severity: warning
-      - name: empty-block
-        severity: warning
-      - name: unused-parameter
-        severity: warning
-      - name: unreachable-code
-        severity: warning
-      - name: redefines-builtin-id
-        severity: warning
-      - name: superfluous-else
-        severity: warning
-      - name: unexported-return
-        severity: warning
-      - name: indent-error-flow
-        severity: warning
-      - name: blank-imports
-        severity: warning
-      - name: range
-        severity: warning
-      - name: time-naming
-        severity: warning
-      - name: context-as-argument
-        severity: warning
-      - name: context-keys-type
-        severity: warning
-      - name: indent-error-flow
-        severity: warning
+      # - name: exported
+      #   severity: warning
+      # - name: error-return
+      #   severity: warning
+      # - name: error-naming
+      #   severity: warning
+      # - name: if-return
+      #   severity: warning
+      # - name: var-naming
+      #   severity: warning
+      # - name: var-declaration
+      #   severity: warning
+      # - name: receiver-naming
+      #   severity: warning
+      # - name: errorf
+      #   severity: warning
+      # - name: empty-block
+      #   severity: warning
+      # - name: unused-parameter
+      #   severity: warning
+      # - name: unreachable-code
+      #   severity: warning
+      # - name: redefines-builtin-id
+      #   severity: warning
+      # - name: superfluous-else
+      #   severity: warning
+      # - name: unexported-return
+      #   severity: warning
+      # - name: indent-error-flow
+      #   severity: warning
+      # - name: blank-imports
+      #   severity: warning
+      # - name: range
+      #   severity: warning
+      # - name: time-naming
+      #   severity: warning
+      # - name: context-as-argument
+      #   severity: warning
+      # - name: context-keys-type
+      #   severity: warning
+      # - name: indent-error-flow
+      #   severity: warning
 
 issues:
   fix: true

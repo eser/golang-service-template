@@ -10,7 +10,7 @@ import (
 const ResponseTimeHeader = "X-Request-Time"
 
 func ResponseTimeMiddleware() httpfx.Handler {
-	return func(ctx *httpfx.Context) httpfx.Response {
+	return func(ctx *httpfx.Context) httpfx.ResponseResult {
 		startTime := time.Now()
 
 		result := ctx.Next()

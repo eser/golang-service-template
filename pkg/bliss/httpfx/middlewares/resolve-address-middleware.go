@@ -17,7 +17,7 @@ const (
 )
 
 func ResolveAddressMiddleware() httpfx.Handler {
-	return func(ctx *httpfx.Context) httpfx.Response {
+	return func(ctx *httpfx.Context) httpfx.ResponseResult {
 		addr := GetClientAddrs(ctx.Request)
 
 		newContext := context.WithValue(

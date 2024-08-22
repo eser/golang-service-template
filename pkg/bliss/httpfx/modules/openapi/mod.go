@@ -19,7 +19,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 
 func RegisterRoutes(routes httpfx.Router) {
 	routes.
-		Route("GET /openapi.json", func(ctx *httpfx.Context) httpfx.Response {
+		Route("GET /openapi.json", func(ctx *httpfx.Context) httpfx.ResponseResult {
 			spec := &ApiIdentity{
 				name:    "golang-service",
 				version: "0.0.0",

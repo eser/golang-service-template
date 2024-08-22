@@ -16,7 +16,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 
 func RegisterRoutes(routes httpfx.Router) {
 	routes.
-		Route("GET /health-check", func(ctx *httpfx.Context) httpfx.Response {
+		Route("GET /health-check", func(ctx *httpfx.Context) httpfx.ResponseResult {
 			return ctx.Results.Ok()
 		}).
 		HasSummary("Health Check").

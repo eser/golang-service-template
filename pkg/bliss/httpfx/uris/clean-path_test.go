@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/httpfx/uris"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCleanPath(t *testing.T) {
@@ -87,9 +88,7 @@ func TestCleanPath(t *testing.T) {
 
 			result := uris.CleanPath(tt.input)
 
-			if result != tt.expected {
-				t.Errorf("CleanPath() = %v, want %v", result, tt.expected)
-			}
+			assert.Equal(t, result, tt.expected)
 		})
 	}
 }

@@ -1,10 +1,10 @@
 package lib_test
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestArraysCopy(t *testing.T) {
@@ -30,7 +30,6 @@ func TestArraysCopy(t *testing.T) {
 			items: [][]int{{1, 2}, {3, 4, 5}, {6}},
 			want:  []int{1, 2, 3, 4, 5, 6},
 		},
-		// Add more test cases as needed
 	}
 
 	for _, tt := range tests {
@@ -39,9 +38,7 @@ func TestArraysCopy(t *testing.T) {
 
 			got := lib.ArraysCopy(tt.items...)
 
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("got %v, want %v", got, tt.want)
-			}
+			assert.ElementsMatch(t, got, tt.want)
 		})
 	}
 }

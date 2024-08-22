@@ -23,7 +23,7 @@ type Context struct {
 	// isAborted bool
 }
 
-func (c *Context) Next() Response {
+func (c *Context) Next() ResponseResult {
 	c.index++
 
 	for c.index < len(c.handlers) {

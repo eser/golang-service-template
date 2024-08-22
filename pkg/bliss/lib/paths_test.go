@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPathsSplit(t *testing.T) {
@@ -52,17 +53,9 @@ func TestPathsSplit(t *testing.T) {
 
 			gotDir, gotFile, gotExt := lib.PathsSplit(tt.filename)
 
-			if gotDir != tt.wantDir {
-				t.Errorf("gotDir = %s, wantDir = %s", gotDir, tt.wantDir)
-			}
-
-			if gotFile != tt.wantFile {
-				t.Errorf("gotFile = %s, wantFile = %s", gotFile, tt.wantFile)
-			}
-
-			if gotExt != tt.wantExt {
-				t.Errorf("gotExt = %s, wantExt = %s", gotExt, tt.wantExt)
-			}
+			assert.Equal(t, gotDir, tt.wantDir)
+			assert.Equal(t, gotFile, tt.wantFile)
+			assert.Equal(t, gotExt, tt.wantExt)
 		})
 	}
 }
