@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // MockReader is a mock implementation of io.Reader that simulates
@@ -28,9 +30,7 @@ func (m *MockReader) Read(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func TestCryptoGetRandomBytes(t *testing.T) {
-	t.Parallel()
-
+func TestCryptoGetRandomBytes(t *testing.T) { //nolint:paralleltest
 	tests := []struct {
 		name          string
 		mockReader    *MockReader
@@ -50,8 +50,6 @@ func TestCryptoGetRandomBytes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
 			originalRand := rand.Reader
 			defer func() {
 				rand.Reader = originalRand
@@ -61,17 +59,17 @@ func TestCryptoGetRandomBytes(t *testing.T) {
 				rand.Reader = tt.mockReader
 			}
 
-			result, err := lib.CryptoGetRandomBytes(16)
+			const size = 16
+			result, err := lib.CryptoGetRandomBytes(size)
 
-			if (err != nil) != tt.expectedError {
-				t.Errorf("CryptoGetRandomBytes() error = %v, wantErr %v", err, tt.expectedError)
+			if tt.expectedError {
+				require.Error(t, err, "CryptoGetRandomBytes() error = nil, expectedError true")
 
 				return
 			}
 
-			if !tt.expectedError && len(result) != 16 {
-				t.Errorf("CryptoGetRandomBytes() = %v, want length %v", result, 16)
-			}
+			require.NoError(t, err, "CryptoGetRandomBytes() error = %v, expectedError false", err)
+			assert.Equal(t, size, len(result), "CryptoGetRandomBytes() = %v, want length %v", result, size)
 		})
 	}
 }
