@@ -10,7 +10,7 @@ type ApiIdentity struct {
 	version string
 }
 
-var Module = fx.Module( //nolint:gochecknoglobals
+var FxModule = fx.Module( //nolint:gochecknoglobals
 	"openapi",
 	fx.Invoke(
 		RegisterRoutes,
@@ -19,7 +19,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 
 func RegisterRoutes(routes httpfx.Router) {
 	routes.
-		Route("GET /openapi.json", func(ctx *httpfx.Context) httpfx.ResponseResult {
+		Route("GET /openapi.json", func(ctx *httpfx.Context) httpfx.Result {
 			spec := &ApiIdentity{
 				name:    "golang-service",
 				version: "0.0.0",

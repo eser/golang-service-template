@@ -13,6 +13,8 @@ type UserRepository interface {
 
 type UserRepositoryImpl struct{}
 
+var _ UserRepository = (*UserRepositoryImpl)(nil)
+
 func NewUserRepository() *UserRepositoryImpl {
 	return &UserRepositoryImpl{}
 }

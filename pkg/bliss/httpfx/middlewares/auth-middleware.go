@@ -17,7 +17,7 @@ const (
 var ErrInvalidSigningMethod = errors.New("Invalid signing method")
 
 func AuthMiddleware() httpfx.Handler {
-	return func(ctx *httpfx.Context) httpfx.ResponseResult {
+	return func(ctx *httpfx.Context) httpfx.Result {
 		tokenString, hasToken := getBearerToken(ctx)
 
 		if !hasToken {

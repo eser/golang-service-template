@@ -9,8 +9,8 @@ import (
 func Run() {
 	app := fx.New(
 		fx.WithLogger(logfx.GetFxLogger),
-		bliss.Module,
-		Module,
+		bliss.FxModule,
+		FxModule,
 	)
 
 	app.Run()

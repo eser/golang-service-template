@@ -4,21 +4,21 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module( //nolint:gochecknoglobals
+var FxModule = fx.Module( //nolint:gochecknoglobals
 	"data",
 	fx.Provide(
 		New,
 	),
 )
 
-type Result struct {
+type FxResult struct {
 	fx.Out
 
 	DataProvider DataProvider
 }
 
-func New() (Result, error) {
-	return Result{ //nolint:exhaustruct
+func New() (FxResult, error) {
+	return FxResult{ //nolint:exhaustruct
 		DataProvider: NewDataProvider(),
 	}, nil
 }

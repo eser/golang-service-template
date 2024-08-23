@@ -78,8 +78,8 @@ func TestAuthMiddleware(t *testing.T) {
 			middleware := middlewares.AuthMiddleware()
 			result := middleware(&httpCtx)
 
-			if result.StatusCode != tt.expectedStatusCode {
-				assert.Equal(t, tt.expectedStatusCode, result.StatusCode)
+			if result.StatusCode() != tt.expectedStatusCode {
+				assert.Equal(t, tt.expectedStatusCode, result.StatusCode())
 			}
 
 			if tt.expectedStatusCode == http.StatusOK || tt.expectedStatusCode == http.StatusNoContent {

@@ -7,7 +7,7 @@ import (
 const AccessControlAllowOriginHeader = "Access-Control-Allow-Origin"
 
 func CorsMiddleware() httpfx.Handler {
-	return func(ctx *httpfx.Context) httpfx.ResponseResult {
+	return func(ctx *httpfx.Context) httpfx.Result {
 		result := ctx.Next()
 
 		ctx.ResponseWriter.Header().Set(AccessControlAllowOriginHeader, "*")

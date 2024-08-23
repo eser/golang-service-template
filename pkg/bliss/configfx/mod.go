@@ -8,21 +8,21 @@ import (
 
 var ErrConfigDecoding = errors.New("config decoding error")
 
-var Module = fx.Module( //nolint:gochecknoglobals
+var FxModule = fx.Module( //nolint:gochecknoglobals
 	"config",
 	fx.Provide(
 		New,
 	),
 )
 
-type Result struct {
+type FxResult struct {
 	fx.Out
 
 	ConfigLoader ConfigLoader
 }
 
-func New() (Result, error) {
-	return Result{ //nolint:exhaustruct
+func New() (FxResult, error) {
+	return FxResult{ //nolint:exhaustruct
 		ConfigLoader: NewConfigLoader(),
 	}, nil
 }

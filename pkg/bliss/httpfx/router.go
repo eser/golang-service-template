@@ -27,6 +27,8 @@ type RouterImpl struct {
 	routes   []*Route
 }
 
+var _ Router = (*RouterImpl)(nil)
+
 func NewRouter(path string) *RouterImpl {
 	mux := http.NewServeMux()
 
@@ -88,9 +90,9 @@ func (r *RouterImpl) Route(pattern string, handlers ...Handler) *Route {
 
 		result := routeHandlers[0](ctx)
 
-		responseWriter.WriteHeader(result.StatusCode)
+		responseWriter.WriteHeader(result.StatusCode())
 
-		_, err := responseWriter.Write(result.Body)
+		_, err := responseWriter.Write(result.Body())
 		if err != nil {
 			// TODO(@eser) replace it with logger
 			fmt.Println("error writing response body: %w", err)

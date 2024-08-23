@@ -13,7 +13,7 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module( //nolint:gochecknoglobals
+var FxModule = fx.Module( //nolint:gochecknoglobals
 	"app",
 	fx.Invoke(
 		RegisterRoutes,
@@ -21,8 +21,8 @@ var Module = fx.Module( //nolint:gochecknoglobals
 	fx.Provide(
 		bliss.LoadConfig[AppConfig](LoadConfig),
 	),
-	healthcheck.Module,
-	openapi.Module,
+	healthcheck.FxModule,
+	openapi.FxModule,
 )
 
 func LoadConfig(cl configfx.ConfigLoader) (*AppConfig, error) {
@@ -50,7 +50,7 @@ func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 	routes.Use(middlewares.CorsMiddleware())
 
 	routes.
-		Route("GET /", func(ctx *httpfx.Context) httpfx.ResponseResult {
+		Route("GET /", func(ctx *httpfx.Context) httpfx.Result {
 			message := fmt.Sprintf(
 				"Hello %s (%s) from %s!",
 				ctx.Request.Context().Value(middlewares.ClientAddr),
@@ -65,7 +65,7 @@ func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
 		HasResponse(http.StatusOK)
 
 	routes.
-		Route("GET /protected", middlewares.AuthMiddleware(), func(ctx *httpfx.Context) httpfx.ResponseResult {
+		Route("GET /protected", middlewares.AuthMiddleware(), func(ctx *httpfx.Context) httpfx.Result {
 			message := fmt.Sprintf("Hello from %s! this endpoint is protected!", appConfig.AppName)
 
 			return ctx.Results.PlainText(message)

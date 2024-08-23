@@ -5,17 +5,17 @@ import (
 	"strings"
 )
 
-func SerializeSlogAttrs(attrs ...slog.Attr) string {
+func SerializeSlogAttrs(attrs []slog.Attr) string {
 	length := len(attrs)
 
 	if length == 0 {
 		return ""
 	}
 
-	result := make([]string, len(attrs))
+	result := make([]string, length)
 
-	for _, attr := range attrs {
-		result = append(result, attr.String())
+	for i, attr := range attrs {
+		result[i] = attr.String()
 	}
 
 	return strings.Join(result, ", ")

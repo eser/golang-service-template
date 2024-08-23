@@ -43,6 +43,8 @@ type ConfigLoader interface {
 
 type ConfigLoaderImpl struct{}
 
+var _ ConfigLoader = (*ConfigLoaderImpl)(nil)
+
 func NewConfigLoader() *ConfigLoaderImpl {
 	return &ConfigLoaderImpl{}
 }

@@ -3,55 +3,32 @@ package httpfx
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/eser/go-service/pkg/bliss/results"
 )
-
-type ResponseResult struct {
-	results.Result
-
-	StatusCode int
-	Body       []byte
-
-	RedirectToUri string
-}
-
-func (r ResponseResult) WithStatusCode(statusCode int) ResponseResult {
-	r.StatusCode = statusCode
-
-	return r
-}
-
-func (r ResponseResult) WithBody(body string) ResponseResult {
-	r.Body = []byte(body)
-
-	return r
-}
 
 type Results struct{}
 
-func (r *Results) Ok() ResponseResult {
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusNoContent,
-		Body:       []byte{},
+func (r *Results) Ok() ResultImpl {
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusNoContent,
+		InnerBody:       []byte{},
 	}
 }
 
-func (r *Results) Bytes(body []byte) ResponseResult {
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusOK,
-		Body:       body,
+func (r *Results) Bytes(body []byte) ResultImpl {
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusOK,
+		InnerBody:       body,
 	}
 }
 
-func (r *Results) PlainText(body string) ResponseResult {
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusOK,
-		Body:       []byte(body),
+func (r *Results) PlainText(body string) ResultImpl {
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusOK,
+		InnerBody:       []byte(body),
 	}
 }
 
-func (r *Results) Json(body any) ResponseResult {
+func (r *Results) Json(body any) ResultImpl {
 	encoded, err := json.Marshal(body)
 	if err != nil {
 		// TODO(@eser): Log error
@@ -61,52 +38,52 @@ func (r *Results) Json(body any) ResponseResult {
 		)
 	}
 
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusOK,
-		Body:       encoded,
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusOK,
+		InnerBody:       encoded,
 	}
 }
 
-func (r *Results) Redirect(uri string) ResponseResult {
-	return ResponseResult{
-		StatusCode:    http.StatusTemporaryRedirect,
-		Body:          []byte{},
-		RedirectToUri: uri,
+func (r *Results) Redirect(uri string) ResultImpl {
+	return ResultImpl{
+		InnerStatusCode:    http.StatusTemporaryRedirect,
+		InnerBody:          []byte{},
+		InnerRedirectToUri: uri,
 	}
 }
 
-func (r *Results) NotFound() ResponseResult {
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusNotFound,
-		Body:       []byte("Not Found"),
+func (r *Results) NotFound() ResultImpl {
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusNotFound,
+		InnerBody:       []byte("Not Found"),
 	}
 }
 
-func (r *Results) Unauthorized(body string) ResponseResult {
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusUnauthorized,
-		Body:       []byte(body),
+func (r *Results) Unauthorized(body string) ResultImpl {
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusUnauthorized,
+		InnerBody:       []byte(body),
 	}
 }
 
-func (r *Results) BadRequest() ResponseResult {
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusBadRequest,
-		Body:       []byte("Bad Request"),
+func (r *Results) BadRequest() ResultImpl {
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusBadRequest,
+		InnerBody:       []byte("Bad Request"),
 	}
 }
 
-func (r *Results) Error(statusCode int, message string) ResponseResult {
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: statusCode,
-		Body:       []byte(message),
+func (r *Results) Error(statusCode int, message string) ResultImpl {
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: statusCode,
+		InnerBody:       []byte(message),
 	}
 }
 
-func (r *Results) Abort() ResponseResult {
+func (r *Results) Abort() ResultImpl {
 	// TODO(@eser) implement this
-	return ResponseResult{ //nolint:exhaustruct
-		StatusCode: http.StatusNotImplemented,
-		Body:       []byte("Not Implemented"),
+	return ResultImpl{ //nolint:exhaustruct
+		InnerStatusCode: http.StatusNotImplemented,
+		InnerBody:       []byte("Not Implemented"),
 	}
 }

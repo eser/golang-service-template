@@ -7,7 +7,7 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module( //nolint:gochecknoglobals
+var FxModule = fx.Module( //nolint:gochecknoglobals
 	"healthcheck",
 	fx.Invoke(
 		RegisterRoutes,
@@ -16,7 +16,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 
 func RegisterRoutes(routes httpfx.Router) {
 	routes.
-		Route("GET /health-check", func(ctx *httpfx.Context) httpfx.ResponseResult {
+		Route("GET /health-check", func(ctx *httpfx.Context) httpfx.Result {
 			return ctx.Results.Ok()
 		}).
 		HasSummary("Health Check").

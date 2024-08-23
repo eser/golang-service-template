@@ -6,6 +6,8 @@ type DataProvider interface {
 
 type DataProviderImpl struct{}
 
+var _ DataProvider = (*DataProviderImpl)(nil)
+
 func NewDataProvider() *DataProviderImpl {
 	return &DataProviderImpl{}
 }

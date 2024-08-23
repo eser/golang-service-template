@@ -12,7 +12,7 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module( //nolint:gochecknoglobals
+var FxModule = fx.Module( //nolint:gochecknoglobals
 	"httpservice",
 	fx.Provide(
 		New,
@@ -22,7 +22,7 @@ var Module = fx.Module( //nolint:gochecknoglobals
 	),
 )
 
-type Result struct {
+type FxResult struct {
 	fx.Out
 
 	HttpService *HttpService
@@ -37,7 +37,7 @@ type HttpService struct {
 	Routes Router
 }
 
-func New(config *Config) (Result, error) {
+func New(config *Config) (FxResult, error) {
 	routes := NewRouter("/")
 
 	server := &http.Server{ //nolint:exhaustruct
@@ -51,7 +51,7 @@ func New(config *Config) (Result, error) {
 		Handler: routes.GetMux(),
 	}
 
-	return Result{ //nolint:exhaustruct
+	return FxResult{ //nolint:exhaustruct
 		HttpService: &HttpService{Server: server, Config: config, Routes: routes},
 		Routes:      routes,
 	}, nil

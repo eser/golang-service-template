@@ -7,7 +7,7 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Module( //nolint:gochecknoglobals
+var FxModule = fx.Module( //nolint:gochecknoglobals
 	"log",
 	fx.Provide(
 		RegisterLogger,
