@@ -49,10 +49,12 @@ func TestRegisterLogger(t *testing.T) {
 				require.Error(t, err)
 				assert.Nil(t, logger)
 				assert.Equal(t, tt.expectedErr, err.Error())
-			} else {
-				require.NoError(t, err)
-				assert.NotNil(t, logger)
+
+				return
 			}
+
+			require.NoError(t, err)
+			assert.NotNil(t, logger)
 		})
 	}
 }

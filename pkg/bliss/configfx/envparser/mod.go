@@ -108,32 +108,26 @@ func extractKeyName(src []byte) (string, int, error) {
 }
 
 func trimExportPrefix(src []byte) []byte {
-	var newSrc []byte
+	trimmedSrc := bytes.TrimPrefix(src, []byte(exportPrefix))
 
-	if bytes.HasPrefix(src, []byte(exportPrefix)) {
-		newSrc = bytes.TrimPrefix(src, []byte(exportPrefix))
-	} else {
-		newSrc = src
-	}
-
-	return lib.StringsTrimLeadingSpaceFromBytes(newSrc)
+	return lib.StringsTrimLeadingSpaceFromBytes(trimmedSrc)
 }
 
 // locateKeyName locates and parses key name and returns rest of slice.
 func locateKeyName(src []byte) (string, []byte, error) {
-	src = trimExportPrefix(src)
+	newSrc := trimExportPrefix(src)
 
-	key, offset, err := extractKeyName(src)
+	key, offset, err := extractKeyName(newSrc)
 	if err != nil {
 		return "", nil, err
 	}
 
-	if len(src) == 0 {
+	if len(newSrc) == 0 {
 		return "", nil, ErrZeroLengthString.New()
 	}
 
 	key = lib.StringsTrimTrailingSpace(key)
-	cutset := lib.StringsTrimLeadingSpaceFromBytes(src[offset:])
+	cutset := lib.StringsTrimLeadingSpaceFromBytes(newSrc[offset:])
 
 	return key, cutset, nil
 }

@@ -59,10 +59,12 @@ func TestNewHandler(t *testing.T) {
 			if tt.expectedErr != "" {
 				require.EqualError(t, err, tt.expectedErr)
 				assert.Nil(t, handler)
-			} else {
-				require.NoError(t, err)
-				assert.NotNil(t, handler)
+
+				return
 			}
+
+			require.NoError(t, err)
+			assert.NotNil(t, handler)
 		})
 	}
 }

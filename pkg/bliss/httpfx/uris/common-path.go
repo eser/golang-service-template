@@ -22,11 +22,15 @@ func CommonPath(p1, p2 *Pattern) string {
 	)
 
 	for segs1, segs2 = p1.Segments, p2.Segments; len(segs1) > 0 && len(segs2) > 0; segs1, segs2 = segs1[1:], segs2[1:] {
-		if s1 := segs1[0]; s1.Wild {
+		s1 := segs1[0]
+
+		if s1.Wild {
 			writeSegment(&b, segs2[0])
-		} else {
-			writeSegment(&b, s1)
+
+			continue
 		}
+
+		writeSegment(&b, s1)
 	}
 
 	if len(segs1) > 0 {

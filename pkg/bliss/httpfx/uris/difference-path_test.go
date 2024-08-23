@@ -111,9 +111,11 @@ func TestDifferencePath(t *testing.T) {
 
 				if tt.want == "" {
 					assert.NotNil(t, r, "DifferencePath() did not panic")
-				} else {
-					assert.Nil(t, r, "DifferencePath() panicked: %v", r)
+
+					return
 				}
+
+				assert.Nil(t, r, "DifferencePath() panicked: %v", r)
 			}()
 
 			got := uris.DifferencePath(tt.p1, tt.p2)

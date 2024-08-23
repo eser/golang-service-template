@@ -92,9 +92,11 @@ func TestDefineNew(t *testing.T) {
 
 			if tt.expectedOk {
 				assert.False(t, tt.occurrence.IsError())
-			} else {
-				assert.True(t, tt.occurrence.IsError())
+
+				return
 			}
+
+			assert.True(t, tt.occurrence.IsError())
 		})
 	}
 }

@@ -29,10 +29,10 @@ func CleanPath(p string) string {
 	if p[len(p)-1] == '/' && np != "/" {
 		// Fast path for common case of p being the string we want:
 		if len(p) == len(np)+1 && strings.HasPrefix(p, np) {
-			np = p
-		} else {
-			np += "/"
+			return p
 		}
+
+		return np + "/"
 	}
 
 	return np

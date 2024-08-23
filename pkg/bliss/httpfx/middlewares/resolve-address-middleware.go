@@ -63,20 +63,27 @@ func ResolveAddressMiddleware() httpfx.Handler {
 	}
 }
 
+func splitHostPort(addr string) (string, string, error) {
+	if !strings.ContainsRune(addr, ':') {
+		return addr, "", nil
+	}
+
+	host, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to split host and port: %w", err)
+	}
+
+	return host, port, nil
+}
+
 func DetectLocalNetwork(requestAddr string) (bool, error) {
 	var requestIp string
 
 	requestAddrs := strings.SplitN(requestAddr, ",", 2) //nolint:mnd
 
-	if strings.ContainsRune(requestAddrs[0], ':') {
-		host, _, err := net.SplitHostPort(requestAddrs[0])
-		if err != nil {
-			return false, fmt.Errorf("failed to split host and port: %w", err)
-		}
-
-		requestIp = host
-	} else {
-		requestIp = requestAddrs[0]
+	requestIp, _, err := splitHostPort(requestAddrs[0])
+	if err != nil {
+		return false, err
 	}
 
 	addrs, err := net.InterfaceAddrs()

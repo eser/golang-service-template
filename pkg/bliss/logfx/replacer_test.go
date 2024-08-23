@@ -178,12 +178,14 @@ func TestTraceLines(t *testing.T) {
 
 			if len(tt.expected) == 0 {
 				assert.Equal(t, tt.expected, result)
-			} else {
-				for i := range tt.expected {
-					ext := strings.Split(tt.expected[i], " ")
 
-					assert.Contains(t, result[i], ext[0])
-				}
+				return
+			}
+
+			for i := range tt.expected {
+				ext := strings.Split(tt.expected[i], " ")
+
+				assert.Contains(t, result[i], ext[0])
 			}
 		})
 	}
