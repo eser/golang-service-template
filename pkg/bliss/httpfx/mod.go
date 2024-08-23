@@ -18,7 +18,7 @@ var FxModule = fx.Module( //nolint:gochecknoglobals
 		New,
 	),
 	fx.Invoke(
-		RegisterHooks,
+		registerHooks,
 	),
 )
 
@@ -27,14 +27,6 @@ type FxResult struct {
 
 	HttpService *HttpService
 	Routes      Router
-}
-
-type HttpService struct {
-	Server *http.Server
-
-	Config *Config
-
-	Routes Router
 }
 
 func New(config *Config) (FxResult, error) {
@@ -58,7 +50,7 @@ func New(config *Config) (FxResult, error) {
 }
 
 // , conf *config.Config, logger *log.Logger.
-func RegisterHooks(lc fx.Lifecycle, hs *HttpService, logger *slog.Logger) {
+func registerHooks(lc fx.Lifecycle, hs *HttpService, logger *slog.Logger) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			logger.Info("HttpService is starting...", slog.String("addr", hs.Config.Addr))

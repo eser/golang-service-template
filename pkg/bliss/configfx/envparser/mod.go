@@ -8,9 +8,9 @@ package envparser
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -18,6 +18,7 @@ import (
 	"unicode"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
+	"github.com/eser/go-service/pkg/bliss/results"
 )
 
 const (
@@ -29,10 +30,10 @@ const (
 )
 
 var (
-	ErrZeroLengthString        = errors.New("zero length string")
-	ErrKeyNameNotFound         = errors.New("key name not found")
-	ErrUnexpectedChar          = errors.New("unexpected character")
-	ErrUnterminatedQuotedValue = errors.New("unterminated quoted value")
+	ErrZeroLengthString        = results.Define("ERRBCE0001", "zero length string")
+	ErrKeyNameNotFound         = results.Define("ERRBCE0002", "key name not found")
+	ErrUnexpectedChar          = results.Define("ERRBCE0003", "unexpected character")
+	ErrUnterminatedQuotedValue = results.Define("ERRBCE0004", "unterminated quoted value")
 )
 
 func ParseBytes(data []byte, out *map[string]any) error {
@@ -99,11 +100,11 @@ func extractKeyName(src []byte) (string, int, error) {
 			return key, i + 1, nil
 		}
 
-		return "", 0, fmt.Errorf(
-			`unexpected character %q in variable name near %q: %w`, string(char), string(src), ErrUnexpectedChar)
+		return "", 0, ErrUnexpectedChar.New().
+			WithAttribute(slog.String("char", string(char)), slog.String("src", string(src)))
 	}
 
-	return "", 0, ErrKeyNameNotFound
+	return "", 0, ErrKeyNameNotFound.New()
 }
 
 func trimExportPrefix(src []byte) []byte {
@@ -128,7 +129,7 @@ func locateKeyName(src []byte) (string, []byte, error) {
 	}
 
 	if len(src) == 0 {
-		return "", nil, ErrZeroLengthString
+		return "", nil, ErrZeroLengthString.New()
 	}
 
 	key = lib.StringsTrimTrailingSpace(key)
@@ -207,7 +208,8 @@ func extractQuotedVarValue(src []byte, vars *map[string]any, quote byte) (string
 		valEndIndex = len(src)
 	}
 
-	return "", nil, fmt.Errorf("unterminated quoted value %s: %w", src[:valEndIndex], ErrUnterminatedQuotedValue)
+	return "", nil, ErrUnterminatedQuotedValue.New().
+		WithAttribute(slog.String("src", string(src[:valEndIndex])))
 }
 
 // extractVarValue extracts variable value and returns rest of slice.

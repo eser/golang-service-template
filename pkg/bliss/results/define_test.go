@@ -41,13 +41,13 @@ func TestDefine(t *testing.T) {
 		},
 		{
 			name:           "resultErr",
-			occurrence:     resultErr.NewWithError(errTest),
+			occurrence:     resultErr.Wrap(errTest),
 			expectedString: "[0002] Error: test",
 			expectedError:  errTest,
 		},
 		{
 			name:           "resultErr with wrapping",
-			occurrence:     resultErr.NewWithError(errTestNested),
+			occurrence:     resultErr.Wrap(errTestNested),
 			expectedString: "[0002] Error: testNested: test",
 			expectedError:  errTest,
 		},
@@ -81,7 +81,7 @@ func TestDefineNew(t *testing.T) {
 		},
 		{
 			name:       "resultErr",
-			occurrence: resultErr.NewWithError(errTest),
+			occurrence: resultErr.Wrap(errTest),
 			expectedOk: false,
 		},
 	}

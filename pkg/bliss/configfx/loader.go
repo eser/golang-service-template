@@ -1,10 +1,11 @@
 package configfx
 
 import (
-	"errors"
 	"reflect"
 	"strconv"
 	"time"
+
+	"github.com/eser/go-service/pkg/bliss/results"
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 	tagRequired = "required"
 )
 
-var ErrNotStruct = errors.New("not a struct")
+var ErrNotStruct = results.Define("ERRBC00001", "not a struct")
 
 type ConfigItemMeta struct {
 	Name            string
@@ -102,7 +103,7 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 	result := []ConfigItemMeta{}
 
 	if r.Kind() != reflect.Struct {
-		return nil, ErrNotStruct
+		return nil, ErrNotStruct.New()
 	}
 
 	for i := range r.NumField() {

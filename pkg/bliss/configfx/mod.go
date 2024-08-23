@@ -1,12 +1,8 @@
 package configfx
 
 import (
-	"errors"
-
 	"go.uber.org/fx"
 )
-
-var ErrConfigDecoding = errors.New("config decoding error")
 
 var FxModule = fx.Module( //nolint:gochecknoglobals
 	"config",

@@ -20,6 +20,7 @@ type ResultImpl struct {
 	Definition *Definition
 
 	InnerError      error
+	InnerMessage    string
 	InnerAttributes []slog.Attr
 }
 
