@@ -1,8 +1,8 @@
 package results
 
 import (
-	"fmt"
 	"log/slog"
+	"strings"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
@@ -16,11 +16,11 @@ type Result interface {
 	Attributes() []slog.Attr
 }
 
-type ResultImpl struct {
+type ResultImpl struct { //nolint:errname
 	Definition *Definition
 
 	InnerError      error
-	InnerMessage    string
+	InnerPayload    any
 	InnerAttributes []slog.Attr
 }
 
@@ -41,20 +41,34 @@ func (r ResultImpl) IsError() bool {
 func (r ResultImpl) String() string {
 	attrs := r.Attributes()
 
-	var attrsStr string
+	builder := strings.Builder{}
+	builder.WriteRune('[')
+	builder.WriteString(r.Definition.Code)
+	builder.WriteString("] ")
+	builder.WriteString(r.Definition.Message)
+
 	if len(attrs) > 0 {
-		attrsStr = fmt.Sprintf(" (%s)", lib.SerializeSlogAttrs(attrs))
+		builder.WriteString(" (")
+		builder.WriteString(lib.SerializeSlogAttrs(attrs))
+		builder.WriteRune(')')
 	}
 
 	if r.InnerError != nil {
-		return fmt.Sprintf("[%s] %s%s: %s", r.Definition.Code, r.Definition.Message, attrsStr, r.InnerError.Error())
+		builder.WriteString(": ")
+		builder.WriteString(r.InnerError.Error())
 	}
 
-	return fmt.Sprintf("[%s] %s%s", r.Definition.Code, r.Definition.Message, attrsStr)
+	return builder.String()
 }
 
 func (r ResultImpl) Attributes() []slog.Attr {
-	return append(r.Definition.Attributes, r.InnerAttributes...)
+	attrs := r.Definition.Attributes
+
+	if r.InnerPayload != nil {
+		attrs = append(attrs, slog.Any("payload", r.InnerPayload))
+	}
+
+	return append(attrs, r.InnerAttributes...)
 }
 
 func (r ResultImpl) WithError(err error) ResultImpl {

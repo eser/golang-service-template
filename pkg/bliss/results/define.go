@@ -2,7 +2,6 @@ package results
 
 import (
 	"log/slog"
-	"strings"
 )
 
 type Definition struct {
@@ -25,30 +24,22 @@ func Define(code string, message string, attributes ...slog.Attr) *Definition {
 	}
 }
 
-func (r *Definition) New(messages ...string) ResultImpl {
-	if messages == nil {
-		messages = []string{}
-	}
-
+func (r *Definition) New(payload ...any) ResultImpl {
 	return ResultImpl{
 		Definition: r,
 
 		InnerError:      nil,
-		InnerMessage:    strings.Join(messages, ", "),
+		InnerPayload:    payload,
 		InnerAttributes: []slog.Attr{},
 	}
 }
 
-func (r *Definition) Wrap(err error, messages ...string) ResultImpl {
-	if messages == nil {
-		messages = []string{}
-	}
-
+func (r *Definition) Wrap(err error, payload ...any) ResultImpl {
 	return ResultImpl{
 		Definition: r,
 
 		InnerError:      err,
-		InnerMessage:    strings.Join(messages, ", "),
+		InnerPayload:    payload,
 		InnerAttributes: []slog.Attr{},
 	}
 }

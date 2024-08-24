@@ -106,7 +106,11 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	}
 
 	if method != "" && !IsValidMethod(method) {
-		return nil, ErrInvalidMethod.New().WithAttribute(slog.String("pattern", s), slog.String("method", method))
+		return nil, ErrInvalidMethod.New().
+			WithAttribute(
+				slog.String("pattern", s),
+				slog.String("method", method),
+			)
 	}
 
 	p := &Pattern{Str: s, Method: method}
