@@ -17,10 +17,10 @@ type FxResult struct {
 	DataProvider DataProvider
 }
 
-func FxNew() (FxResult, error) {
+func FxNew() FxResult {
 	return FxResult{
 		Out: fx.Out{},
 
 		DataProvider: NewDataProvider(),
-	}, nil
+	}
 }

@@ -50,7 +50,7 @@ func NewConfigLoader() *ConfigLoaderImpl {
 	return &ConfigLoaderImpl{}
 }
 
-func (dcl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
+func (cl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
 	r := reflect.ValueOf(i).Elem()
 
 	children, err := reflectMeta(r)
@@ -70,7 +70,7 @@ func (dcl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
 	}, nil
 }
 
-func (dcl *ConfigLoaderImpl) LoadMap(resources ...ConfigResource) (*map[string]any, error) {
+func (cl *ConfigLoaderImpl) LoadMap(resources ...ConfigResource) (*map[string]any, error) {
 	target := map[string]any{}
 
 	for _, resource := range resources {
@@ -83,13 +83,13 @@ func (dcl *ConfigLoaderImpl) LoadMap(resources ...ConfigResource) (*map[string]a
 	return &target, nil
 }
 
-func (dcl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
-	meta, err := dcl.LoadMeta(i)
+func (cl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
+	meta, err := cl.LoadMeta(i)
 	if err != nil {
 		return err
 	}
 
-	target, err := dcl.LoadMap(resources...)
+	target, err := cl.LoadMap(resources...)
 	if err != nil {
 		return err
 	}

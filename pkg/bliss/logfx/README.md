@@ -22,7 +22,7 @@ type Config struct {
 
 ## Fx
 
-The `logfx` package provides an `FxModule` and `GetFxLogger` that can be used to integrate with the `fx` framework.
+The `logfx` package provides an `FxModule` and `GetFxLogger` that can be used to integrate with the `go.uber.org/fx` framework.
 
 ```go
 import (
@@ -44,25 +44,25 @@ app.Run()
 
 ## API
 
-### New function
+### NewLogger function
 
 Creates a new `slog.Logger` object based on the provided configuration.
 
 ```go
-// func New(config *Config) (*slog.Logger, error)
+// func NewLogger(config *Config) (*slog.Logger, error)
 
-logger, err := logfx.New(config)
+logger, err := logfx.NewLogger(config)
 ```
 
 
-### NewDefaultLogger function
+### NewLoggerAsDefault function
 
 Creates a new `slog.Logger` object based on the provided configuration and makes it default slog instance.
 
 ```go
-// func NewDefaultLogger(config *Config) (*slog.Logger, error)
+// func NewLoggerAsDefault(config *Config) (*slog.Logger, error)
 
-logger, err := logfx.NewDefaultLogger(config)
+logger, err := logfx.NewLoggerAsDefault(config)
 ```
 
 

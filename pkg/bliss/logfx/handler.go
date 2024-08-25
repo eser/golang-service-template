@@ -11,8 +11,8 @@ import (
 type Handler struct {
 	InnerHandler slog.Handler
 
-	writer io.Writer
-	config *Config
+	InnerWriter io.Writer
+	InnerConfig *Config
 }
 
 func NewHandler(w io.Writer, config *Config) (*Handler, error) {
@@ -33,9 +33,8 @@ func NewHandler(w io.Writer, config *Config) (*Handler, error) {
 
 	return &Handler{
 		InnerHandler: innerHandler,
-
-		writer: w,
-		config: config,
+		InnerWriter:  w,
+		InnerConfig:  config,
 	}, nil
 }
 
@@ -44,7 +43,7 @@ func (h *Handler) Enabled(ctx context.Context, level slog.Level) bool {
 }
 
 func (h *Handler) Handle(ctx context.Context, rec slog.Record) error {
-	if h.config.PrettyMode {
+	if h.InnerConfig.PrettyMode {
 		out := strings.Builder{}
 
 		out.WriteString(Colored(ColorDimGray, rec.Time.Format("15:04:05.000")))
@@ -67,7 +66,7 @@ func (h *Handler) Handle(ctx context.Context, rec slog.Record) error {
 		out.WriteString(rec.Message)
 		out.WriteRune(' ')
 
-		_, err := io.WriteString(h.writer, out.String())
+		_, err := io.WriteString(h.InnerWriter, out.String())
 		if err != nil {
 			return fmt.Errorf("failed to write log: %w", err)
 		}
@@ -84,15 +83,15 @@ func (h *Handler) Handle(ctx context.Context, rec slog.Record) error {
 func (h *Handler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	return &Handler{
 		InnerHandler: h.InnerHandler.WithAttrs(attrs),
-		writer:       h.writer,
-		config:       h.config,
+		InnerWriter:  h.InnerWriter,
+		InnerConfig:  h.InnerConfig,
 	}
 }
 
 func (h *Handler) WithGroup(name string) slog.Handler {
 	return &Handler{
 		InnerHandler: h.InnerHandler.WithGroup(name),
-		writer:       h.writer,
-		config:       h.config,
+		InnerWriter:  h.InnerWriter,
+		InnerConfig:  h.InnerConfig,
 	}
 }

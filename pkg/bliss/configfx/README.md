@@ -9,7 +9,7 @@ The documentation below provides an overview of the package, its types, function
 
 ## Fx
 
-The `configfx` package provides an `FxModule` that can be used to integrate with the `fx` framework.
+The `configfx` package provides an `FxModule` that can be used to integrate with the `go.uber.org/fx` framework.
 
 ```go
 import (
@@ -49,25 +49,14 @@ type ConfigLoader interface {
 ```
 
 
-### New function
+### NewConfigLoader function
 
-Creates a new `slog.Logger` object based on the provided configuration.
-
-```go
-// func NewLogger(config *Config) (*slog.Logger, error)
-
-logger, err := logfx.NewLogger(config)
-```
-
-
-### NewLoggerAsDefault function
-
-Creates a new `slog.Logger` object based on the provided configuration and makes it default slog instance.
+Creates a new `ConfigLoader` object based on the provided configuration.
 
 ```go
-// func NewLoggerAsDefault(config *Config) (*slog.Logger, error)
+// func NewConfigLoader() *ConfigLoaderImpl
 
-logger, err := logfx.NewLoggerAsDefault(config)
+cl := logfx.NewConfigLoader()
 ```
 
 
@@ -87,6 +76,8 @@ type AppConfig struct {
 
 func loadConfig() (*AppConfig, error) {
   conf := &AppConfig{}
+
+  cl := logfx.NewConfigLoader()
 
   err := cl.Load(
 		conf,

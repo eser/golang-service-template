@@ -8,7 +8,7 @@ import (
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
-func (dcl *ConfigLoaderImpl) FromEnvFileDirect(filename string) ConfigResource {
+func (cl *ConfigLoaderImpl) FromEnvFileDirect(filename string) ConfigResource {
 	return func(target *map[string]any) error {
 		err := envparser.TryParseFiles(target, filename)
 		if err != nil {
@@ -19,7 +19,7 @@ func (dcl *ConfigLoaderImpl) FromEnvFileDirect(filename string) ConfigResource {
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromEnvFile(filename string) ConfigResource {
+func (cl *ConfigLoaderImpl) FromEnvFile(filename string) ConfigResource {
 	return func(target *map[string]any) error {
 		env := lib.EnvGetCurrent()
 		filenames := lib.EnvAwareFilenames(env, filename)
@@ -33,7 +33,7 @@ func (dcl *ConfigLoaderImpl) FromEnvFile(filename string) ConfigResource {
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromSystemEnv() ConfigResource {
+func (cl *ConfigLoaderImpl) FromSystemEnv() ConfigResource {
 	return func(target *map[string]any) error {
 		lib.EnvOverrideVariables(target)
 
@@ -41,7 +41,7 @@ func (dcl *ConfigLoaderImpl) FromSystemEnv() ConfigResource {
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromJsonFileDirect(filename string) ConfigResource {
+func (cl *ConfigLoaderImpl) FromJsonFileDirect(filename string) ConfigResource {
 	return func(target *map[string]any) error {
 		err := jsonparser.TryParseFiles(target, filename)
 		if err != nil {
@@ -52,7 +52,7 @@ func (dcl *ConfigLoaderImpl) FromJsonFileDirect(filename string) ConfigResource 
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromJsonFile(filename string) ConfigResource {
+func (cl *ConfigLoaderImpl) FromJsonFile(filename string) ConfigResource {
 	return func(target *map[string]any) error {
 		env := lib.EnvGetCurrent()
 		filenames := lib.EnvAwareFilenames(env, filename)

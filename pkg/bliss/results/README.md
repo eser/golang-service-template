@@ -44,7 +44,7 @@ var (
 ```
 
 ### Definition.New and Definitions.Wrap methods
-Creates a new `Result` implementation from a definition.
+Creates a new `Result` object from a definition.
 
 Example 1:
 ```go

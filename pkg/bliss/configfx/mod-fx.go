@@ -17,10 +17,10 @@ type FxResult struct {
 	ConfigLoader ConfigLoader
 }
 
-func FxNew() (FxResult, error) {
+func FxNew() FxResult {
 	return FxResult{
 		Out: fx.Out{},
 
 		ConfigLoader: NewConfigLoader(),
-	}, nil
+	}
 }
