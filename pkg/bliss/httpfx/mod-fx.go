@@ -15,7 +15,7 @@ import (
 var FxModule = fx.Module( //nolint:gochecknoglobals
 	"httpservice",
 	fx.Provide(
-		New,
+		FxNew,
 	),
 	fx.Invoke(
 		registerHooks,
@@ -29,7 +29,7 @@ type FxResult struct {
 	Routes      Router
 }
 
-func New(config *Config) (FxResult, error) {
+func FxNew(config *Config) (FxResult, error) {
 	routes := NewRouter("/")
 
 	server := &http.Server{ //nolint:exhaustruct
@@ -43,7 +43,9 @@ func New(config *Config) (FxResult, error) {
 		Handler: routes.GetMux(),
 	}
 
-	return FxResult{ //nolint:exhaustruct
+	return FxResult{
+		Out: fx.Out{},
+
 		HttpService: &HttpService{Server: server, Config: config, Routes: routes},
 		Routes:      routes,
 	}, nil

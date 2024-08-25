@@ -43,7 +43,7 @@ func TestRegisterLogger(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			logger, err := logfx.RegisterLogger(tt.config)
+			logger, err := logfx.NewLogger(tt.config)
 
 			if tt.wantErr {
 				require.Error(t, err)

@@ -64,9 +64,9 @@ func (r ResultImpl) String() string {
 func (r ResultImpl) Attributes() []slog.Attr {
 	attrs := r.Definition.Attributes
 
-	if r.InnerPayload != nil {
-		attrs = append(attrs, slog.Any("payload", r.InnerPayload))
-	}
+	// if r.InnerPayload != nil {
+	// 	attrs = append(attrs, slog.Any("payload", r.InnerPayload))
+	// }
 
 	return append(attrs, r.InnerAttributes...)
 }

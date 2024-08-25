@@ -66,7 +66,14 @@ repos:
             Dockerfile|
             LICENSE|
             Makefile|
-            README.md
+            README.md|
+            pkg/bliss/configfx/README.md|
+            pkg/bliss/datafx/README.md|
+            pkg/bliss/httpfx/README.md|
+            pkg/bliss/lib/README.md|
+            pkg/bliss/logfx/README.md|
+            pkg/bliss/results/README.md|
+            pkg/bliss/README.md|
           )$
       - id: run-tests
         name: run tests

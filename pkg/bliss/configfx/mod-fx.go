@@ -7,7 +7,7 @@ import (
 var FxModule = fx.Module( //nolint:gochecknoglobals
 	"config",
 	fx.Provide(
-		New,
+		FxNew,
 	),
 )
 
@@ -17,8 +17,10 @@ type FxResult struct {
 	ConfigLoader ConfigLoader
 }
 
-func New() (FxResult, error) {
-	return FxResult{ //nolint:exhaustruct
+func FxNew() (FxResult, error) {
+	return FxResult{
+		Out: fx.Out{},
+
 		ConfigLoader: NewConfigLoader(),
 	}, nil
 }

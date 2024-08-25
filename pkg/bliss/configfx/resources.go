@@ -8,7 +8,7 @@ import (
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
-func (dcl *ConfigLoaderImpl) FromEnvFileSingle(filename string) ConfigResource {
+func (dcl *ConfigLoaderImpl) FromEnvFileDirect(filename string) ConfigResource {
 	return func(target *map[string]any) error {
 		err := envparser.TryParseFiles(target, filename)
 		if err != nil {
@@ -41,7 +41,7 @@ func (dcl *ConfigLoaderImpl) FromSystemEnv() ConfigResource {
 	}
 }
 
-func (dcl *ConfigLoaderImpl) FromJsonFileSingle(filename string) ConfigResource {
+func (dcl *ConfigLoaderImpl) FromJsonFileDirect(filename string) ConfigResource {
 	return func(target *map[string]any) error {
 		err := jsonparser.TryParseFiles(target, filename)
 		if err != nil {

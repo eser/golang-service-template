@@ -8,7 +8,7 @@ The documentation below provides an overview of the package, its types, function
 
 ## API
 
-### Result Interface
+### Result interface
 Defines the contract for result types.
 
 ```
@@ -37,9 +37,9 @@ Creates a new `Definition` object.
 // func Define(code string, message string, attributes ...slog.Attr) *Definition
 
 var (
-  resOk       = Define("OP001", "OK")
-  resNotFound = Define("OP002", "Not Found")
-  resFailure  = Define("OP003", "Fail")
+  resOk       = results.Define("OP001", "OK")
+  resNotFound = results.Define("OP002", "Not Found")
+  resFailure  = results.Define("OP003", "Fail")
 )
 ```
 
@@ -49,15 +49,15 @@ Creates a new `Result` implementation from a definition.
 Example 1:
 ```go
 var (
-  resOk       = Define("OP001", "OK")
-  resNotFound = Define("OP002", "Not Found")
-  resFailure  = Define("OP003", "Fail")
+  resOk       = results.Define("OP001", "OK")
+  resNotFound = results.Define("OP002", "Not Found")
+  resFailure  = results.Define("OP003", "Fail")
 )
 
 // func (r *Definition) New(payload ...any) ResultImpl
 // func (r *Definition) Wrap(err error, payload ...any) ResultImpl
 
-func FileOp(filename string) Result {
+func FileOp(filename string) results.Result {
   file, err := os.Open(filepath.Clean(filename))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -76,15 +76,15 @@ func FileOp(filename string) Result {
 Example 2:
 ```go
 var (
-  resOk                = Define("PARSE001", "OK")
-  resSyntaxError       = Define("PARSE002", "Syntax Error")
-  resInvalidOperation  = Define("PARSE003", "Invalid Operation")
+  resOk                = results.Define("PARSE001", "OK")
+  resSyntaxError       = results.Define("PARSE002", "Syntax Error")
+  resInvalidOperation  = results.Define("PARSE003", "Invalid Operation")
 )
 
 // func (r *Definition) New(payload ...any) ResultImpl
 // func (r *Definition) Wrap(err error, payload ...any) ResultImpl
 
-func Parse(...) Result {
+func Parse(...) results.Result {
   if ... {
     // Output: [PARSE002] Syntax Error: host/path missing / (pattern=..., method=...)
     return resSyntaxError.New("host/path missing /").

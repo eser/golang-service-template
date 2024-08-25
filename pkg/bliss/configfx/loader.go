@@ -14,7 +14,7 @@ const (
 	tagRequired = "required"
 )
 
-var ErrNotStruct = results.Define("ERRBC00001", "not a struct")
+var ErrNotStruct = results.Define("ERRBC00001", "not a struct") //nolint:gochecknoglobals
 
 type ConfigItemMeta struct {
 	Name            string
@@ -34,11 +34,11 @@ type ConfigLoader interface {
 	LoadMap(resources ...ConfigResource) (*map[string]any, error)
 	Load(i any, resources ...ConfigResource) error
 
-	FromEnvFileSingle(filename string) ConfigResource
+	FromEnvFileDirect(filename string) ConfigResource
 	FromEnvFile(filename string) ConfigResource
 	FromSystemEnv() ConfigResource
 
-	FromJsonFileSingle(filename string) ConfigResource
+	FromJsonFileDirect(filename string) ConfigResource
 	FromJsonFile(filename string) ConfigResource
 }
 
