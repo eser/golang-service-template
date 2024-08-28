@@ -1,4 +1,4 @@
-package app
+package config
 
 import (
 	"github.com/eser/go-service/pkg/bliss"

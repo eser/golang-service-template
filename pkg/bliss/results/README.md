@@ -11,7 +11,7 @@ The documentation below provides an overview of the package, its types, function
 ### Result interface
 Defines the contract for result types.
 
-```
+```go
 type Result interface {
 	error
 	Unwrap() error

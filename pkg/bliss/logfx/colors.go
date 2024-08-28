@@ -19,6 +19,16 @@ const (
 	ColorLightMagenta Color = "\033[95m"
 	ColorLightCyan    Color = "\033[96m"
 	ColorLightGray    Color = "\033[97m"
+
+	// ColorBrightBlack     Color = "\033[90m"
+	// ColorBrightWhite     Color = "\033[97m"
+	// ColorBrightRedBg     Color = "\033[101m"
+	// ColorBrightGreenBg   Color = "\033[102m"
+	// ColorBrightYellowBg  Color = "\033[103m"
+	// ColorBrightBlueBg    Color = "\033[104m"
+	// ColorBrightMagentaBg Color = "\033[105m"
+	// ColorBrightCyanBg    Color = "\033[106m"
+	// ColorBrightWhiteBg   Color = "\033[107m".
 )
 
 func Colored(color Color, message string) string {

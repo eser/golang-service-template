@@ -11,7 +11,7 @@ The documentation below provides an overview of the package, its types, function
 
 Configuration struct for the logger:
 
-```
+```go
 type Config struct {
 	ReadHeaderTimeout time.Duration `conf:"READ_HEADER_TIMEOUT" default:"5s"`
 	ReadTimeout       time.Duration `conf:"READ_TIMEOUT"        default:"10s"`

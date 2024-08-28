@@ -33,7 +33,7 @@ app.Run()
 ### ConfigLoader interface
 Defines methods for loading configuration.
 
-```
+```go
 type ConfigLoader interface {
 	LoadMeta(i any) (ConfigItemMeta, error)
 	LoadMap(resources ...ConfigResource) (*map[string]any, error)

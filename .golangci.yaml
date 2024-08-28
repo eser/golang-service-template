@@ -10,8 +10,7 @@ output:
 linters:
   enable-all: true
   disable:
-    # - exhaustruct
-    # - godox
+    - godox
     - gomnd
     - stylecheck
     - varnamelen

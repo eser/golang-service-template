@@ -1,6 +1,8 @@
 package datafx
 
 import (
+	"database/sql"
+
 	"go.uber.org/fx"
 )
 
@@ -17,10 +19,10 @@ type FxResult struct {
 	DataProvider DataProvider
 }
 
-func FxNew() FxResult {
+func FxNew(db *sql.DB) FxResult {
 	return FxResult{
 		Out: fx.Out{},
 
-		DataProvider: NewDataProvider(),
+		DataProvider: NewDataProvider(db),
 	}
 }

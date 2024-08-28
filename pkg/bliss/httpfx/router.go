@@ -57,7 +57,7 @@ func (r *RouterImpl) GetRoutes() []*Route {
 	return r.routes
 }
 
-func (r *RouterImpl) Group(path string) Router {
+func (r *RouterImpl) Group(path string) Router { //nolint:ireturn
 	return NewRouter(r.path + path)
 }
 

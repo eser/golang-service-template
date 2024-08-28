@@ -11,7 +11,7 @@ The documentation below provides an overview of the package, its types, function
 
 Configuration struct for the logger:
 
-```
+```go
 type Config struct {
 	Level      string `conf:"LEVEL"      default:"INFO"`
 	PrettyMode bool   `conf:"PRETTY"     default:"true"`

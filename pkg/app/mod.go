@@ -2,8 +2,10 @@ package app
 
 import (
 	"fmt"
-	"net/http"
 
+	"github.com/eser/go-service/pkg/app/config"
+	"github.com/eser/go-service/pkg/app/routes/home"
+	"github.com/eser/go-service/pkg/app/routes/protected"
 	"github.com/eser/go-service/pkg/bliss"
 	"github.com/eser/go-service/pkg/bliss/configfx"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
@@ -16,17 +18,19 @@ import (
 var FxModule = fx.Module( //nolint:gochecknoglobals
 	"app",
 	fx.Invoke(
-		RegisterRoutes,
+		RegisterMiddlewares,
+		home.IndexRoutes,
+		protected.IndexRoutes,
 	),
 	fx.Provide(
-		bliss.LoadConfig[AppConfig](LoadConfig),
+		bliss.LoadConfig[config.AppConfig](LoadConfig),
 	),
 	healthcheck.FxModule,
 	openapi.FxModule,
 )
 
-func LoadConfig(cl configfx.ConfigLoader) (*AppConfig, error) {
-	appConfig := &AppConfig{} //nolint:exhaustruct
+func LoadConfig(cl configfx.ConfigLoader) (*config.AppConfig, error) {
+	appConfig := &config.AppConfig{} //nolint:exhaustruct
 
 	err := cl.Load(
 		appConfig,
@@ -42,35 +46,10 @@ func LoadConfig(cl configfx.ConfigLoader) (*AppConfig, error) {
 	return appConfig, nil
 }
 
-func RegisterRoutes(routes httpfx.Router, appConfig *AppConfig) {
+func RegisterMiddlewares(routes httpfx.Router, appConfig *config.AppConfig) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
 	routes.Use(middlewares.ResolveAddressMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())
 	routes.Use(middlewares.CorsMiddleware())
-
-	routes.
-		Route("GET /", func(ctx *httpfx.Context) httpfx.Result {
-			message := fmt.Sprintf(
-				"Hello %s (%s) from %s!",
-				ctx.Request.Context().Value(middlewares.ClientAddr),
-				ctx.Request.Context().Value(middlewares.ClientAddrOrigin),
-				appConfig.AppName,
-			)
-
-			return ctx.Results.PlainText(message)
-		}).
-		HasSummary("Homepage").
-		HasDescription("This is the homepage of the service.").
-		HasResponse(http.StatusOK)
-
-	routes.
-		Route("GET /protected", middlewares.AuthMiddleware(), func(ctx *httpfx.Context) httpfx.Result {
-			message := fmt.Sprintf("Hello from %s! this endpoint is protected!", appConfig.AppName)
-
-			return ctx.Results.PlainText(message)
-		}).
-		HasSummary("Protected page").
-		HasDescription("A page protected with JWT auth.").
-		HasResponse(http.StatusOK)
 }
