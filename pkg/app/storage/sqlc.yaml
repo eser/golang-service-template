@@ -1,0 +1,14 @@
+version: "2"
+
+sql:
+  - engine: "postgresql"
+    queries: "db/sql/dmls.sql"
+    schema: "db/sql/ddls.sql"
+    rules:
+      - sqlc/db-prepare
+    gen:
+      go:
+        package: "db"
+        out: "db"
+        sql_package: "database/sql"
+        initialisms: []

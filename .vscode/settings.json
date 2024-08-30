@@ -1,10 +1,11 @@
 {
   "go.testFlags": [
-    "-v",
-    "-failfast"
+    "-failfast",
+    "-count 1"
   ],
   "go.toolsManagement.autoUpdate": true,
   "go.useLanguageServer": true,
+  "go.vetOnSave": "package",
   "go.lintFlags": [
     "--build-tags=integration,unit"
   ],
