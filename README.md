@@ -45,6 +45,18 @@ This project inherits the [Standard Go Project Layout](https://github.com/golang
 
 
 - 2️⃣ Install prerequisites
+
+  **On macOS and Homebrew (automatically):**
+
+  ```bash
+  $ make init
+  ```
+
+  If it fails on any step, you can install them manually by following the steps below. Otherwise, you can skip the rest of the steps.
+
+
+  **On other OS or without Homebrew:**
+
   - Install and enable [pre-commit](https://pre-commit.com/#install)
   - Install [GNU make](https://www.gnu.org/software/make/)
   - Install [govulncheck](https://go.googlesource.com/vuln)

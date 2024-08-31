@@ -1,11 +1,18 @@
-.PHONY: dev build multiarch-build run clean test test-api test-cov test-ci dep lint container-start container-start-prod container-rebuild container-rebuild-prod container-restart container-restart-prod container-stop container-stop-prod container-destroy container-destroy-prod container-update container-update-prod container-dev container-ps container-ps-prod container-logs-all container-logs-all-prod container-logs container-logs-prod container-cli container-cli-prod container-push
+.PHONY: init dev build multiarch-build generate clean run test test-api test-cov test-ci dep lint container-start container-start-prod container-rebuild container-rebuild-prod container-restart container-restart-prod container-stop container-stop-prod container-destroy container-destroy-prod container-update container-update-prod container-dev container-ps container-ps-prod container-logs-all container-logs-all-prod container-logs container-logs-prod container-cli container-cli-prod container-push
 # .RECIPEPREFIX := $(.RECIPEPREFIX)<space>
 BINARY_NAME=service-cli
 TESTCOVERAGE_THRESHOLD=0
 
+init:
+	brew install pre-commit
+	brew install make
+	pre-commit install
+	go install github.com/air-verse/air@latest
+	go install golang.org/x/vuln/cmd/govulncheck@latest
+	go install github.com/jandelgado/gcov2lcov@latest
+
 dev:
-	# go run ./cmd/${BINARY_NAME}/
-	air
+	air; if [ $$? -ne 0 ]; then go run ./cmd/${BINARY_NAME}/; fi
 
 build:
 	go build -o ./tmp/dist/${BINARY_NAME} ./cmd/${BINARY_NAME}/
@@ -18,11 +25,14 @@ multiarch-build:
 	GOARCH=arm64 GOOS=linux go build -o ./tmp/dist/${BINARY_NAME}-linux-arm64 ./cmd/${BINARY_NAME}
 	GOARCH=arm64 GOOS=windows go build -o ./tmp/dist/${BINARY_NAME}-windows-arm64 ./cmd/${BINARY_NAME}
 
-run: build
-	./tmp/dist/${BINARY_NAME}
+generate:
+	go generate ./...
 
 clean:
 	go clean
+
+run: build
+	./tmp/dist/${BINARY_NAME}
 
 test-api:
 	cd ./deployments/api/ && \
