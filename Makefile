@@ -1,4 +1,4 @@
-.PHONY: dev build multiarch-build run clean test test-cov test-ci dep lint container-start container-start-prod container-rebuild container-rebuild-prod container-restart container-restart-prod container-stop container-stop-prod container-destroy container-destroy-prod container-update container-update-prod container-dev container-ps container-ps-prod container-logs-all container-logs-all-prod container-logs container-logs-prod container-cli container-cli-prod container-push
+.PHONY: dev build multiarch-build run clean test test-api test-cov test-ci dep lint container-start container-start-prod container-rebuild container-rebuild-prod container-restart container-restart-prod container-stop container-stop-prod container-destroy container-destroy-prod container-update container-update-prod container-dev container-ps container-ps-prod container-logs-all container-logs-all-prod container-logs container-logs-prod container-cli container-cli-prod container-push
 # .RECIPEPREFIX := $(.RECIPEPREFIX)<space>
 BINARY_NAME=service-cli
 TESTCOVERAGE_THRESHOLD=0
@@ -23,6 +23,11 @@ run: build
 
 clean:
 	go clean
+
+test-api:
+	cd ./deployments/api/ && \
+	bru run ./ --env development && \
+	cd ../../
 
 test:
 	go test -failfast -count 1 ./...
