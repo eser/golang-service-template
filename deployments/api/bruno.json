@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "golang-service-template",
+  "type": "collection",
+  "ignore": [
+    "tmp",
+    ".git"
+  ]
+}

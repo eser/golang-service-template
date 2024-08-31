@@ -40,5 +40,3 @@ __debug_bin*
 build-errors.log
 /tmp/*
 !/tmp/.gitkeep
-/dist/*
-!/dist/.gitkeep

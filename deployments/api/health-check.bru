@@ -1,0 +1,21 @@
+meta {
+  name: Health Check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseuri}}/health-check
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: 204
+}
+
+tests {
+  test("status code is 204", function() {
+    expect(res.status).equal(204);
+  });
+}

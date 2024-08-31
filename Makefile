@@ -8,18 +8,18 @@ dev:
 	air
 
 build:
-	go build -o ./dist/${BINARY_NAME} ./cmd/${BINARY_NAME}/
+	go build -o ./tmp/dist/${BINARY_NAME} ./cmd/${BINARY_NAME}/
 
 multiarch-build:
-	GOARCH=amd64 GOOS=darwin go build -o ./dist/${BINARY_NAME}-darwin-amd64 ./cmd/${BINARY_NAME}
-	GOARCH=amd64 GOOS=linux go build -o ./dist/${BINARY_NAME}-linux-amd64 ./cmd/${BINARY_NAME}
-	GOARCH=amd64 GOOS=windows go build -o ./dist/${BINARY_NAME}-windows-amd64 ./cmd/${BINARY_NAME}
-	GOARCH=arm64 GOOS=darwin go build -o ./dist/${BINARY_NAME}-darwin-arm64 ./cmd/${BINARY_NAME}
-	GOARCH=arm64 GOOS=linux go build -o ./dist/${BINARY_NAME}-linux-arm64 ./cmd/${BINARY_NAME}
-	GOARCH=arm64 GOOS=windows go build -o ./dist/${BINARY_NAME}-windows-arm64 ./cmd/${BINARY_NAME}
+	GOARCH=amd64 GOOS=darwin go build -o ./tmp/dist/${BINARY_NAME}-darwin-amd64 ./cmd/${BINARY_NAME}
+	GOARCH=amd64 GOOS=linux go build -o ./tmp/dist/${BINARY_NAME}-linux-amd64 ./cmd/${BINARY_NAME}
+	GOARCH=amd64 GOOS=windows go build -o ./tmp/dist/${BINARY_NAME}-windows-amd64 ./cmd/${BINARY_NAME}
+	GOARCH=arm64 GOOS=darwin go build -o ./tmp/dist/${BINARY_NAME}-darwin-arm64 ./cmd/${BINARY_NAME}
+	GOARCH=arm64 GOOS=linux go build -o ./tmp/dist/${BINARY_NAME}-linux-arm64 ./cmd/${BINARY_NAME}
+	GOARCH=arm64 GOOS=windows go build -o ./tmp/dist/${BINARY_NAME}-windows-arm64 ./cmd/${BINARY_NAME}
 
 run: build
-	./dist/${BINARY_NAME}
+	./tmp/dist/${BINARY_NAME}
 
 clean:
 	go clean
