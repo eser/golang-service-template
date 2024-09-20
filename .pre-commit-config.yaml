@@ -67,6 +67,7 @@ repos:
             LICENSE|
             Makefile|
             README.md|
+            deployments/resources/fluentd/Dockerfile|
             pkg/bliss/configfx/README.md|
             pkg/bliss/datafx/README.md|
             pkg/bliss/httpfx/README.md|
