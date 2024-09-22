@@ -46,10 +46,11 @@ func LoadConfig(cl configfx.ConfigLoader) (*config.AppConfig, error) {
 	return appConfig, nil
 }
 
-func RegisterMiddlewares(routes httpfx.Router, appConfig *config.AppConfig) {
+func RegisterMiddlewares(routes httpfx.Router, httpMetrics *httpfx.Metrics, appConfig *config.AppConfig) {
 	routes.Use(middlewares.ErrorHandlerMiddleware())
 	routes.Use(middlewares.ResolveAddressMiddleware())
 	routes.Use(middlewares.ResponseTimeMiddleware())
 	routes.Use(middlewares.CorrelationIdMiddleware())
 	routes.Use(middlewares.CorsMiddleware())
+	routes.Use(middlewares.MetricsMiddleware(httpMetrics))
 }

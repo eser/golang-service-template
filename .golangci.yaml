@@ -15,6 +15,7 @@ linters:
     - stylecheck
     - varnamelen
     - execinquery
+    - exportloopref
 
 linters-settings:
   depguard:
@@ -34,6 +35,7 @@ linters-settings:
           - github.com/go-faker/faker/v4
           - github.com/getkin/kin-openapi/openapi3
           - github.com/golang-jwt/jwt/v5
+          - github.com/prometheus/client_golang/prometheus
   revive:
     # enable-all-rules: true
     ignore-generated-header: true

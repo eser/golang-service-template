@@ -19,8 +19,9 @@ type HttpService interface {
 }
 
 type HttpServiceImpl struct {
-	InnerServer *http.Server
-	InnerRouter Router
+	InnerServer  *http.Server
+	InnerRouter  Router
+	InnerMetrics *Metrics
 
 	Config *Config
 }
@@ -41,8 +42,8 @@ func NewHttpService(config *Config, router Router) *HttpServiceImpl {
 
 	return &HttpServiceImpl{
 		InnerServer: server,
-		Config:      config,
 		InnerRouter: router,
+		Config:      config,
 	}
 }
 

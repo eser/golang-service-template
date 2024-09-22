@@ -25,7 +25,7 @@ func NewUserRepository(tx datafx.DbExecutor) UserRepository {
 	}
 }
 
-func (r UserRepository) DbExecutor() datafx.DbExecutor { //nolint:ireturn
+func (r UserRepository) DbExecutor() datafx.DbExecutor {
 	return r.tx
 }
 

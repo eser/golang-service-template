@@ -1,6 +1,7 @@
 package httpfx
 
 import (
+	"github.com/eser/go-service/pkg/bliss/metricsfx"
 	"go.uber.org/fx"
 )
 
@@ -19,17 +20,20 @@ type FxResult struct {
 
 	HttpService HttpService
 	Routes      Router
+	Metrics     *Metrics
 }
 
-func FxNew(config *Config) FxResult {
+func FxNew(config *Config, mp metricsfx.MetricsProvider) FxResult {
 	routes := NewRouter("/")
 	httpService := NewHttpService(config, routes)
+	metrics := NewMetrics(mp)
 
 	return FxResult{
 		Out: fx.Out{},
 
 		HttpService: httpService,
 		Routes:      routes,
+		Metrics:     metrics,
 	}
 }
 
