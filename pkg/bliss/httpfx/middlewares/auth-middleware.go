@@ -11,10 +11,10 @@ import (
 )
 
 const (
-	AuthClaims httpfx.ContextKey = "claims"
+	ContextKeyAuthClaims httpfx.ContextKey = "claims"
 )
 
-var ErrInvalidSigningMethod = results.Define("ERRBHMA001", "Invalid signing method")
+var ErrInvalidSigningMethod = results.Define("ERRBHMA001", "Invalid signing method") //nolint:gochecknoglobals
 
 func AuthMiddleware() httpfx.Handler {
 	return func(ctx *httpfx.Context) httpfx.Result {
@@ -49,7 +49,7 @@ func AuthMiddleware() httpfx.Handler {
 
 		ctx.UpdateContext(context.WithValue(
 			ctx.Request.Context(),
-			AuthClaims,
+			ContextKeyAuthClaims,
 			claims,
 		))
 

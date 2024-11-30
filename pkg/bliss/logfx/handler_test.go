@@ -3,7 +3,7 @@ package logfx_test
 import (
 	"bytes"
 	"context"
-	"fmt"
+	"errors"
 	"log/slog"
 	"testing"
 	"time"
@@ -15,8 +15,8 @@ import (
 
 type mockFailWriter struct{}
 
-func (m *mockFailWriter) Write(p []byte) (n int, err error) {
-	return 0, fmt.Errorf("failed to write")
+func (m *mockFailWriter) Write(p []byte) (int, error) {
+	return 0, errors.New("failed to write") //nolint:err113
 }
 
 func TestNewHandler(t *testing.T) {
@@ -93,7 +93,7 @@ func TestHandler_Enabled(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			handler, _ := logfx.NewHandler(&bytes.Buffer{}, &logfx.Config{
+			handler, _ := logfx.NewHandler(&bytes.Buffer{}, &logfx.Config{ //nolint:exhaustruct
 				Level: tt.level,
 			})
 
@@ -102,7 +102,7 @@ func TestHandler_Enabled(t *testing.T) {
 	}
 }
 
-func TestHandler_Handle(t *testing.T) {
+func TestHandler_Handle(t *testing.T) { //nolint:funlen
 	t.Parallel()
 
 	tests := []struct {
@@ -148,7 +148,7 @@ func TestHandler_Handle(t *testing.T) {
 			t.Parallel()
 
 			writer := &bytes.Buffer{}
-			handler, _ := logfx.NewHandler(writer, &logfx.Config{
+			handler, _ := logfx.NewHandler(writer, &logfx.Config{ //nolint:exhaustruct
 				Level:      tt.level,
 				PrettyMode: true,
 			})
@@ -162,7 +162,8 @@ func TestHandler_Handle(t *testing.T) {
 
 	t.Run("failed to write log", func(t *testing.T) {
 		t.Parallel()
-		handler, _ := logfx.NewHandler(&mockFailWriter{}, &logfx.Config{
+
+		handler, _ := logfx.NewHandler(&mockFailWriter{}, &logfx.Config{ //nolint:exhaustruct
 			Level:      "info",
 			PrettyMode: true,
 		})
@@ -173,17 +174,19 @@ func TestHandler_Handle(t *testing.T) {
 
 func TestHandler_WithAttrs(t *testing.T) {
 	t.Parallel()
-	handler, _ := logfx.NewHandler(&bytes.Buffer{}, &logfx.Config{
+
+	handler, _ := logfx.NewHandler(&bytes.Buffer{}, &logfx.Config{ //nolint:exhaustruct
 		Level: "info",
 	})
-	newHandler := handler.WithAttrs([]slog.Attr{})
+	newHandler := handler.WithAttrs(make([]slog.Attr, 0))
 	// FIXME(@eser) should equal or not?
 	assert.Equal(t, handler, newHandler)
 }
 
 func TestHandler_WithGroup(t *testing.T) {
 	t.Parallel()
-	handler, _ := logfx.NewHandler(&bytes.Buffer{}, &logfx.Config{
+
+	handler, _ := logfx.NewHandler(&bytes.Buffer{}, &logfx.Config{ //nolint:exhaustruct
 		Level: "info",
 	})
 	newHandler := handler.WithGroup("test")

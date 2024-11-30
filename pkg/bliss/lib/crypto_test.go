@@ -2,7 +2,7 @@ package lib_test
 
 import (
 	"crypto/rand"
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/lib"
@@ -17,9 +17,9 @@ type MockReader struct {
 }
 
 // Read implements the io.Reader interface for MockReader.
-func (m *MockReader) Read(p []byte) (n int, err error) {
+func (m *MockReader) Read(p []byte) (int, error) {
 	if m.fail {
-		return 0, fmt.Errorf("mock read error")
+		return 0, errors.New("mock read error") //nolint:err113
 	}
 
 	// Simulate successful read
@@ -48,7 +48,7 @@ func TestCryptoGetRandomBytes(t *testing.T) { //nolint:paralleltest
 		},
 	}
 
-	for _, tt := range tests {
+	for _, tt := range tests { //nolint:paralleltest
 		t.Run(tt.name, func(t *testing.T) {
 			originalRand := rand.Reader
 			defer func() {
@@ -69,7 +69,7 @@ func TestCryptoGetRandomBytes(t *testing.T) { //nolint:paralleltest
 			}
 
 			require.NoError(t, err, "CryptoGetRandomBytes() error = %v, expectedError false", err)
-			assert.Equal(t, size, len(result), "CryptoGetRandomBytes() = %v, want length %v", result, size)
+			assert.Len(t, result, size, "CryptoGetRandomBytes() = %v, want length %v", result, size)
 		})
 	}
 }

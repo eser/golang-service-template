@@ -1,0 +1,23 @@
+{
+  "lock": true,
+  "nodeModulesDir": "manual",
+  "unstable": [
+    "cron",
+    "temporal"
+  ],
+  "exclude": [
+    "**/node_modules/*",
+    "**/.next/*",
+    "**/proto-ts/*"
+  ],
+  "lint": {
+    "rules": {
+      "tags": [
+        "recommended"
+      ]
+    }
+  },
+  "fmt": {
+    "lineWidth": 120
+  }
+}

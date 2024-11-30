@@ -13,7 +13,7 @@ func TestTryParseFiles(t *testing.T) {
 	t.Run("should parse a json config file", func(t *testing.T) {
 		t.Parallel()
 
-		m := map[string]any{}
+		m := make(map[string]any)
 		err := jsonparser.TryParseFiles(&m, "./testdata/config.json")
 
 		if assert.NoError(t, err) {
@@ -25,7 +25,7 @@ func TestTryParseFiles(t *testing.T) {
 	t.Run("should parse multiple json config files", func(t *testing.T) {
 		t.Parallel()
 
-		m := map[string]any{}
+		m := make(map[string]any)
 		err := jsonparser.TryParseFiles(&m, "./testdata/config.json", "./testdata/config.development.json")
 
 		if assert.NoError(t, err) {

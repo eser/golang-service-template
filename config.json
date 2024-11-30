@@ -1,0 +1,9 @@
+{
+  "data": {
+    "sources": {
+      "default": {
+        "dsn": "postgres://postgres:s3cr3t@localhost:5432/postgres?sslmode=disable"
+      }
+    }
+  }
+}

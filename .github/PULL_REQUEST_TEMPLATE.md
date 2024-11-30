@@ -10,8 +10,7 @@ Fixes #
 
 ## Check List (Check all the applicable boxes)
 
-- [x] The title of my pull request is a short description of the requested
-      changes.
+- [x] The title of my pull request is a short description of the requested changes.
 - [x] My code follows the code style of this project.
 - [ ] My change requires changes to the documentation.
 - [ ] I have updated the documentation accordingly.

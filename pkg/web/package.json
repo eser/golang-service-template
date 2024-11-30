@@ -1,0 +1,31 @@
+{
+  "name": "next-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.2.2",
+    "@grpc/grpc-js": "^1.12.2",
+    "@radix-ui/themes": "^3.1.6",
+    "babel-plugin-react-compiler": "^19.0.0-beta-df7b47d-20241124",
+    "fluid-tailwind": "^1.0.4",
+    "next": "^15.0.3",
+    "react": "19.0.0-rc-f994737d14-20240522",
+    "react-dom": "19.0.0-rc-f994737d14-20240522"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "postcss": "^8.4.49",
+    "postcss-import": "^16.1.0",
+    "tailwindcss": "^3.4.15",
+    "ts-proto": "^2.4.2",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}

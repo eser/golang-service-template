@@ -187,8 +187,8 @@ func TestEnvOverrideVariables(t *testing.T) {
 		},
 		{
 			name:         "should handle empty environment",
-			env:          map[string]string{},
-			expectedArgs: map[string]any{},
+			env:          make(map[string]string),
+			expectedArgs: make(map[string]any),
 		},
 	}
 

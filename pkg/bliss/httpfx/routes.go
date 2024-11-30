@@ -11,9 +11,9 @@ type RouteOpenApiSpecRequest struct {
 }
 
 type RouteOpenApiSpecResponse struct {
+	Model      any
 	StatusCode int
 	HasModel   bool
-	Model      any
 }
 
 type RouteOpenApiSpec struct {
@@ -21,10 +21,10 @@ type RouteOpenApiSpec struct {
 	Summary     string
 	Description string
 	Tags        []string
-	Deprecated  bool
 
-	Requests  []RouteOpenApiSpecRequest
-	Responses []RouteOpenApiSpecResponse
+	Requests   []RouteOpenApiSpecRequest
+	Responses  []RouteOpenApiSpecResponse
+	Deprecated bool
 }
 
 type Route struct {

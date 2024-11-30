@@ -23,7 +23,7 @@ func createToken(secret string, exp time.Time) string {
 	return tokenString
 }
 
-func TestAuthMiddleware(t *testing.T) {
+func TestAuthMiddleware(t *testing.T) { //nolint:funlen
 	t.Parallel()
 
 	tests := []struct {
@@ -83,7 +83,7 @@ func TestAuthMiddleware(t *testing.T) {
 			}
 
 			if tt.expectedStatusCode == http.StatusOK || tt.expectedStatusCode == http.StatusNoContent {
-				claims, claimsOk := httpCtx.Request.Context().Value(middlewares.AuthClaims).(jwt.MapClaims)
+				claims, claimsOk := httpCtx.Request.Context().Value(middlewares.ContextKeyAuthClaims).(jwt.MapClaims)
 
 				assert.True(t, claimsOk, "Claims are missing in context")
 

@@ -13,7 +13,7 @@ type Metrics struct {
 
 func NewMetrics(mp metricsfx.MetricsProvider) *Metrics {
 	requestsTotal := prometheus.NewCounterVec(
-		prometheus.CounterOpts{
+		prometheus.CounterOpts{ //nolint:exhaustruct
 			Name: "http_requests_total",
 			Help: "Total number of HTTP requests",
 		},

@@ -16,6 +16,22 @@ type DbExecutor interface {
 	// QueryRow(query string, args ...any) *sql.Row
 }
 
+type DbExecutorDb interface {
+	DbExecutor
+
+	PingContext(ctx context.Context) error
+	// Ping() error
+	BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error)
+	// Begin() (*sql.Tx, error)
+}
+
+type DbExecutorTx interface {
+	DbExecutor
+
+	Rollback() error
+	Commit() error
+}
+
 type Repository interface {
-	DbExecutor() DbExecutor
+	// DbScope() DbExecutor
 }

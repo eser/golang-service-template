@@ -1,4 +1,11 @@
 {
+  "coverage-gutters.coverageBaseDir": "./test/",
+  "coverage-gutters.coverageFileNames": [
+    "cov_profile.lcov"
+  ],
+  "coverage-gutters.showGutterCoverage": true,
+  "coverage-gutters.showLineCoverage": true,
+  "coverage-gutters.showRulerCoverage": true,
   "go.testFlags": [
     "-failfast",
     "-count 1"
@@ -24,20 +31,67 @@
     ],
     "ui.semanticTokens": true
   },
+  "deno.codeLens.test": true,
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.suggest.imports.autoDiscover": true,
+  "deno.cacheOnSave": true,
+  "deno.codeLens.implementations": true,
+  "biome.enabled": false,
+  "css.customData": [
+    ".vscode/tailwind.json"
+  ],
+  "files.associations": {
+    "*.mdoc": "markdown",
+    "*.mdx": "markdown"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/tmp": true,
+    "**/.next": true,
+    ".vscode/extensions.json": true,
+    ".vscode/tailwind.json": true,
+    ".adr-dir": true,
+    ".air.toml": true,
+    ".editorconfig": true,
+    ".gitattributes": true,
+    "deno.json": true,
+    "go.sum": true,
+    "LICENSE": true
+  },
+  "redhat.telemetry.enabled": false,
+  "editor.defaultFormatter": "denoland.vscode-deno",
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow.json": "./.github/workflows/*.yml"
   },
   "[codeowners]": {
     "editor.defaultFormatter": "chdsbd.github-code-owners"
   },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
   "[json]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
+    "editor.defaultFormatter": "denoland.vscode-deno"
   },
-  "files.associations": {
-    "*.mdoc": "markdown",
-    "*.mdx": "markdown"
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[postcss]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
   }
 }

@@ -2,10 +2,11 @@
 
 ## Overview
 
-The **httpfx** package provides a framework for building HTTP services with support for routing, middleware, and OpenAPI documentation generation. The package is designed to work seamlessly with the `go.uber.org/fx` framework.
+The **httpfx** package provides a framework for building HTTP services with support for routing, middleware, and OpenAPI
+documentation generation. The package is designed to work seamlessly with the `bliss/di` package.
 
-The documentation below provides an overview of the package, its types, functions, and usage examples. For more detailed information, refer to the source code and tests.
-
+The documentation below provides an overview of the package, its types, functions, and usage examples. For more detailed
+information, refer to the source code and tests.
 
 ## Configuration
 
@@ -25,27 +26,24 @@ type Config struct {
 }
 ```
 
+## Bliss DI
 
-## Fx
-
-The `httpfx` package provides an `FxModule` that can be used to integrate with the `go.uber.org/fx` framework.
+The `httpfx` package provides a `RegisterDependencies` function that can be used to integrate with the `bliss/di`
+package.
 
 ```go
 import (
   ...
+  "github.com/eser/go-service/pkg/bliss/di"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
-	"go.uber.org/fx"
   ...
 )
 
-app := fx.New(
-	httpfx.FxModule,                    // registers httpfx.HttpService and httpfx.Router
+err := di.RegisterFn(
+	httpfx.RegisterDependencies,                    // registers httpfx.HttpService and httpfx.Router
 	...
 )
-
-app.Run()
 ```
-
 
 ## API
 
@@ -59,7 +57,6 @@ Create a new `Router` object.
 router := httpfx.NewRouter("/")
 ```
 
-
 ### NewHttpService function
 
 Creates a new `HttpService` object based on the provided configuration.
@@ -71,4 +68,4 @@ router := httpfx.NewRouter("/")
 hs := httpfx.HttpService(config, router)
 ```
 
-TODO(@eser): rest of the documentation
+TODO(@eser) rest of the documentation

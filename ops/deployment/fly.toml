@@ -1,0 +1,33 @@
+# fly.toml app configuration file generated for go-service on 2024-10-06T12:32:31+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "go-service"
+
+[build]
+build-target = "runner"
+dockerfile = "Dockerfile"
+
+  [build.args]
+  MODE = "production"
+
+[deploy]
+# max_unavailable = 1
+strategy = "rolling"
+
+[env]
+NODE_ENV = "production"
+
+[http_service]
+auto_start_machines = true
+auto_stop_machines = true
+force_https = true
+internal_port = 3_000
+min_machines_running = 0
+processes = [ "app" ]
+
+[[vm]]
+cpu_kind = "shared"
+cpus = 1
+memory = "1gb"

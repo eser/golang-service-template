@@ -30,10 +30,10 @@ const (
 )
 
 var (
-	ErrZeroLengthString        = results.Define("ERRBCE0001", "zero length string")
-	ErrKeyNameNotFound         = results.Define("ERRBCE0002", "key name not found")
-	ErrUnexpectedChar          = results.Define("ERRBCE0003", "unexpected character")
-	ErrUnterminatedQuotedValue = results.Define("ERRBCE0004", "unterminated quoted value")
+	ErrZeroLengthString        = results.Define("ERRBCE0001", "zero length string")        //nolint:gochecknoglobals
+	ErrKeyNameNotFound         = results.Define("ERRBCE0002", "key name not found")        //nolint:gochecknoglobals
+	ErrUnexpectedChar          = results.Define("ERRBCE0003", "unexpected character")      //nolint:gochecknoglobals
+	ErrUnterminatedQuotedValue = results.Define("ERRBCE0004", "unterminated quoted value") //nolint:gochecknoglobals
 )
 
 func ParseBytes(data []byte, out *map[string]any) error {

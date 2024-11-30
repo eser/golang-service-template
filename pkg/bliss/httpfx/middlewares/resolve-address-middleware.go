@@ -88,7 +88,7 @@ func DetectLocalNetwork(requestAddr string) (bool, error) {
 
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
-		return false, err
+		return false, err //nolint:wrapcheck
 	}
 
 	requestIpNet := net.ParseIP(requestIp)

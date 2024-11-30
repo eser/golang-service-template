@@ -10,7 +10,7 @@ type Results struct{}
 func (r *Results) Ok() ResultImpl {
 	return ResultImpl{ //nolint:exhaustruct
 		InnerStatusCode: http.StatusNoContent,
-		InnerBody:       []byte{},
+		InnerBody:       make([]byte, 0),
 	}
 }
 
@@ -31,7 +31,7 @@ func (r *Results) PlainText(body string) ResultImpl {
 func (r *Results) Json(body any) ResultImpl {
 	encoded, err := json.Marshal(body)
 	if err != nil {
-		// TODO(@eser): Log error
+		// TODO(@eser) Log error
 		return r.Error(
 			http.StatusInternalServerError,
 			"Failed to encode JSON",
@@ -45,9 +45,9 @@ func (r *Results) Json(body any) ResultImpl {
 }
 
 func (r *Results) Redirect(uri string) ResultImpl {
-	return ResultImpl{
+	return ResultImpl{ //nolint:exhaustruct
 		InnerStatusCode:    http.StatusTemporaryRedirect,
-		InnerBody:          []byte{},
+		InnerBody:          make([]byte, 0),
 		InnerRedirectToUri: uri,
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCleanPath(t *testing.T) {
+func TestCleanPath(t *testing.T) { //nolint:funlen
 	t.Parallel()
 
 	tests := []struct {
@@ -88,7 +88,7 @@ func TestCleanPath(t *testing.T) {
 
 			result := uris.CleanPath(tt.input)
 
-			assert.Equal(t, result, tt.expected)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }

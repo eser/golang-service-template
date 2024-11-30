@@ -2,35 +2,36 @@
 
 ## Overview
 
-The **configfx** package provides a flexible and powerful configuration loader for Go applications. It supports loading configuration from various sources, including environment files, JSON files, and system environment variables. The package is designed to work seamlessly with the `go.uber.org/fx` framework.
+The **configfx** package provides a flexible and powerful configuration loader for Go applications. It supports loading
+configuration from various sources, including environment files, JSON files, and system environment variables. The
+package is designed to work seamlessly with the `bliss/di` package.
 
-The documentation below provides an overview of the package, its types, functions, and usage examples. For more detailed information, refer to the source code and tests.
+The documentation below provides an overview of the package, its types, functions, and usage examples. For more detailed
+information, refer to the source code and tests.
 
+## Bliss DI
 
-## Fx
-
-The `configfx` package provides an `FxModule` that can be used to integrate with the `go.uber.org/fx` framework.
+The `configfx` package provides a `RegisterDependencies` function that can be used to integrate with the `bliss/di`
+package.
 
 ```go
 import (
   ...
+  "github.com/eser/go-service/pkg/bliss/di"
 	"github.com/eser/go-service/pkg/bliss/configfx"
-	"go.uber.org/fx"
   ...
 )
 
-app := fx.New(
-	configfx.FxModule,                 // registers configfx.ConfigLoader
+err := di.RegisterFn(
+	configfx.RegisterDependencies,                 // registers configfx.ConfigLoader
 	...
 )
-
-app.Run()
 ```
-
 
 ## API
 
 ### ConfigLoader interface
+
 Defines methods for loading configuration.
 
 ```go
@@ -48,7 +49,6 @@ type ConfigLoader interface {
 }
 ```
 
-
 ### NewConfigLoader function
 
 Creates a new `ConfigLoader` object based on the provided configuration.
@@ -59,12 +59,12 @@ Creates a new `ConfigLoader` object based on the provided configuration.
 cl := logfx.NewConfigLoader()
 ```
 
-
 ### Load function
 
 The `Load` method loads configuration from multiple resources.
 
 Example:
+
 ```go
 type AppConfig struct {
 	AppName  string `conf:"NAME" default:"go-service"`

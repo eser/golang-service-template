@@ -1,6 +1,20 @@
+severity:
+  default-severity: error
+
+  rules:
+    - linters:
+        - wsl
+        - errcheck
+      severity: warning
+    - linters:
+        - varnamelen
+      severity: low
+
 run:
-  concurrency: 4
   timeout: 1m
+  issues-exit-code: 1
+  tests: true
+  concurrency: 4
 
 output:
   formats:
@@ -13,7 +27,6 @@ linters:
     - godox
     - gomnd
     - stylecheck
-    - varnamelen
     - execinquery
     - exportloopref
 
@@ -27,8 +40,10 @@ linters-settings:
         allow:
           - $gostd
           - golang.org/x/net/http/httpguts
+          - google.golang.org/grpc
+          - google.golang.org/grpc/reflection
+          - google.golang.org/grpc/status
           - github.com/eser/go-service
-          - go.uber.org/fx
           - github.com/oklog/ulid/v2
           - github.com/go-playground/validator/v10
           - github.com/stretchr/testify
@@ -36,6 +51,8 @@ linters-settings:
           - github.com/getkin/kin-openapi/openapi3
           - github.com/golang-jwt/jwt/v5
           - github.com/prometheus/client_golang/prometheus
+          - github.com/pressly/goose/v3
+          - github.com/lib/pq
   revive:
     # enable-all-rules: true
     ignore-generated-header: true
@@ -92,3 +109,7 @@ issues:
   exclude-use-default: false
   exclude-dirs:
     - docs
+    - ops
+    - specs
+    - tmp
+    - web

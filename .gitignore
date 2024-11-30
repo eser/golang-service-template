@@ -30,13 +30,13 @@ Thumbs.db
 # Test binaries, coverage and testing tool outputs
 *.test
 *.out
-/cov_profile.lcov
+cov_profile.lcov
 
 # Dependency directories (remove the comment below to include it)
-# /vendor/
+# vendor/
 
 # Build output and temporary files
 __debug_bin*
 build-errors.log
-/tmp/*
-!/tmp/.gitkeep
+tmp/*
+!tmp/.gitkeep

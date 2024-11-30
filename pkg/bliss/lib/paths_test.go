@@ -53,9 +53,9 @@ func TestPathsSplit(t *testing.T) {
 
 			gotDir, gotFile, gotExt := lib.PathsSplit(tt.filename)
 
-			assert.Equal(t, gotDir, tt.wantDir)
-			assert.Equal(t, gotFile, tt.wantFile)
-			assert.Equal(t, gotExt, tt.wantExt)
+			assert.Equal(t, tt.wantDir, gotDir)
+			assert.Equal(t, tt.wantFile, gotFile)
+			assert.Equal(t, tt.wantExt, gotExt)
 		})
 	}
 }

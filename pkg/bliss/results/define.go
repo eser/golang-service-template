@@ -13,7 +13,7 @@ type Definition struct {
 
 func Define(code string, message string, attributes ...slog.Attr) *Definition {
 	if attributes == nil {
-		attributes = []slog.Attr{}
+		attributes = make([]slog.Attr, 0)
 	}
 
 	return &Definition{
@@ -30,7 +30,7 @@ func (r *Definition) New(payload ...any) ResultImpl {
 
 		InnerError:      nil,
 		InnerPayload:    payload,
-		InnerAttributes: []slog.Attr{},
+		InnerAttributes: make([]slog.Attr, 0),
 	}
 }
 
@@ -40,6 +40,6 @@ func (r *Definition) Wrap(err error, payload ...any) ResultImpl {
 
 		InnerError:      err,
 		InnerPayload:    payload,
-		InnerAttributes: []slog.Attr{},
+		InnerAttributes: make([]slog.Attr, 0),
 	}
 }

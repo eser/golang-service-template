@@ -22,7 +22,7 @@ func NewMetricsProvider() *MetricsProviderImpl {
 	registry.MustRegister(collectors.NewGoCollector())
 
 	// Register the process collector (which collects process-level metrics)
-	registry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+	registry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{})) //nolint:exhaustruct
 
 	return &MetricsProviderImpl{
 		registry: registry,

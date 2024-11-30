@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+const separator = "__"
+
 func ParseBytes(data []byte, out *map[string]any) error {
 	var raw map[string]any
 
@@ -68,7 +70,7 @@ func flattenJSON(input map[string]any, prefix string, out *map[string]any) {
 
 		if isMap {
 			// Eğer değer bir map ise, recursive olarak çağırıyoruz
-			flattenJSON(mapValue, prefix+strings.ToUpper(key)+"__", out)
+			flattenJSON(mapValue, prefix+strings.ToUpper(key)+separator, out)
 
 			continue
 		}

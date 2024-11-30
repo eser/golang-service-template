@@ -14,12 +14,12 @@ type Result interface {
 }
 
 type ResultImpl struct {
+	InnerRedirectToUri string
 	results.ResultImpl
 
-	InnerStatusCode int
-	InnerBody       []byte
+	InnerBody []byte
 
-	InnerRedirectToUri string
+	InnerStatusCode int
 }
 
 var _ Result = (*ResultImpl)(nil)

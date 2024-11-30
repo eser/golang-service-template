@@ -1,14 +1,17 @@
 # bliss/results
 
 ## Overview
-The **results** package provides a structured way to handle and represent operational results, including errors, within the application.
 
-The documentation below provides an overview of the package, its types, functions, and usage examples. For more detailed information, refer to the source code and tests.
+The **results** package provides a structured way to handle and represent operational results, including errors, within
+the application.
 
+The documentation below provides an overview of the package, its types, functions, and usage examples. For more detailed
+information, refer to the source code and tests.
 
 ## API
 
 ### Result interface
+
 Defines the contract for result types.
 
 ```go
@@ -23,14 +26,15 @@ type Result interface {
 ```
 
 **Methods:**
+
 - `Error() string`: Returns the error message.
 - `Unwrap() error`: Returns the underlying error.
 - `IsError() bool`: Indicates if the result is an error.
 - `String() string`: Returns the string representation of the result.
 - `Attributes() []slog.Attr`: Returns the attributes associated with the result.
 
-
 ### Define function
+
 Creates a new `Definition` object.
 
 ```go
@@ -44,9 +48,11 @@ var (
 ```
 
 ### Definition.New and Definitions.Wrap methods
+
 Creates a new `Result` object from a definition.
 
 Example 1:
+
 ```go
 var (
   resOk       = results.Define("OP001", "OK")
@@ -74,6 +80,7 @@ func FileOp(filename string) results.Result {
 ```
 
 Example 2:
+
 ```go
 var (
   resOk                = results.Define("PARSE001", "OK")

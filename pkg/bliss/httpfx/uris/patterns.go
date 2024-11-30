@@ -17,9 +17,9 @@ import (
 )
 
 var (
-	ErrPatternParsing  = results.Define("ERRBHUP001", "unable to parse pattern")
-	ErrInvalidWildcard = results.Define("ERRBHUP001", "invalid wildcard")
-	ErrInvalidMethod   = results.Define("ERRBHUP001", "invalid method")
+	ErrPatternParsing  = results.Define("ERRBHUP001", "unable to parse pattern") //nolint:gochecknoglobals
+	ErrInvalidWildcard = results.Define("ERRBHUP002", "invalid wildcard")        //nolint:gochecknoglobals
+	ErrInvalidMethod   = results.Define("ERRBHUP003", "invalid method")          //nolint:gochecknoglobals
 )
 
 // A pattern is something that can be matched against an HTTP request.
@@ -29,6 +29,7 @@ type Pattern struct {
 	Method string
 	Host   string
 	Path   string
+	Loc    string // source location of registering call, for helpful messages
 	// The representation of a path differs from the surface syntax, which
 	// simplifies most algorithms.
 	//
@@ -40,7 +41,6 @@ type Pattern struct {
 	// For example, the path "a/{$}" is represented as a literal segment "a" followed
 	// by a literal segment "/".
 	Segments []Segment
-	Loc      string // source location of registering call, for helpful messages
 }
 
 func (p *Pattern) String() string { return p.Str }
@@ -113,7 +113,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 			)
 	}
 
-	p := &Pattern{Str: s, Method: method}
+	p := &Pattern{Str: s, Method: method} //nolint:exhaustruct
 
 	if found {
 		off = len(method) + 1
@@ -122,7 +122,11 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	i := strings.IndexByte(rest, '/')
 
 	if i < 0 {
-		return nil, ErrPatternParsing.New("host/path missing /").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method))
+		return nil, ErrPatternParsing.New("host/path missing /").
+			WithAttribute(
+				slog.String("pattern", p.Str),
+				slog.String("method", p.Method),
+			)
 	}
 
 	p.Host = rest[:i]
@@ -131,7 +135,12 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	if j := strings.IndexByte(p.Host, '{'); j >= 0 {
 		off += j
 
-		return nil, ErrPatternParsing.New("host contains '{' (missing initial '/'?)").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("host", p.Host))
+		return nil, ErrPatternParsing.New("host contains '{' (missing initial '/'?)").
+			WithAttribute(
+				slog.String("pattern", p.Str),
+				slog.String("method", p.Method),
+				slog.String("host", p.Host),
+			)
 	}
 	// At this point, rest is the path.
 	off += i
@@ -139,11 +148,17 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 	// An unclean path with a method that is not CONNECT can never match,
 	// because paths are cleaned before matching.
 	if method != "" && method != "CONNECT" && rest != CleanPath(rest) {
-		return nil, ErrPatternParsing.New("non-CONNECT pattern with unclean path can never match").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("host", p.Host), slog.String("path", rest))
+		return nil, ErrPatternParsing.New("non-CONNECT pattern with unclean path can never match").
+			WithAttribute(
+				slog.String("pattern", p.Str),
+				slog.String("method", p.Method),
+				slog.String("host", p.Host),
+				slog.String("path", rest),
+			)
 	}
 
 	p.Path = rest
-	seenNames := map[string]bool{} // remember wildcard names to catch dups
+	seenNames := make(map[string]bool) // remember wildcard names to catch dups
 
 	for len(rest) > 0 {
 		// Invariant: rest[0] == '/'.
@@ -152,7 +167,7 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 
 		if len(rest) == 0 {
 			// Trailing slash.
-			p.Segments = append(p.Segments, Segment{Wild: true, Multi: true})
+			p.Segments = append(p.Segments, Segment{Wild: true, Multi: true}) //nolint:exhaustruct
 
 			break
 		}
@@ -169,25 +184,42 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 		if i := strings.IndexByte(seg, '{'); i < 0 { //nolint:nestif
 			// Literal.
 			seg = tryPathUnescape(seg)
-			p.Segments = append(p.Segments, Segment{Str: seg})
+			p.Segments = append(p.Segments, Segment{Str: seg}) //nolint:exhaustruct
 		} else {
 			// Wildcard.
 			if i != 0 {
-				return nil, ErrInvalidWildcard.New("bad wildcard segment (must start with '{')").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("segment", seg), slog.String("expected", "{"))
+				return nil, ErrInvalidWildcard.New("bad wildcard segment (must start with '{')").
+					WithAttribute(
+						slog.String("pattern", p.Str),
+						slog.String("method", p.Method),
+						slog.String("segment", seg),
+						slog.String("expected", "{"),
+					)
 			}
 
 			if seg[len(seg)-1] != '}' {
-				return nil, ErrInvalidWildcard.New("bad wildcard segment (must end with '}')").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("segment", seg), slog.String("expected", "}"))
+				return nil, ErrInvalidWildcard.New("bad wildcard segment (must end with '}')").
+					WithAttribute(
+						slog.String("pattern", p.Str),
+						slog.String("method", p.Method),
+						slog.String("segment", seg),
+						slog.String("expected", "}"),
+					)
 			}
 
 			name := seg[1 : len(seg)-1]
 
 			if name == "$" {
 				if len(rest) != 0 {
-					return nil, ErrInvalidMethod.New("{$} wildcard not at end").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("segment", seg))
+					return nil, ErrInvalidMethod.New("{$} wildcard not at end").
+						WithAttribute(
+							slog.String("pattern", p.Str),
+							slog.String("method", p.Method),
+							slog.String("segment", seg),
+						)
 				}
 
-				p.Segments = append(p.Segments, Segment{Str: "/"})
+				p.Segments = append(p.Segments, Segment{Str: "/"}) //nolint:exhaustruct
 
 				break
 			}
@@ -195,19 +227,40 @@ func ParsePattern(s string) (_ *Pattern, err error) { //nolint:funlen,gocognit,c
 			name, multi := strings.CutSuffix(name, "...")
 
 			if multi && len(rest) != 0 {
-				return nil, ErrInvalidWildcard.New("{...} wildcard not at end").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("segment", seg))
+				return nil, ErrInvalidWildcard.New("{...} wildcard not at end").
+					WithAttribute(
+						slog.String("pattern", p.Str),
+						slog.String("method", p.Method),
+						slog.String("segment", seg),
+					)
 			}
 
 			if name == "" {
-				return nil, ErrInvalidWildcard.New("empty wildcard").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method))
+				return nil, ErrInvalidWildcard.New("empty wildcard").
+					WithAttribute(
+						slog.String("pattern", p.Str),
+						slog.String("method", p.Method),
+					)
 			}
 
 			if !isValidWildcardName(name) {
-				return nil, ErrInvalidWildcard.New("bad wildcard name").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("segment", seg), slog.String("name", name))
+				return nil, ErrInvalidWildcard.New("bad wildcard name").
+					WithAttribute(
+						slog.String("pattern", p.Str),
+						slog.String("method", p.Method),
+						slog.String("segment", seg),
+						slog.String("name", name),
+					)
 			}
 
 			if seenNames[name] {
-				return nil, ErrInvalidWildcard.New("duplicate wildcard name").WithAttribute(slog.String("pattern", p.Str), slog.String("method", p.Method), slog.String("segment", seg), slog.String("name", name))
+				return nil, ErrInvalidWildcard.New("duplicate wildcard name").
+					WithAttribute(
+						slog.String("pattern", p.Str),
+						slog.String("method", p.Method),
+						slog.String("segment", seg),
+						slog.String("name", name),
+					)
 			}
 
 			seenNames[name] = true

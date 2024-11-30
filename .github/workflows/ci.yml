@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - dev
     # tags:
     #   - v[0-9]+.[0-9]+.[0-9]+
 
@@ -52,7 +51,7 @@ jobs:
           # - windows-latest
           # - macOS-latest
         golang-version:
-          - 1.23.0
+          - 1.23.3
 
     steps:
       - name: Checkout repository
@@ -70,10 +69,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Setup govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Setup betteralign
+        run: go install github.com/dkorunic/betteralign/cmd/betteralign@latest
 
       - name: Setup gcov2lcov
         run: go install github.com/jandelgado/gcov2lcov@latest

@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
         args: ["--maxkb=1024"]
@@ -25,7 +25,7 @@ repos:
         args: ["--autofix", "--no-ensure-ascii", "--no-sort-keys"]
       - id: trailing-whitespace
   - repo: https://github.com/crate-ci/typos
-    rev: v1.23.6
+    rev: v1.28.1
     hooks:
       - id: typos
         verbose: true
@@ -37,37 +37,38 @@ repos:
             go.mod
           )$
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.4.0
+    rev: v3.6.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: []
   - repo: https://github.com/golangci/golangci-lint
-    rev: v1.60.1
+    rev: v1.62.2
     hooks:
       - id: golangci-lint
   - repo: local
     hooks:
-      - id: govulncheck
-        name: govulncheck
-        entry: govulncheck ./...
+      - id: checks
+        name: checks
+        entry: make check
         language: golang
         pass_filenames: false
         types:
-        - go
+          - go
       - id: kebab-case-files-only
         name: kebab-case files only
         entry: filenames must be kebab-case only
         language: fail
-        files: '(?!\_test\.go$)[^a-z0-9.\/\[\]@-]'
+        files: '(?!(_test\.go|_grpc\.pb\.go)$)[^a-z0-9.\/\[\]@-]'
         exclude: |
           (?x)^(
             .github/.*|
-            Dockerfile|
             LICENSE|
             Makefile|
             README.md|
-            deployments/resources/fluentd/Dockerfile|
+            docs/README.md|
+            ops/docker/Dockerfile|
+            ops/docker/resources/fluentd/Dockerfile|
             pkg/bliss/configfx/README.md|
             pkg/bliss/datafx/README.md|
             pkg/bliss/httpfx/README.md|

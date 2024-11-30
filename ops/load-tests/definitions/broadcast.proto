@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option go_package = "github.com/eser/go-service/pkg/proto-go/broadcast";
+
+package broadcast;
+
+// CHANNELS
+
+message Channel {
+  string id = 1;
+  string name = 2;
+}
+
+message Channels {
+  repeated Channel channels = 1;
+}
+
+message GetByIdRequest {
+  optional string id = 1;
+}
+
+message ListRequest {
+}
+
+service ChannelService {
+  rpc GetById(GetByIdRequest) returns (Channel) {}
+  rpc List(ListRequest) returns (Channels) {}
+}
+
+// MESSAGES
+
+message Message {
+  string body = 1;
+}
+
+message SendRequest {
+  string channelId = 1;
+  Message message = 2;
+}
+
+enum SendResultType {
+  SUCCESS = 0;
+  ERROR = 1;
+}
+
+message SendResponse {
+  SendResultType result = 1;
+  optional string error = 2;
+}
+
+service MessageService {
+  rpc Send(SendRequest) returns (SendResponse) {}
+}

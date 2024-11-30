@@ -36,8 +36,8 @@ func NewRouter(path string) *RouterImpl {
 		mux:  mux,
 		path: path,
 
-		handlers: []Handler{},
-		routes:   []*Route{},
+		handlers: make([]Handler, 0),
+		routes:   make([]*Route, 0),
 	}
 }
 
@@ -95,7 +95,7 @@ func (r *RouterImpl) Route(pattern string, handlers ...Handler) *Route {
 		_, err := responseWriter.Write(result.Body())
 		if err != nil {
 			// TODO(@eser) replace it with logger
-			fmt.Println("error writing response body: %w", err)
+			fmt.Println("error writing response body: %w", err) //nolint:forbidigo
 		}
 	}
 

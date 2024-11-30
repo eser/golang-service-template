@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCommonPath(t *testing.T) {
+func TestCommonPath(t *testing.T) { //nolint:funlen
 	t.Parallel()
 
 	tests := []struct {
@@ -18,71 +18,71 @@ func TestCommonPath(t *testing.T) {
 	}{
 		{
 			name:     "SameSegments",
-			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}},
-			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}}, //nolint:exhaustruct
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}}, //nolint:exhaustruct
 			expected: "/foo",
 		},
 		{
 			name:     "DifferentSegments",
-			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}},
-			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "foo"}}}, //nolint:exhaustruct
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}}, //nolint:exhaustruct
 			expected: "/foo",
 		},
 		{
 			name:     "DifferentSegmentsWithWildcard",
-			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: true, Str: "foo"}}},
-			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: true, Str: "foo"}}},  //nolint:exhaustruct
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}}, //nolint:exhaustruct
 			expected: "/bar",
 		},
 		{
 			name:     "WildcardAndMultipleSegments",
-			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: true, Str: "foo", Multi: true}}},
-			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}},
+			p1:       uris.Pattern{Segments: []uris.Segment{{Wild: true, Str: "foo", Multi: true}}}, //nolint:exhaustruct
+			p2:       uris.Pattern{Segments: []uris.Segment{{Wild: false, Str: "bar"}}},             //nolint:exhaustruct
 			expected: "/bar",
 		},
 		{
 			name: "FourSegments",
-			p1: uris.Pattern{Segments: []uris.Segment{
-				{Wild: true, Str: "foo"},
-				{Wild: true, Str: "bar"},
-				{Wild: true, Str: "baz"},
-				{Wild: true, Str: "qux"},
+			p1: uris.Pattern{Segments: []uris.Segment{ //nolint:exhaustruct
+				{Wild: true, Str: "foo"}, //nolint:exhaustruct
+				{Wild: true, Str: "bar"}, //nolint:exhaustruct
+				{Wild: true, Str: "baz"}, //nolint:exhaustruct
+				{Wild: true, Str: "qux"}, //nolint:exhaustruct
 			}},
-			p2: uris.Pattern{Segments: []uris.Segment{
-				{Wild: true, Str: "foo"},
-				{Wild: true, Str: "bar"},
-				{Wild: true, Str: "baz"},
-				{Wild: true, Str: "qux"},
+			p2: uris.Pattern{Segments: []uris.Segment{ //nolint:exhaustruct
+				{Wild: true, Str: "foo"}, //nolint:exhaustruct
+				{Wild: true, Str: "bar"}, //nolint:exhaustruct
+				{Wild: true, Str: "baz"}, //nolint:exhaustruct
+				{Wild: true, Str: "qux"}, //nolint:exhaustruct
 			}},
 			expected: "/foo/bar/baz/qux",
 		},
 		{
 			name: "FourP1SegmentWithThreeP2Segment",
-			p1: uris.Pattern{Segments: []uris.Segment{
-				{Wild: true, Str: "foo"},
-				{Wild: true, Str: "bar"},
-				{Wild: true, Str: "baz"},
-				{Wild: true, Str: "qux"},
+			p1: uris.Pattern{Segments: []uris.Segment{ //nolint:exhaustruct
+				{Wild: true, Str: "foo"}, //nolint:exhaustruct
+				{Wild: true, Str: "bar"}, //nolint:exhaustruct
+				{Wild: true, Str: "baz"}, //nolint:exhaustruct
+				{Wild: true, Str: "qux"}, //nolint:exhaustruct
 			}},
-			p2: uris.Pattern{Segments: []uris.Segment{
-				{Wild: true, Str: "foo"},
-				{Wild: true, Str: "bar"},
-				{Wild: true, Str: "test"},
+			p2: uris.Pattern{Segments: []uris.Segment{ //nolint:exhaustruct
+				{Wild: true, Str: "foo"},  //nolint:exhaustruct
+				{Wild: true, Str: "bar"},  //nolint:exhaustruct
+				{Wild: true, Str: "test"}, //nolint:exhaustruct
 			}},
 			expected: "/foo/bar/test/qux",
 		},
 		{
 			name: "ThreeP1SegmentWithFourP2Segment",
-			p1: uris.Pattern{Segments: []uris.Segment{
-				{Wild: true, Str: "foo"},
-				{Wild: true, Str: "bar"},
-				{Wild: true, Str: "baz"},
+			p1: uris.Pattern{Segments: []uris.Segment{ //nolint:exhaustruct
+				{Wild: true, Str: "foo"}, //nolint:exhaustruct
+				{Wild: true, Str: "bar"}, //nolint:exhaustruct
+				{Wild: true, Str: "baz"}, //nolint:exhaustruct
 			}},
-			p2: uris.Pattern{Segments: []uris.Segment{
-				{Wild: true, Str: "foo"},
-				{Wild: true, Str: "bar"},
-				{Wild: true, Str: "baz"},
-				{Wild: true, Str: "qux"},
+			p2: uris.Pattern{Segments: []uris.Segment{ //nolint:exhaustruct
+				{Wild: true, Str: "foo"}, //nolint:exhaustruct
+				{Wild: true, Str: "bar"}, //nolint:exhaustruct
+				{Wild: true, Str: "baz"}, //nolint:exhaustruct
+				{Wild: true, Str: "qux"}, //nolint:exhaustruct
 			}},
 			expected: "/foo/bar/baz/qux",
 		},

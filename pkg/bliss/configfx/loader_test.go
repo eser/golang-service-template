@@ -17,7 +17,7 @@ type TestConfigNested struct {
 	Port int `conf:"port" default:"8080"`
 }
 
-func TestLoadMeta(t *testing.T) {
+func TestLoadMeta(t *testing.T) { //nolint:funlen
 	t.Parallel()
 
 	t.Run("should get config meta", func(t *testing.T) {

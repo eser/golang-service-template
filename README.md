@@ -2,23 +2,21 @@
 
 `Golang Service Template` project is designed to provide a robust foundation that is always ready to be open-sourced, accelerating development and fostering a unified understanding across disciplines. It empowers teams to quickly adopt best practices and streamline the project setup, ensuring consistency and clarity from the very start.
 
-
 ## Local development
 
 Clone this repository into your projects folder
 
-
 ### Structure
 
-This project inherits the [Standard Go Project Layout](https://github.com/golang-standards/project-layout) structure but includes its own interpretation.
-
+This project inherits the [Standard Go Project Layout](https://github.com/golang-standards/project-layout) structure but
+includes its own interpretation.
 
 ### Directories
 
-- The `pkg` directory contains packages for project modules. The absence of a direct `internal` folder helps us maintain a mentally isolated modular structure.
+- The `pkg` directory contains packages for project modules. The absence of a direct `internal` folder helps us maintain
+  a mentally isolated modular structure.
 - The `deployment` directory contains local and remote infrastructure configuration files, such as `compose.yml`.
 - The `cmd` directory contains the entrypoint for the project binaries.
-
 
 ### Installation
 
@@ -43,7 +41,6 @@ This project inherits the [Standard Go Project Layout](https://github.com/golang
   export PATH="$PATH:$GOPATH/bin"
   ```
 
-
 - 2️⃣ Install prerequisites
 
   **On macOS and Homebrew (automatically):**
@@ -52,17 +49,29 @@ This project inherits the [Standard Go Project Layout](https://github.com/golang
   $ make init
   ```
 
-  If it fails on any step, you can install them manually by following the steps below. Otherwise, you can skip the rest of the steps.
-
+  If it fails on any step, you can install them manually by following the steps below. Otherwise, you can skip the rest
+  of the steps.
 
   **On other OS or without Homebrew:**
 
+  - Install [Deno](https://docs.deno.com/runtime/getting_started/installation/)
   - Install and enable [pre-commit](https://pre-commit.com/#install)
   - Install [GNU make](https://www.gnu.org/software/make/)
+  - Install [protobuf](https://github.com/protocolbuffers/protobuf/releases)
+  - Install [Kreya CLI](https://kreya.app/docs/cli/#installation)
+  - Install [Air](https://github.com/air-verse/air#installation)
   - Install [govulncheck](https://go.googlesource.com/vuln)
-  - Install [gcov2lcov](https://github.com/jandelgado/gcov2lcov?tab=readme-ov-file#installation)
+  - Install [betteralign](https://github.com/dkorunic/betteralign#installation)
+  - Install [gcov2lcov](https://github.com/jandelgado/gcov2lcov#installation)
+  - Install [protoc-gen-go](https://github.com/protocolbuffers/protobuf-go)
+  - Install [protoc-gen-go-grpc](https://github.com/grpc/grpc-go#installation)
 
   ```bash
+  $ curl -fsSL https://deno.land/install.sh | sh
+  Archive:  ~/.deno/bin/deno.zip
+  inflating: ~/.deno/bin/deno
+  Deno was installed successfully to ~/.deno/bin/deno
+
   $ brew install pre-commit
   ==> Fetching dependencies for pre-commit
   ==> Fetching pre-commit
@@ -77,39 +86,52 @@ This project inherits the [Standard Go Project Layout](https://github.com/golang
   ==> Installing make
   ...
 
+  $ brew install protobuf
+  ==> Fetching dependencies for protobuf
+  ==> Fetching protobuf
+  ==> Installing dependencies for protobuf
+  ==> Installing protobuf
+  ...
+
   $ pre-commit install
   pre-commit installed at .git/hooks/pre-commit
+
+  $ go install github.com/air-verse/air@latest
+  go: downloading github.com/air-verse/air v0.0.0
 
   $ go install golang.org/x/vuln/cmd/govulncheck@latest
   go: downloading golang.org/x/vuln/cmd/govulncheck v0.0.0
 
+  $ go install github.com/dkorunic/betteralign/cmd/betteralign@latest
+  go: downloading github.com/dkorunic/betteralign/cmd/betteralign v0.0.0
+
   $ go install github.com/jandelgado/gcov2lcov@latest
   go: downloading github.com/jandelgado/gcov2lcov v0.0.0
-  ```
 
+  $ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+  go: downloading google.golang.org/protobuf/cmd/protoc-gen-go v0.0.0
+
+  $ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+  go: downloading google.golang.org/grpc/cmd/protoc-gen-go-grpc v0.0.0
+  ```
 
 - 3️⃣ (Optional) Ensure that you can access private dependencies
 
-  You need to get a Personal Access Token from your GitHub account in order to
-  download private dependencies.
+  You need to get a Personal Access Token from your GitHub account in order to download private dependencies.
 
-  To get these, visit https://github.com/settings/tokens/new and create a new
-  token with the `read:packages` scope.
+  To get these, visit https://github.com/settings/tokens/new and create a new token with the `read:packages` scope.
 
-  Then, you need to create or edit the `.netrc` file in your home directory with
-  the following content:
+  Then, you need to create or edit the `.netrc` file in your home directory with the following content:
 
   ```
   machine github.com login <your-github-username> password <your-github-access-token>
   ```
-
 
 - 4️⃣ Download required modules for the project
 
   ```bash
   $ make dep
   ```
-
 
 - 5️⃣ (Optional) Check installation via pre-commit scripts
 
@@ -121,7 +143,8 @@ This project inherits the [Standard Go Project Layout](https://github.com/golang
 
 #### Running the project
 
-Before running any command, please make sure that you have configured your environment regarding your own settings first. You may found the related entries that can be configured in `.env` file.
+Before running any command, please make sure that you have configured your environment regarding your own settings
+first. You may found the related entries that can be configured in `.env` file.
 
 ```bash
 $ make run
@@ -130,20 +153,17 @@ $ make run
 
 - You can access http://localhost:8080/ to check if the project is running
 
-
 ### Running the project (with hot-reloading development mode)
 
 ```bash
 $ make dev
 ```
 
-
 ### Testing the project
 
 ```bash
 $ make test
 ```
-
 
 ### Development (with Docker Compose)
 
@@ -154,7 +174,6 @@ $ make container-start
 # then launch watch mode to reflect changes on time
 $ make container-dev
 ```
-
 
 ### Contribution
 
@@ -167,8 +186,7 @@ $ make container-dev
 - Wait for review and merge
 - Delete your branch
 
-
 ## More Information
 
-This project is bootstrapped from https://github.com/eser/golang-service-template.
-See the source repository for further details.
+This project is bootstrapped from https://github.com/eser/golang-service-template. See the source repository for further
+details.
