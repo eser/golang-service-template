@@ -18,33 +18,21 @@ init:
 	command -v protoc-gen-go >/dev/null || go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	command -v protoc-gen-go-grpc >/dev/null || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
-.PHONY: dev-identitysvc
-dev-identitysvc:
-	air --build.bin "./tmp/identitysvc" --build.cmd "go build -o ./tmp/identitysvc ./cmd/identitysvc/"
+.PHONY: dev-samplesvc
+dev-samplesvc:
+	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
 
-.PHONY: dev-broadcastsvc
-dev-broadcastsvc:
-	air --build.bin "./tmp/broadcastsvc" --build.cmd "go build -o ./tmp/broadcastsvc ./cmd/broadcastsvc/"
+.PHONY: dev-samplehttp
+dev-samplehttp:
+	air --build.bin "./tmp/samplehttp" --build.cmd "go build -o ./tmp/samplehttp ./cmd/samplehttp/"
 
-.PHONY: dev-broadcasthttp
-dev-broadcasthttp:
-	air --build.bin "./tmp/broadcasthttp" --build.cmd "go build -o ./tmp/broadcasthttp ./cmd/broadcasthttp/"
+.PHONY: run-samplesvc
+run-samplesvc:
+	go run ./cmd/samplesvc/
 
-.PHONY: dev-testhttp
-dev-testhttp:
-	air --build.bin "./tmp/testhttp" --build.cmd "go build -o ./tmp/testhttp ./cmd/testhttp/"
-
-.PHONY: run-identitysvc
-run-identitysvc:
-	go run ./cmd/identitysvc/
-
-.PHONY: run-broadcastsvc
-run-broadcastsvc:
-	go run ./cmd/broadcastsvc/
-
-.PHONY: run-broadcasthttp
-run-broadcasthttp:
-	go run ./cmd/broadcasthttp/
+.PHONY: run-samplehttp
+run-samplehttp:
+	go run ./cmd/samplehttp/
 
 .PHONY: run-testhttp
 run-testhttp:

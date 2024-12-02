@@ -1,10 +1,10 @@
-package broadcastsvc
+package samplesvc
 
 import (
 	"github.com/eser/go-service/pkg/bliss"
 )
 
 type AppConfig struct {
-	AppName string `conf:"NAME" default:"broadcastsvc"`
+	AppName string `conf:"NAME" default:"samplesvc"`
 	bliss.BaseConfig
 }

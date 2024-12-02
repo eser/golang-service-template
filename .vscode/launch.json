@@ -2,20 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch broadcastsvc",
+      "name": "Launch samplesvc",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "cwd": "${workspaceFolder}",
-      "program": "cmd/broadcastsvc/"
+      "program": "cmd/samplesvc/"
     },
     {
-      "name": "Launch broadcasthttp",
+      "name": "Launch samplehttp",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "cwd": "${workspaceFolder}",
-      "program": "cmd/broadcasthttp/"
+      "program": "cmd/samplehttp/"
     }
   ]
 }

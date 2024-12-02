@@ -1,4 +1,4 @@
-package broadcastsvc
+package samplesvc
 
 import (
 	"context"

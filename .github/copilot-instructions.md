@@ -8,7 +8,7 @@ When generating or creating new components, you must refer to definitions like `
 
 ### Service Modules
 
-Each **service module** is defined under the `pkg/` directory (e.g., `identitysvc` is a gRPC service, `broadcasthttp` is an HTTP service).
+Each **service module** is defined under the `pkg/` directory (e.g., `samplesvc` is a gRPC service, `samplehttp` is an HTTP service).
 
 Each service module should be suffixed with "svc" or "http" depending on its protocol and should have its own `sqlc` definitions, repositories, services, and other components. Service modules have their own entry points defined in the `cmd/` directory with the same name and corresponding `Makefile` targets for running the service locally. After creating a service module, you must update the unit tests and the README.
 

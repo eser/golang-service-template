@@ -1,4 +1,4 @@
-package broadcasthttp
+package samplehttp
 
 import (
 	"encoding/json"
