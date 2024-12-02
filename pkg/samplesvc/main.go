@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/eser/go-service/pkg/bliss/configfx"
+	"github.com/eser/go-service/pkg/bliss/datafx"
 	"github.com/eser/go-service/pkg/bliss/di"
 	"github.com/eser/go-service/pkg/bliss/grpcfx"
 	"github.com/eser/go-service/pkg/bliss/lib"
@@ -12,15 +13,15 @@ import (
 	"github.com/eser/go-service/pkg/bliss/metricsfx"
 )
 
-func LoadConfig(loader configfx.ConfigLoader) (*AppConfig, *logfx.Config, *grpcfx.Config, error) {
+func LoadConfig(loader configfx.ConfigLoader) (*AppConfig, *logfx.Config, *grpcfx.Config, *datafx.Config, error) {
 	appConfig := &AppConfig{} //nolint:exhaustruct
 
 	err := loader.LoadDefaults(appConfig)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("failed to load config: %w", err)
+		return nil, nil, nil, nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	return appConfig, &appConfig.Log, &appConfig.Grpc, nil
+	return appConfig, &appConfig.Log, &appConfig.Grpc, &appConfig.Data, nil
 }
 
 func Run() error {
@@ -32,6 +33,7 @@ func Run() error {
 		logfx.RegisterDependencies,
 		metricsfx.RegisterDependencies,
 		grpcfx.RegisterDependencies,
+		datafx.RegisterDependencies,
 
 		RegisterGrpcService,
 	)
