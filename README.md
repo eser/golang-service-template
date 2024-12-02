@@ -15,7 +15,7 @@ includes its own interpretation.
 
 - The `pkg` directory contains packages for project modules. The absence of a direct `internal` folder helps us maintain
   a mentally isolated modular structure.
-- The `deployment` directory contains local and remote infrastructure configuration files, such as `compose.yml`.
+- The `ops` directory contains local and remote infrastructure configuration files, such as `compose.yml`.
 - The `cmd` directory contains the entrypoint for the project binaries.
 
 ### Installation
