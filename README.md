@@ -66,11 +66,6 @@ includes its own interpretation.
   - Install [protoc-gen-go-grpc](https://github.com/grpc/grpc-go#installation)
 
   ```bash
-  $ curl -fsSL https://deno.land/install.sh | sh
-  Archive:  ~/.deno/bin/deno.zip
-  inflating: ~/.deno/bin/deno
-  Deno was installed successfully to ~/.deno/bin/deno
-
   $ brew install pre-commit
   ==> Fetching dependencies for pre-commit
   ==> Fetching pre-commit

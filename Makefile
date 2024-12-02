@@ -5,7 +5,6 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
 .PHONY: init
 init:
-	command -v deno >/dev/null || curl -fsSL https://deno.land/install.sh | sh
 	command -v pre-commit >/dev/null || brew install pre-commit
 	command -v make >/dev/null || brew install make
 	command -v protoc >/dev/null || brew install protobuf
@@ -33,10 +32,6 @@ run-samplesvc:
 .PHONY: run-samplehttp
 run-samplehttp:
 	go run ./cmd/samplehttp/
-
-.PHONY: run-testhttp
-run-testhttp:
-	go run ./cmd/testhttp/
 
 .PHONY: migrate
 migrate:
@@ -151,13 +146,13 @@ container-logs:
 
 .PHONY: container-cli
 container-cli:
-	docker compose --file ./ops/docker/compose.yml exec identitysvc bash
+	docker compose --file ./ops/docker/compose.yml exec samplehttp bash
 
 .PHONY: container-push
 container-push:
 ifdef VERSION
-	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/identitysvc:v$(VERSION) .
-	docker push acikyazilim.registry.cpln.io/identitysvc:v$(VERSION)
+	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/samplehttp:v$(VERSION) .
+	docker push acikyazilim.registry.cpln.io/samplehttp:v$(VERSION)
 else
 	@echo "VERSION is not set"
 endif

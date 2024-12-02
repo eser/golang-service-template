@@ -52,7 +52,7 @@ COPY . .
 FROM builder-base AS runner-development
 
 EXPOSE 8080
-ENTRYPOINT ["go", "run", "./cmd/identitysvc/"]
+ENTRYPOINT ["go", "run", "./cmd/samplehttp/"]
 
 # ------------------------
 # builder-production image
@@ -60,7 +60,7 @@ ENTRYPOINT ["go", "run", "./cmd/identitysvc/"]
 
 FROM builder-base AS builder-production
 
-RUN go build ./cmd/identitysvc/
+RUN go build ./cmd/samplehttp/
 
 # -----------------------
 # runner-production image
@@ -68,7 +68,7 @@ RUN go build ./cmd/identitysvc/
 FROM upstream-runner AS runner-production
 
 # Copy the binary from the builder-production container
-COPY --from=builder-production --chown=nonroot:nonroot /app/identitysvc /
+COPY --from=builder-production --chown=nonroot:nonroot /app/samplehttp /
 # COPY --from=builder-production /bin/sh /bin/sh
 # COPY --from=builder-production /bin/cat /bin/cat
 
@@ -76,4 +76,4 @@ COPY --from=builder-production --chown=nonroot:nonroot /app/identitysvc /
 USER nonroot
 
 EXPOSE 8080
-ENTRYPOINT ["/identitysvc"]
+ENTRYPOINT ["/samplehttp"]

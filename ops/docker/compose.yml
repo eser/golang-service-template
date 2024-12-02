@@ -1,7 +1,7 @@
 name: development
 
 services:
-  identitysvc:
+  samplehttp:
     tty: true
     stdin_open: true
     restart: unless-stopped
@@ -34,7 +34,7 @@ services:
       options:
         fluentd-address: localhost:24224
         fluentd-async-connect: "true"
-        tag: identitysvc
+        tag: samplehttp
 
   postgres:
     image: postgres:16-bookworm
