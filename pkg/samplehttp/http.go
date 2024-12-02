@@ -6,11 +6,27 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/eser/go-service/pkg/bliss/datafx"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 	"github.com/eser/go-service/pkg/proto-go/broadcast"
 )
 
-func RegisterHttpRoutes(routes httpfx.Router, appConfig *AppConfig, logger *slog.Logger) {
+func RegisterHttpRoutes(routes httpfx.Router, appConfig *AppConfig, logger *slog.Logger, dataProvider datafx.DataProvider) { //nolint:lll
+	routes.
+		Route("GET /channels", func(ctx *httpfx.Context) httpfx.Result {
+			scope := dataProvider.GetDefault().Connection
+
+			channels, err := NewChannelService(scope).List(ctx.Request.Context())
+			if err != nil {
+				return ctx.Results.Error(http.StatusInternalServerError, err.Error())
+			}
+
+			return ctx.Results.Json(channels)
+		}).
+		HasSummary("List channels").
+		HasDescription("List channels.").
+		HasResponse(http.StatusOK)
+
 	routes.
 		Route("POST /send", func(ctx *httpfx.Context) httpfx.Result {
 			body, err := io.ReadAll(ctx.Request.Body)
