@@ -49,13 +49,6 @@ generate:
 clean:
 	go clean
 
-.PHONY: test-api
-test-api:
-	cd ./ops/api-tests/ && \
-	kreyac environment set-active development --disable-telemetry && \
-	kreyac collection invoke '**' --disable-telemetry && \
-	cd ../../
-
 .PHONY: test
 test:
 	go test -failfast -count 1 ./...
