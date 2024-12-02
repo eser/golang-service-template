@@ -11,6 +11,7 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpfx/middlewares"
 	"github.com/eser/go-service/pkg/bliss/httpfx/modules/healthcheck"
 	"github.com/eser/go-service/pkg/bliss/httpfx/modules/openapi"
+	"github.com/eser/go-service/pkg/bliss/httpfx/modules/profiling"
 	"github.com/eser/go-service/pkg/bliss/lib"
 	"github.com/eser/go-service/pkg/bliss/logfx"
 	"github.com/eser/go-service/pkg/bliss/metricsfx"
@@ -53,6 +54,7 @@ func Run() error {
 
 		healthcheck.RegisterHttpRoutes,
 		openapi.RegisterHttpRoutes,
+		profiling.RegisterHttpRoutes,
 
 		RegisterHttpRoutes,
 	)

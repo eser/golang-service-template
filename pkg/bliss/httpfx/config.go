@@ -13,4 +13,8 @@ type Config struct {
 
 	InitializationTimeout   time.Duration `conf:"INIT_TIMEOUT"     default:"25s"`
 	GracefulShutdownTimeout time.Duration `conf:"SHUTDOWN_TIMEOUT" default:"5s"`
+
+	HealthCheckEnabled bool `conf:"HEALTH_CHECK" default:"true"`
+	OpenApiEnabled     bool `conf:"OPENAPI"      default:"true"`
+	ProfilingEnabled   bool `conf:"PROFILING"    default:"false"`
 }

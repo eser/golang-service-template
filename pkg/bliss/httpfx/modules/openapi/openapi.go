@@ -9,7 +9,11 @@ type ApiIdentity struct {
 	version string
 }
 
-func RegisterHttpRoutes(routes httpfx.Router) error {
+func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) error {
+	if !config.OpenApiEnabled {
+		return nil
+	}
+
 	routes.
 		Route("GET /openapi.json", func(ctx *httpfx.Context) httpfx.Result {
 			spec := &ApiIdentity{
