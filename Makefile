@@ -175,17 +175,13 @@ else
 endif
 
 .PHONY: generate-proto
-# --ts_proto_opt="context=true,env=node,lowerCaseServiceMethods=true,outputServices=grpc-js,removeEnumPrefix=true,snakeToCamel=true,useAbortSignal=true,useAsyncIterable=true,useReadonlyTypes=true,comments=false,useNullAsOptional=true"
 generate-proto:
 	@{ \
 	  for f in ./specs/proto/*; do \
 	    current_proto="$$(basename $$f)"; \
 	    echo "Generating stubs for $$current_proto"; \
 			\
-			protoc --plugin=./pkg/web/node_modules/.bin/protoc-gen-ts_proto \
-				--proto_path=./specs/proto/ \
-				--ts_proto_out=./pkg/web/proto-ts/ \
-				--ts_proto_opt="context=true,lowerCaseServiceMethods=true,outputServices=grpc-js,removeEnumPrefix=false,snakeToCamel=true,useReadonlyTypes=true,comments=false,useNullAsOptional=true" \
+			protoc --proto_path=./specs/proto/ \
 				--go_out=./pkg/proto-go/ --go_opt=paths=source_relative \
 				--go-grpc_out=./pkg/proto-go/ --go-grpc_opt=paths=source_relative \
 				"./specs/proto/$$current_proto/$$current_proto.proto"; \

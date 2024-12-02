@@ -54,7 +54,6 @@ includes its own interpretation.
 
   **On other OS or without Homebrew:**
 
-  - Install [Deno](https://docs.deno.com/runtime/getting_started/installation/)
   - Install and enable [pre-commit](https://pre-commit.com/#install)
   - Install [GNU make](https://www.gnu.org/software/make/)
   - Install [protobuf](https://github.com/protocolbuffers/protobuf/releases)

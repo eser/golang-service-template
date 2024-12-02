@@ -30,13 +30,3 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-
-  - package-ecosystem: "npm"
-    directory: "/pkg/web/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "deps(npm): "
-      include: "scope"
-    labels:
-      - "dependencies"

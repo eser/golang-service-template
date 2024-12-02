@@ -108,8 +108,6 @@ issues:
   fix: true
   exclude-use-default: false
   exclude-dirs:
-    - docs
     - ops
     - specs
     - tmp
-    - web
