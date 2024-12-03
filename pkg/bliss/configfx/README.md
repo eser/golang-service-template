@@ -39,6 +39,7 @@ type ConfigLoader interface {
 	LoadMeta(i any) (ConfigItemMeta, error)
 	LoadMap(resources ...ConfigResource) (*map[string]any, error)
 	Load(i any, resources ...ConfigResource) error
+	LoadDefaults(i any) error
 
 	FromEnvFileDirect(filename string) ConfigResource
 	FromEnvFile(filename string) ConfigResource

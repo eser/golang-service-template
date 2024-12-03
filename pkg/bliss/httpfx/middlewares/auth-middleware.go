@@ -21,7 +21,7 @@ func AuthMiddleware() httpfx.Handler {
 		tokenString, hasToken := getBearerToken(ctx)
 
 		if !hasToken {
-			return ctx.Results.Unauthorized("No suitable authorization header found")
+			return ctx.Results.Unauthorized([]byte("No suitable authorization header found"))
 		}
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
@@ -33,17 +33,17 @@ func AuthMiddleware() httpfx.Handler {
 		})
 
 		if err != nil || !token.Valid {
-			return ctx.Results.Unauthorized(err.Error())
+			return ctx.Results.Unauthorized([]byte(err.Error()))
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
-			return ctx.Results.Unauthorized("Invalid token")
+			return ctx.Results.Unauthorized([]byte("Invalid token"))
 		}
 
 		if exp, ok := claims["exp"].(float64); ok {
 			if time.Unix(int64(exp), 0).Before(time.Now()) {
-				return ctx.Results.Unauthorized("Token is expired")
+				return ctx.Results.Unauthorized([]byte("Token is expired"))
 			}
 		}
 

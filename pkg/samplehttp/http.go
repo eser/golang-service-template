@@ -18,7 +18,7 @@ func RegisterHttpRoutes(routes httpfx.Router, appConfig *AppConfig, logger *slog
 
 			channels, err := NewChannelService(scope).List(ctx.Request.Context())
 			if err != nil {
-				return ctx.Results.Error(http.StatusInternalServerError, err.Error())
+				return ctx.Results.Error(http.StatusInternalServerError, []byte(err.Error()))
 			}
 
 			return ctx.Results.Json(channels)
@@ -31,13 +31,13 @@ func RegisterHttpRoutes(routes httpfx.Router, appConfig *AppConfig, logger *slog
 		Route("POST /send", func(ctx *httpfx.Context) httpfx.Result {
 			body, err := io.ReadAll(ctx.Request.Body)
 			if err != nil {
-				return ctx.Results.Error(http.StatusInternalServerError, err.Error())
+				return ctx.Results.Error(http.StatusInternalServerError, []byte(err.Error()))
 			}
 
 			var payload broadcast.SendRequest
 			err = json.Unmarshal(body, &payload)
 			if err != nil {
-				return ctx.Results.Error(http.StatusBadRequest, err.Error())
+				return ctx.Results.Error(http.StatusBadRequest, []byte(err.Error()))
 			}
 
 			logger.Info(

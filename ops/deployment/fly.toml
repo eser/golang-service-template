@@ -17,7 +17,7 @@ dockerfile = "Dockerfile"
 strategy = "rolling"
 
 [env]
-NODE_ENV = "production"
+APP_ENV = "production"
 
 [http_service]
 auto_start_machines = true

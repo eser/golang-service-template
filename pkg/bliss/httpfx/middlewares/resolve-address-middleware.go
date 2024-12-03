@@ -28,7 +28,7 @@ func ResolveAddressMiddleware() httpfx.Handler {
 
 		isLocal, err := DetectLocalNetwork(addr)
 		if err != nil {
-			return ctx.Results.Error(http.StatusInternalServerError, err.Error())
+			return ctx.Results.Error(http.StatusInternalServerError, []byte(err.Error()))
 		}
 
 		if isLocal {

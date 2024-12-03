@@ -21,10 +21,10 @@ func (r *Results) Bytes(body []byte) ResultImpl {
 	}
 }
 
-func (r *Results) PlainText(body string) ResultImpl {
+func (r *Results) PlainText(body []byte) ResultImpl {
 	return ResultImpl{ //nolint:exhaustruct
 		InnerStatusCode: http.StatusOK,
-		InnerBody:       []byte(body),
+		InnerBody:       body,
 	}
 }
 
@@ -34,7 +34,7 @@ func (r *Results) Json(body any) ResultImpl {
 		// TODO(@eser) Log error
 		return r.Error(
 			http.StatusInternalServerError,
-			"Failed to encode JSON",
+			[]byte("Failed to encode JSON"),
 		)
 	}
 
@@ -59,10 +59,10 @@ func (r *Results) NotFound() ResultImpl {
 	}
 }
 
-func (r *Results) Unauthorized(body string) ResultImpl {
+func (r *Results) Unauthorized(body []byte) ResultImpl {
 	return ResultImpl{ //nolint:exhaustruct
 		InnerStatusCode: http.StatusUnauthorized,
-		InnerBody:       []byte(body),
+		InnerBody:       body,
 	}
 }
 
@@ -73,10 +73,10 @@ func (r *Results) BadRequest() ResultImpl {
 	}
 }
 
-func (r *Results) Error(statusCode int, message string) ResultImpl {
+func (r *Results) Error(statusCode int, message []byte) ResultImpl {
 	return ResultImpl{ //nolint:exhaustruct
 		InnerStatusCode: statusCode,
-		InnerBody:       []byte(message),
+		InnerBody:       message,
 	}
 }
 
