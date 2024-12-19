@@ -3,19 +3,34 @@ TESTCOVERAGE_THRESHOLD=0
 
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
+.PHONY: dep
+dep:
+	go mod download
+	go mod tidy
+
+.PHONY: dep-tools
+dep-tools: dep
+	@echo Installing tools from tools.go
+	@cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
+
 .PHONY: init
-init:
+init: dep-tools
 	command -v pre-commit >/dev/null || brew install pre-commit
 	command -v make >/dev/null || brew install make
 	command -v protoc >/dev/null || brew install protobuf
 	[ -f .git/hooks/pre-commit ] || pre-commit install
 	command -v air >/dev/null || go install github.com/air-verse/air@latest
-	command -v govulncheck >/dev/null || go install golang.org/x/vuln/cmd/govulncheck@latest
 	command -v betteralign >/dev/null || go install github.com/dkorunic/betteralign/cmd/betteralign@latest
-	command -v goose >/dev/null || go install github.com/pressly/goose/v3/cmd/goose@latest
 	command -v gcov2lcov >/dev/null || go install github.com/jandelgado/gcov2lcov@latest
+	command -v goose >/dev/null || go install github.com/pressly/goose/v3/cmd/goose@latest
+	command -v govulncheck >/dev/null || go install golang.org/x/vuln/cmd/govulncheck@latest
 	command -v protoc-gen-go >/dev/null || go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	command -v protoc-gen-go-grpc >/dev/null || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	command -v stringer >/dev/null || go install golang.org/x/tools/cmd/stringer@latest
+
+.PHONY: dev-eserlivesvc
+dev-eserlivesvc:
+	air --build.bin "./tmp/eserlivesvc" --build.cmd "go build -o ./tmp/eserlivesvc ./cmd/eserlivesvc/"
 
 .PHONY: dev-samplesvc
 dev-samplesvc:
@@ -24,6 +39,10 @@ dev-samplesvc:
 .PHONY: dev-samplehttp
 dev-samplehttp:
 	air --build.bin "./tmp/samplehttp" --build.cmd "go build -o ./tmp/samplehttp ./cmd/samplehttp/"
+
+.PHONY: run-eserlivesvc
+run-eserlivesvc:
+	go run ./cmd/eserlivesvc/
 
 .PHONY: run-samplesvc
 run-samplesvc:
@@ -78,11 +97,6 @@ test-ci: test-cov
   else \
     echo "OK"; \
   fi
-
-.PHONY: dep
-dep:
-	go mod download
-	go mod tidy
 
 .PHONY: lint
 lint:

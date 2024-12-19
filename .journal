@@ -1,0 +1,5 @@
+2024-03-19 14:40:00 - Fixed integer overflow warning in users/service.go
+- Added safe integer conversion for Limit parameter
+
+2024-03-19 14:45:00 - Changed Cursor.Limit type in shared/cursor.go
+- Modified Limit field type from int to int32 to avoid conversion warnings

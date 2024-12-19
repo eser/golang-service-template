@@ -7,12 +7,12 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/lib/pq v1.10.9
 	github.com/oklog/ulid/v2 v2.1.0
-	github.com/pressly/goose/v3 v3.23.1
+	github.com/pressly/goose/v3 v3.24.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/net v0.32.0
-	google.golang.org/grpc v1.69.0
-	google.golang.org/protobuf v1.35.2
+	golang.org/x/net v0.33.0
+	google.golang.org/grpc v1.69.2
+	google.golang.org/protobuf v1.36.0
 )
 
 require (

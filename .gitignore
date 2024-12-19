@@ -14,6 +14,8 @@ Thumbs.db
 # local API keys and secrets
 .env.local
 .env.*.local
+config.local.json
+config.*.local.json
 
 # sensitive files
 *.key
