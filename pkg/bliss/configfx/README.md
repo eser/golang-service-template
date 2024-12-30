@@ -50,14 +50,14 @@ type ConfigLoader interface {
 }
 ```
 
-### NewConfigLoader function
+### NewConfigManager function
 
 Creates a new `ConfigLoader` object based on the provided configuration.
 
 ```go
-// func NewConfigLoader() *ConfigLoaderImpl
+// func NewConfigManager() *ConfigManager
 
-cl := logfx.NewConfigLoader()
+cl := configfx.NewConfigManager()
 ```
 
 ### Load function
@@ -78,7 +78,7 @@ type AppConfig struct {
 func loadConfig() (*AppConfig, error) {
   conf := &AppConfig{}
 
-  cl := logfx.NewConfigLoader()
+  cl := configfx.NewConfigManager()
 
   err := cl.Load(
 		conf,

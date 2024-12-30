@@ -12,14 +12,14 @@ import (
 var ErrChannelNotFound = errors.New("channel not found")
 
 type ChannelService struct {
-	scope   datafx.DbExecutor
+	scope   datafx.SqlDataStorer
 	queries *data.Queries
 }
 
-func NewChannelService(scope datafx.DbExecutor) ChannelService {
+func NewChannelService(sqlDataStorer datafx.SqlDataStorer) ChannelService {
 	return ChannelService{
-		scope:   scope,
-		queries: data.New(scope),
+		scope:   sqlDataStorer,
+		queries: data.New(sqlDataStorer.GetConnection()),
 	}
 }
 

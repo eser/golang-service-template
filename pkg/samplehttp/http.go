@@ -14,9 +14,9 @@ import (
 func RegisterHttpRoutes(routes httpfx.Router, appConfig *AppConfig, logger *slog.Logger, dataProvider datafx.DataProvider) { //nolint:lll
 	routes.
 		Route("GET /channels", func(ctx *httpfx.Context) httpfx.Result {
-			scope := dataProvider.GetDefault().Connection
+			dataStorage := dataProvider.GetDefaultSql()
 
-			channels, err := NewChannelService(scope).List(ctx.Request.Context())
+			channels, err := NewChannelService(dataStorage).List(ctx.Request.Context())
 			if err != nil {
 				return ctx.Results.Error(http.StatusInternalServerError, []byte(err.Error()))
 			}

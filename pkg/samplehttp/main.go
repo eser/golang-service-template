@@ -40,6 +40,68 @@ func RegisterHttpMiddlewares(routes httpfx.Router, httpMetrics *httpfx.Metrics, 
 }
 
 func Run() error {
+	// config
+	cl := configfx.NewConfigManager()
+
+	appConfig := &AppConfig{} //nolint:exhaustruct
+
+	err := cl.LoadDefaults(appConfig)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// logger
+	logger, err := logfx.NewLoggerAsDefault(&appConfig.Log)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// metrics
+	mp := metricsfx.NewMetricsProvider()
+
+	// http service
+	routes := httpfx.NewRouter("/")
+	httpService := httpfx.NewHttpService(&appConfig.Http, routes, mp, logger)
+
+	// data
+	dataProvider := datafx.NewDataManager(logger)
+	err = dataProvider.LoadFromConfig(&appConfig.Data)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	// http middlewares
+	routes.Use(middlewares.ErrorHandlerMiddleware())
+	routes.Use(middlewares.ResolveAddressMiddleware())
+	routes.Use(middlewares.ResponseTimeMiddleware())
+	routes.Use(middlewares.CorrelationIdMiddleware())
+	routes.Use(middlewares.CorsMiddleware())
+	routes.Use(middlewares.MetricsMiddleware(httpService.InnerMetrics))
+
+	// http modules
+	healthcheck.RegisterHttpRoutes(routes, &appConfig.Http)
+	openapi.RegisterHttpRoutes(routes, &appConfig.Http)
+	profiling.RegisterHttpRoutes(routes, &appConfig.Http)
+
+	// http routes
+	RegisterHttpRoutes(routes, appConfig, logger, dataProvider)
+
+	// run
+	ctx := context.Background()
+
+	cleanup, err := httpService.Start(ctx)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	defer cleanup()
+
+	lib.WaitForSignal()
+
+	return nil
+}
+
+func RunWithDi() error {
 	err := di.RegisterFn(
 		di.Default,
 		configfx.RegisterDependencies,

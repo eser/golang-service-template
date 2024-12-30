@@ -9,7 +9,7 @@ import (
 )
 
 func RegisterDependencies(container di.Container, config *Config, logger *slog.Logger) error {
-	dp := NewDataProvider(logger)
+	dp := NewDataManager(logger)
 
 	di.RegisterFor[DataProvider](container, dp)
 

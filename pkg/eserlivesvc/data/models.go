@@ -7,6 +7,8 @@ package data
 import (
 	"database/sql"
 	"time"
+
+	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
 type Event struct {
@@ -15,10 +17,10 @@ type Event struct {
 	Status          string         `json:"status"`
 	SeriesId        sql.NullString `json:"seriesId"`
 	Slug            string         `json:"slug"`
-	EventPictureUri sql.NullString `json:"eventPictureUri"`
+	EventPictureUri lib.NullString `json:"eventPictureUri"`
 	Title           string         `json:"title"`
 	Description     string         `json:"description"`
-	AttendanceUri   sql.NullString `json:"attendanceUri"`
+	AttendanceUri   lib.NullString `json:"attendanceUri"`
 	PublishedAt     sql.NullTime   `json:"publishedAt"`
 	TimeStart       time.Time      `json:"timeStart"`
 	TimeEnd         time.Time      `json:"timeEnd"`
@@ -40,7 +42,7 @@ type EventAttendance struct {
 type EventSeries struct {
 	Id              string         `json:"id"`
 	Slug            string         `json:"slug"`
-	EventPictureUri sql.NullString `json:"eventPictureUri"`
+	EventPictureUri lib.NullString `json:"eventPictureUri"`
 	Title           string         `json:"title"`
 	Description     string         `json:"description"`
 	CreatedAt       time.Time      `json:"createdAt"`
@@ -52,7 +54,7 @@ type Profile struct {
 	Id                string         `json:"id"`
 	Kind              string         `json:"kind"`
 	Slug              string         `json:"slug"`
-	ProfilePictureUri sql.NullString `json:"profilePictureUri"`
+	ProfilePictureUri lib.NullString `json:"profilePictureUri"`
 	Title             string         `json:"title"`
 	Description       string         `json:"description"`
 	ShowStories       bool           `json:"showStories"`
@@ -76,9 +78,9 @@ type Question struct {
 	Id            string         `json:"id"`
 	UserId        string         `json:"userId"`
 	Content       string         `json:"content"`
-	AnswerKind    sql.NullString `json:"answerKind"`
-	AnswerContent sql.NullString `json:"answerContent"`
-	AnswerUri     sql.NullString `json:"answerUri"`
+	AnswerKind    lib.NullString `json:"answerKind"`
+	AnswerContent lib.NullString `json:"answerContent"`
+	AnswerUri     lib.NullString `json:"answerUri"`
 	AnsweredAt    sql.NullTime   `json:"answeredAt"`
 	IsAnonymous   bool           `json:"isAnonymous"`
 	IsHidden      bool           `json:"isHidden"`
@@ -100,7 +102,7 @@ type Session struct {
 	Status                   string         `json:"status"`
 	OauthRequestState        string         `json:"oauthRequestState"`
 	OauthRequestCodeVerifier string         `json:"oauthRequestCodeVerifier"`
-	OauthRedirectUri         sql.NullString `json:"oauthRedirectUri"`
+	OauthRedirectUri         lib.NullString `json:"oauthRedirectUri"`
 	LoggedInUserId           sql.NullString `json:"loggedInUserId"`
 	LoggedInAt               sql.NullTime   `json:"loggedInAt"`
 	ExpiresAt                sql.NullTime   `json:"expiresAt"`
@@ -114,7 +116,7 @@ type Story struct {
 	Status          string         `json:"status"`
 	IsFeatured      sql.NullBool   `json:"isFeatured"`
 	Slug            string         `json:"slug"`
-	StoryPictureUri sql.NullString `json:"storyPictureUri"`
+	StoryPictureUri lib.NullString `json:"storyPictureUri"`
 	Title           string         `json:"title"`
 	Description     string         `json:"description"`
 	AuthorProfileId sql.NullString `json:"authorProfileId"`
@@ -130,13 +132,13 @@ type User struct {
 	Id                  string         `json:"id"`
 	Kind                string         `json:"kind"`
 	Name                string         `json:"name"`
-	Email               sql.NullString `json:"email"`
-	Phone               sql.NullString `json:"phone"`
+	Email               lib.NullString `json:"email"`
+	Phone               lib.NullString `json:"phone"`
 	IndividualProfileId sql.NullString `json:"individualProfileId"`
-	GithubRemoteId      sql.NullString `json:"githubRemoteId"`
-	GithubHandle        sql.NullString `json:"githubHandle"`
-	XRemoteId           sql.NullString `json:"xRemoteId"`
-	XHandle             sql.NullString `json:"xHandle"`
+	GithubRemoteId      lib.NullString `json:"githubRemoteId"`
+	GithubHandle        lib.NullString `json:"githubHandle"`
+	XRemoteId           lib.NullString `json:"xRemoteId"`
+	XHandle             lib.NullString `json:"xHandle"`
 	CreatedAt           time.Time      `json:"createdAt"`
 	UpdatedAt           sql.NullTime   `json:"updatedAt"`
 	DeletedAt           sql.NullTime   `json:"deletedAt"`

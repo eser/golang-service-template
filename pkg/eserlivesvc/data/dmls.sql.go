@@ -8,6 +8,8 @@ package data
 import (
 	"context"
 	"database/sql"
+
+	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -18,12 +20,12 @@ values ($1, $2, $3, $4, $5, $6, $7, $8) returning id, kind, name, email, phone, 
 type CreateUserParams struct {
 	Id             string         `json:"id"`
 	Name           string         `json:"name"`
-	Email          sql.NullString `json:"email"`
-	Phone          sql.NullString `json:"phone"`
-	GithubRemoteId sql.NullString `json:"githubRemoteId"`
-	GithubHandle   sql.NullString `json:"githubHandle"`
-	XRemoteId      sql.NullString `json:"xRemoteId"`
-	XHandle        sql.NullString `json:"xHandle"`
+	Email          lib.NullString `json:"email"`
+	Phone          lib.NullString `json:"phone"`
+	GithubRemoteId lib.NullString `json:"githubRemoteId"`
+	GithubHandle   lib.NullString `json:"githubHandle"`
+	XRemoteId      lib.NullString `json:"xRemoteId"`
+	XHandle        lib.NullString `json:"xHandle"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -70,7 +72,7 @@ select id, kind, name, email, phone, individual_profile_id, github_remote_id, gi
 where github_remote_id = $1
 `
 
-func (q *Queries) GetUserByGithubRemoteId(ctx context.Context, githubRemoteID sql.NullString) (User, error) {
+func (q *Queries) GetUserByGithubRemoteId(ctx context.Context, githubRemoteID lib.NullString) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUserByGithubRemoteId, githubRemoteID)
 	var i User
 	err := row.Scan(
@@ -200,12 +202,12 @@ returning id, kind, name, email, phone, individual_profile_id, github_remote_id,
 type UpsertUserByGithubRemoteIdParams struct {
 	Id             string         `json:"id"`
 	Name           string         `json:"name"`
-	Email          sql.NullString `json:"email"`
-	Phone          sql.NullString `json:"phone"`
-	GithubRemoteId sql.NullString `json:"githubRemoteId"`
-	GithubHandle   sql.NullString `json:"githubHandle"`
-	XRemoteId      sql.NullString `json:"xRemoteId"`
-	XHandle        sql.NullString `json:"xHandle"`
+	Email          lib.NullString `json:"email"`
+	Phone          lib.NullString `json:"phone"`
+	GithubRemoteId lib.NullString `json:"githubRemoteId"`
+	GithubHandle   lib.NullString `json:"githubHandle"`
+	XRemoteId      lib.NullString `json:"xRemoteId"`
+	XHandle        lib.NullString `json:"xHandle"`
 }
 
 func (q *Queries) UpsertUserByGithubRemoteId(ctx context.Context, arg UpsertUserByGithubRemoteIdParams) (User, error) {

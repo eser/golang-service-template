@@ -25,7 +25,7 @@ func TestLoadMeta(t *testing.T) { //nolint:funlen
 
 		config := TestConfig{} //nolint:exhaustruct
 
-		cl := configfx.NewConfigLoader()
+		cl := configfx.NewConfigManager()
 		meta, err := cl.LoadMeta(&config)
 
 		expected := []configfx.ConfigItemMeta{
@@ -54,7 +54,7 @@ func TestLoadMeta(t *testing.T) { //nolint:funlen
 
 		config := TestConfigNested{} //nolint:exhaustruct
 
-		cl := configfx.NewConfigLoader()
+		cl := configfx.NewConfigManager()
 		meta, err := cl.LoadMeta(&config)
 
 		expected := []configfx.ConfigItemMeta{
