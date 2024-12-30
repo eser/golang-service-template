@@ -55,8 +55,7 @@ func main() {
 			command := allArgs[0]
 			args := allArgs[1:]
 
-			database := dataProvider.GetDefault().Connection
-
+			database := dataProvider.GetDefaultSql()
 			if database == nil {
 				return errors.New("database is not initialized") //nolint:err113
 			}
@@ -64,7 +63,7 @@ func main() {
 			err := goose.RunWithOptionsContext(
 				context.Background(),
 				command,
-				database,
+				database.GetConnection(),
 				"./ops/migrations/",
 				args,
 			)

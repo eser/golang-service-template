@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/eser/go-service/pkg/bliss/datafx"
+	"github.com/eser/go-service/pkg/bliss/lib"
 	"github.com/eser/go-service/pkg/eserlivesvc/data"
 	"github.com/eser/go-service/pkg/eserlivesvc/shared"
 )
@@ -17,7 +18,7 @@ type UserService struct {
 	queries *data.Queries
 }
 
-func NewUserService(scope datafx.DbExecutor) UserService {
+func NewUserService(dataStorage datafx.DataStorer) UserService {
 	return UserService{
 		scope:   scope,
 		queries: data.New(scope),
@@ -42,7 +43,7 @@ func (r UserService) GetById(ctx context.Context, id string) (*data.User, error)
 }
 
 func (r UserService) GetByGithubRemoteId(ctx context.Context, githubRemoteId string) (*data.User, error) {
-	row, err := r.queries.GetUserByGithubRemoteId(ctx, sql.NullString{String: githubRemoteId, Valid: true})
+	row, err := r.queries.GetUserByGithubRemoteId(ctx, lib.NullString{String: githubRemoteId, Valid: true})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrUserNotFound

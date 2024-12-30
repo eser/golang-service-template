@@ -16,7 +16,7 @@ type ChannelService struct {
 	queries *data.Queries
 }
 
-func NewChannelService(scope datafx.DbExecutor) ChannelService {
+func NewChannelService(dataStorage datafx.DataStorer) ChannelService {
 	return ChannelService{
 		scope:   scope,
 		queries: data.New(scope),

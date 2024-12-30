@@ -1,6 +1,10 @@
 # Golang Service Template
 
-`Golang Service Template` project is designed to provide a robust foundation that is always ready to be open-sourced, accelerating development and fostering a unified understanding across disciplines. It empowers teams to quickly adopt best practices and streamline the project setup, ensuring consistency and clarity from the very start.
+`Golang Service Template` project is designed to provide a robust foundation
+that is always ready to be open-sourced, accelerating development and fostering
+a unified understanding across disciplines. It empowers teams to quickly adopt
+best practices and streamline the project setup, ensuring consistency and
+clarity from the very start.
 
 ## Local development
 
@@ -8,14 +12,27 @@ Clone this repository into your projects folder
 
 ### Structure
 
-This project inherits the [Standard Go Project Layout](https://github.com/golang-standards/project-layout) structure but
-includes its own interpretation.
+This project inherits the
+[Standard Go Project Layout](https://github.com/golang-standards/project-layout)
+structure but includes its own interpretation.
+
+The template code also serves as a service template, implemented with Hexagonal
+Architecture to support typical software organizations striving to apply
+Event-Driven Architecture (EDA) and Domain-Driven Design (DDD).
+
+The decision to use Hexagonal Architecture is based on its simplicity as one of
+the most straightforward implementations of Onion Architecture, with which I
+have extensive experience. Additionally, it is flexible enough to evolve into
+more structured or complex systems, such as Clean Architecture, as project
+requirements grow.
 
 ### Directories
 
-- The `pkg` directory contains packages for project modules. The absence of a direct `internal` folder helps us maintain
-  a mentally isolated modular structure.
-- The `ops` directory contains local and remote infrastructure configuration files, such as `compose.yml`.
+- The `pkg` directory contains packages for project modules. The absence of a
+  direct `internal` folder helps us maintain a mentally isolated modular
+  structure.
+- The `ops` directory contains local and remote infrastructure configuration
+  files, such as `compose.yml`.
 - The `cmd` directory contains the entrypoint for the project binaries.
 
 ### Installation
@@ -49,8 +66,8 @@ includes its own interpretation.
   $ make init
   ```
 
-  If it fails on any step, you can install them manually by following the steps below. Otherwise, you can skip the rest
-  of the steps.
+  If it fails on any step, you can install them manually by following the steps
+  below. Otherwise, you can skip the rest of the steps.
 
   **On other OS or without Homebrew:**
 
@@ -110,11 +127,14 @@ includes its own interpretation.
 
 - 3️⃣ (Optional) Ensure that you can access private dependencies
 
-  You need to get a Personal Access Token from your GitHub account in order to download private dependencies.
+  You need to get a Personal Access Token from your GitHub account in order to
+  download private dependencies.
 
-  To get these, visit https://github.com/settings/tokens/new and create a new token with the `read:packages` scope.
+  To get these, visit https://github.com/settings/tokens/new and create a new
+  token with the `read:packages` scope.
 
-  Then, you need to create or edit the `.netrc` file in your home directory with the following content:
+  Then, you need to create or edit the `.netrc` file in your home directory with
+  the following content:
 
   ```
   machine github.com login <your-github-username> password <your-github-access-token>
@@ -136,8 +156,9 @@ includes its own interpretation.
 
 #### Running the project
 
-Before running any command, please make sure that you have configured your environment regarding your own settings
-first. You may found the related entries that can be configured in `.env` file.
+Before running any command, please make sure that you have configured your
+environment regarding your own settings first. You may found the related entries
+that can be configured in `.env` file.
 
 ```bash
 $ make run
@@ -181,5 +202,6 @@ $ make container-dev
 
 ## More Information
 
-This project is bootstrapped from https://github.com/eser/golang-service-template. See the source repository for further
-details.
+This project is bootstrapped from
+https://github.com/eser/golang-service-template. See the source repository for
+further details.

@@ -13,14 +13,14 @@ import (
 func RegisterHttpRoutes(routes httpfx.Router, appConfig *shared.AppConfig, logger *slog.Logger, dataProvider datafx.DataProvider) { //nolint:lll
 	routes.
 		Route("GET /users", func(ctx *httpfx.Context) httpfx.Result {
-			scope := dataProvider.GetDefault().Connection
+			dataStorage := dataProvider.GetDefaultSql()
 
 			cursor := shared.Cursor{
 				Offset: ctx.Request.URL.Query().Get("cursor"),
 				Limit:  10, //nolint:mnd
 			}
 
-			users, err := NewUserService(scope).List(ctx.Request.Context(), cursor)
+			users, err := NewUserService(dataStorage).List(ctx.Request.Context(), cursor)
 			if err != nil {
 				return ctx.Results.Error(http.StatusInternalServerError, []byte(err.Error()))
 			}
@@ -34,9 +34,9 @@ func RegisterHttpRoutes(routes httpfx.Router, appConfig *shared.AppConfig, logge
 	routes.
 		Route("GET /users/{id}", func(ctx *httpfx.Context) httpfx.Result {
 			id := ctx.Request.PathValue("id")
-			scope := dataProvider.GetDefault().Connection
+			dataStorage := dataProvider.GetDefaultSql()
 
-			user, err := NewUserService(scope).GetById(ctx.Request.Context(), id)
+			user, err := NewUserService(dataStorage).GetById(ctx.Request.Context(), id)
 			if err != nil {
 				if errors.Is(err, ErrUserNotFound) {
 					return ctx.Results.Error(http.StatusNotFound, []byte("user not found"))

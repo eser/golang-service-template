@@ -7,34 +7,27 @@ import (
 	"log/slog"
 )
 
-const DefaultDB = "DEFAULT"
-
-type DataProvider interface {
-	GetDefault() *DataProviderDb
-	GetNamed(name string) *DataProviderDb
-}
-
-type DataProviderImpl struct {
-	dbs    map[string]*DataProviderDb
+type DataManager struct {
+	dbs    map[string]*DataManagerDb
 	logger *slog.Logger
 }
 
-var _ DataProvider = (*DataProviderImpl)(nil)
+var _ DataProvider = (*DataManager)(nil)
 
-func NewDataProvider(logger *slog.Logger) *DataProviderImpl {
-	dbs := make(map[string]*DataProviderDb)
+func NewDataManager(logger *slog.Logger) *DataManager {
+	dbs := make(map[string]*DataManagerDb)
 
-	return &DataProviderImpl{
+	return &DataManager{
 		dbs:    dbs,
 		logger: logger,
 	}
 }
 
-func (dataProvider *DataProviderImpl) GetDefault() *DataProviderDb {
+func (dataProvider *DataManager) GetDefaultSql() SqlDataStorer { //nolint:ireturn
 	return dataProvider.dbs[DefaultDB]
 }
 
-func (dataProvider *DataProviderImpl) GetNamed(name string) *DataProviderDb {
+func (dataProvider *DataManager) GetNamedSql(name string) SqlDataStorer { //nolint:ireturn
 	if db, exists := dataProvider.dbs[name]; exists {
 		return db
 	}
@@ -42,7 +35,7 @@ func (dataProvider *DataProviderImpl) GetNamed(name string) *DataProviderDb {
 	return nil
 }
 
-func (dataProvider *DataProviderImpl) AddConnection(name string, dsn string) error {
+func (dataProvider *DataManager) AddConnection(name string, dsn string) error {
 	dataProvider.logger.Info(
 		"adding database connection",
 		slog.String("name", name),
@@ -68,13 +61,14 @@ func (dataProvider *DataProviderImpl) AddConnection(name string, dsn string) err
 		return fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	dataProvider.dbs[name] = &DataProviderDb{Connection: database}
+	dataProvider.dbs[name] = NewDataManagerDb(database)
+
 	dataProvider.logger.Info("successfully added database connection", slog.String("name", name))
 
 	return nil
 }
 
-func (dataProvider *DataProviderImpl) LoadFromConfig(config *Config) error {
+func (dataProvider *DataManager) LoadFromConfig(config *Config) error {
 	for name, source := range config.Sources {
 		err := dataProvider.AddConnection(name, source.DSN)
 		if err != nil {

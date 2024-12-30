@@ -5,7 +5,7 @@ import (
 )
 
 func RegisterDependencies(container di.Container) {
-	cl := NewConfigLoader()
+	cl := NewConfigManager()
 
 	di.RegisterFor[ConfigLoader](container, cl)
 }

@@ -16,6 +16,13 @@ sql:
         emit_empty_slices: true
         emit_json_tags: true
         json_tags_case_style: "camel"
+        overrides:
+          - db_type: "text"
+            nullable: true
+            go_type: "github.com/eser/go-service/pkg/bliss/lib.NullString"
+          # - db_type: "pg_catalog.bpchar"
+          #   nullable: true
+          #   go_type: "github.com/eser/go-service/pkg/bliss/lib.NullString"
   # - engine: "postgresql"
   #   queries: "pkg/samplehttp/dmls.sql"
   #   schema: "pkg/samplehttp/ddls.sql"

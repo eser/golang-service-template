@@ -9,53 +9,18 @@ import (
 	"github.com/eser/go-service/pkg/bliss/results"
 )
 
-const (
-	tagConf     = "conf"
-	tagDefault  = "default"
-	tagRequired = "required"
-
-	separator = "__"
-)
-
 var ErrNotStruct = results.Define("ERRBC00001", "not a struct") //nolint:gochecknoglobals
 
-type ConfigItemMeta struct {
-	Type         reflect.Type
-	Field        reflect.Value
-	Name         string
-	DefaultValue string
+type ConfigManager struct{}
 
-	Children        []ConfigItemMeta
-	IsRequired      bool
-	HasDefaultValue bool
+var _ ConfigLoader = (*ConfigManager)(nil)
+
+func NewConfigManager() *ConfigManager {
+	return &ConfigManager{}
 }
 
-type ConfigResource func(target *map[string]any) error
-
-type ConfigLoader interface {
-	LoadMeta(i any) (ConfigItemMeta, error)
-	LoadMap(resources ...ConfigResource) (*map[string]any, error)
-	Load(i any, resources ...ConfigResource) error
-	LoadDefaults(i any) error
-
-	FromEnvFileDirect(filename string) ConfigResource
-	FromEnvFile(filename string) ConfigResource
-	FromSystemEnv() ConfigResource
-
-	FromJsonFileDirect(filename string) ConfigResource
-	FromJsonFile(filename string) ConfigResource
-}
-
-type ConfigLoaderImpl struct{}
-
-var _ ConfigLoader = (*ConfigLoaderImpl)(nil)
-
-func NewConfigLoader() *ConfigLoaderImpl {
-	return &ConfigLoaderImpl{}
-}
-
-func (cl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
-	r := reflect.ValueOf(i).Elem()
+func (cl *ConfigManager) LoadMeta(i any) (ConfigItemMeta, error) {
+	r := reflect.ValueOf(i).Elem() //nolint:varnamelen
 
 	children, err := reflectMeta(r)
 	if err != nil {
@@ -74,7 +39,11 @@ func (cl *ConfigLoaderImpl) LoadMeta(i any) (ConfigItemMeta, error) {
 	}, nil
 }
 
-func (cl *ConfigLoaderImpl) LoadMap(resources ...ConfigResource) (*map[string]any, error) {
+// ------------------------
+// Load Methods
+// ------------------------
+
+func (cl *ConfigManager) LoadMap(resources ...ConfigResource) (*map[string]any, error) {
 	target := make(map[string]any)
 
 	for _, resource := range resources {
@@ -87,7 +56,7 @@ func (cl *ConfigLoaderImpl) LoadMap(resources ...ConfigResource) (*map[string]an
 	return &target, nil
 }
 
-func (cl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
+func (cl *ConfigManager) Load(i any, resources ...ConfigResource) error {
 	meta, err := cl.LoadMeta(i)
 	if err != nil {
 		return err
@@ -103,7 +72,7 @@ func (cl *ConfigLoaderImpl) Load(i any, resources ...ConfigResource) error {
 	return nil
 }
 
-func (cl *ConfigLoaderImpl) LoadDefaults(i any) error {
+func (cl *ConfigManager) LoadDefaults(i any) error {
 	return cl.Load(
 		i,
 		cl.FromJsonFile("config.json"),
@@ -112,7 +81,7 @@ func (cl *ConfigLoaderImpl) LoadDefaults(i any) error {
 	)
 }
 
-func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
+func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) { //nolint:varnamelen
 	result := make([]ConfigItemMeta, 0)
 
 	if r.Kind() != reflect.Struct {
@@ -136,13 +105,13 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 			continue
 		}
 
-		tag, hasTag := structFieldType.Tag.Lookup(tagConf)
+		tag, hasTag := structFieldType.Tag.Lookup(TagConf)
 		if !hasTag {
 			continue
 		}
 
-		_, isRequired := structFieldType.Tag.Lookup(tagRequired)
-		defaultValue, hasDefaultValue := structFieldType.Tag.Lookup(tagDefault)
+		_, isRequired := structFieldType.Tag.Lookup(TagRequired)
+		defaultValue, hasDefaultValue := structFieldType.Tag.Lookup(TagDefault)
 
 		var children []ConfigItemMeta = nil
 
@@ -170,7 +139,7 @@ func reflectMeta(r reflect.Value) ([]ConfigItemMeta, error) {
 	return result, nil
 }
 
-func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) {
+func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) { //nolint:funlen,cyclop
 	for _, child := range meta.Children {
 		key := prefix + child.Name
 
@@ -179,7 +148,7 @@ func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) {
 			newMap := reflect.MakeMap(child.Type)
 
 			// Find all keys that start with our prefix
-			prefix := key + separator
+			prefix := key + Separator
 			for key := range *target {
 				if !strings.HasPrefix(key, prefix) {
 					continue
@@ -187,7 +156,7 @@ func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) {
 
 				// Extract the map key from the flattened key
 				mapKey := strings.TrimPrefix(key, prefix)
-				if idx := strings.Index(mapKey, separator); idx != -1 {
+				if idx := strings.Index(mapKey, Separator); idx != -1 {
 					mapKey = mapKey[:idx]
 				}
 
@@ -212,7 +181,7 @@ func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) {
 					subMeta.Children = children
 				}
 
-				reflectSet(subMeta, prefix+mapKey+separator, target)
+				reflectSet(subMeta, prefix+mapKey+Separator, target)
 
 				// Set the value in the map
 				newMap.SetMapIndex(reflect.ValueOf(mapKey), mapValue)
@@ -224,7 +193,7 @@ func reflectSet(meta ConfigItemMeta, prefix string, target *map[string]any) {
 		}
 
 		if child.Type.Kind() == reflect.Struct {
-			reflectSet(child, key+separator, target)
+			reflectSet(child, key+Separator, target)
 
 			continue
 		}

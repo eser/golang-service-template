@@ -7,12 +7,14 @@ package data
 import (
 	"context"
 	"database/sql"
+
+	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
 type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteUser(ctx context.Context, id string) (sql.Result, error)
-	GetUserByGithubRemoteId(ctx context.Context, githubRemoteID sql.NullString) (User, error)
+	GetUserByGithubRemoteId(ctx context.Context, githubRemoteID lib.NullString) (User, error)
 	GetUserById(ctx context.Context, id string) (User, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (sql.Result, error)

@@ -39,9 +39,9 @@ func (s *BroadcastService) GetById(ctx context.Context, req *pb.GetByIdRequest) 
 }
 
 func (s *BroadcastService) List(ctx context.Context, req *pb.ListRequest) (*pb.Channels, error) {
-	scope := s.dataProvider.GetDefault().Connection
+	dataStorage := s.dataProvider.GetDefaultSql()
 
-	channels, err := NewChannelService(scope).List(ctx)
+	channels, err := NewChannelService(dataStorage).List(ctx)
 	if err != nil {
 		return nil, err
 	}
