@@ -31,23 +31,30 @@ container := di.Default
 
 // Register dependencies
 err := di.RegisterFn(
-    container,
-    configfx.RegisterDependencies,
-    logfx.RegisterDependencies,
-    httpfx.RegisterDependencies,
-    // ... other dependencies
+  container,
+  configfx.RegisterDependencies,
+  logfx.RegisterDependencies,
+  httpfx.RegisterDependencies,
+  // ... other dependencies
 )
+if err != nil {
+  panic(err)
+}
 
 // Create and run the application
 run := di.CreateInvoker(
-    container,
-    func(
-        httpService httpfx.HttpService,
-        // ... other dependencies
-    ) error {
-        // Use the injected dependencies
-        return nil
-    },
+  container,
+  func(
+    httpService httpfx.HttpService,
+    // ... other dependencies
+  ) error {
+    err := httpService.Start()
+    if err != nil {
+      return err
+    }
+
+    return nil
+  },
 )
 
 // Seal the container to prevent further modifications

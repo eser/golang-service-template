@@ -41,6 +41,8 @@ func RegisterHttpMiddlewares(routes httpfx.Router, httpMetrics *httpfx.Metrics, 
 }
 
 func Run() error {
+	ctx := context.Background()
+
 	// config
 	cl := configfx.NewConfigManager()
 
@@ -67,7 +69,7 @@ func Run() error {
 	// data
 	dataRegistry := datafx.NewRegistry(logger)
 
-	err = dataRegistry.LoadFromConfig(context.TODO(), &appConfig.Data)
+	err = dataRegistry.LoadFromConfig(ctx, &appConfig.Data)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}
@@ -89,8 +91,6 @@ func Run() error {
 	http.RegisterHttpRoutes(routes, appConfig, logger, dataRegistry)
 
 	// run
-	ctx := context.Background()
-
 	cleanup, err := httpService.Start(ctx)
 	if err != nil {
 		return err //nolint:wrapcheck
