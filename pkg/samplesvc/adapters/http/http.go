@@ -8,7 +8,6 @@ import (
 
 	"github.com/eser/go-service/pkg/bliss/datafx"
 	"github.com/eser/go-service/pkg/bliss/httpfx"
-	"github.com/eser/go-service/pkg/proto-go/broadcast"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/config"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/storage"
 	"github.com/eser/go-service/pkg/samplesvc/business/channel"
@@ -39,7 +38,7 @@ func RegisterHttpRoutes(routes httpfx.Router, appConfig *config.AppConfig, logge
 				return ctx.Results.Error(http.StatusInternalServerError, []byte(err.Error()))
 			}
 
-			var payload broadcast.SendRequest
+			var payload channel.Channel
 			err = json.Unmarshal(body, &payload)
 			if err != nil {
 				return ctx.Results.Error(http.StatusBadRequest, []byte(err.Error()))
@@ -47,8 +46,8 @@ func RegisterHttpRoutes(routes httpfx.Router, appConfig *config.AppConfig, logge
 
 			logger.Info(
 				"Send",
-				slog.String("channelId", payload.GetChannelId()),
-				slog.Any("message", payload.GetMessage()),
+				slog.String("id", payload.Id),
+				slog.String("name", payload.Name.String),
 			)
 
 			return ctx.Results.Ok()

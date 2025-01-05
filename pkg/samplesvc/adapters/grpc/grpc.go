@@ -7,14 +7,14 @@ import (
 	"github.com/eser/go-service/pkg/bliss/datafx"
 	"github.com/eser/go-service/pkg/bliss/di"
 	"github.com/eser/go-service/pkg/bliss/grpcfx"
-	pb "github.com/eser/go-service/pkg/proto-go/broadcast"
+	"github.com/eser/go-service/pkg/samplesvc/adapters/grpc/generated"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/storage"
 	"github.com/eser/go-service/pkg/samplesvc/business/channel"
 )
 
 type BroadcastService struct {
-	pb.UnimplementedChannelServiceServer
-	pb.UnimplementedMessageServiceServer
+	generated.UnimplementedChannelServiceServer
+	generated.UnimplementedMessageServiceServer
 
 	logger       *slog.Logger
 	dataRegistry *datafx.Registry
@@ -23,15 +23,15 @@ type BroadcastService struct {
 func RegisterGrpcService(container di.Container, grpcService grpcfx.GrpcService, logger *slog.Logger, dataRegistry *datafx.Registry) { //nolint:lll
 	bs := NewBroadcastService(logger, dataRegistry)
 
-	grpcService.RegisterService(&pb.ChannelService_ServiceDesc, bs)
-	grpcService.RegisterService(&pb.MessageService_ServiceDesc, bs)
+	grpcService.RegisterService(&generated.ChannelService_ServiceDesc, bs)
+	grpcService.RegisterService(&generated.MessageService_ServiceDesc, bs)
 }
 
 func NewBroadcastService(logger *slog.Logger, dataRegistry *datafx.Registry) *BroadcastService {
 	return &BroadcastService{logger: logger, dataRegistry: dataRegistry} //nolint:exhaustruct
 }
 
-func (s *BroadcastService) GetById(ctx context.Context, req *pb.GetByIdRequest) (*pb.Channel, error) {
+func (s *BroadcastService) GetById(ctx context.Context, req *generated.GetByIdRequest) (*generated.Channel, error) {
 	dataSource := s.dataRegistry.GetDefaultSql()
 	repo := storage.NewChannelRepository(dataSource)
 	service := channel.NewService(repo)
@@ -41,7 +41,7 @@ func (s *BroadcastService) GetById(ctx context.Context, req *pb.GetByIdRequest) 
 		return nil, err //nolint:wrapcheck
 	}
 
-	result := &pb.Channel{
+	result := &generated.Channel{
 		Id:   channel.Id,
 		Name: channel.Name.String,
 	}
@@ -49,7 +49,7 @@ func (s *BroadcastService) GetById(ctx context.Context, req *pb.GetByIdRequest) 
 	return result, nil
 }
 
-func (s *BroadcastService) List(ctx context.Context, req *pb.ListRequest) (*pb.Channels, error) {
+func (s *BroadcastService) List(ctx context.Context, req *generated.ListRequest) (*generated.Channels, error) {
 	dataSource := s.dataRegistry.GetDefaultSql()
 	repo := storage.NewChannelRepository(dataSource)
 	service := channel.NewService(repo)
@@ -59,18 +59,18 @@ func (s *BroadcastService) List(ctx context.Context, req *pb.ListRequest) (*pb.C
 		return nil, err //nolint:wrapcheck
 	}
 
-	newChannels := make([]*pb.Channel, len(channels))
+	newChannels := make([]*generated.Channel, len(channels))
 	for i, channel := range channels {
-		newChannels[i] = &pb.Channel{
+		newChannels[i] = &generated.Channel{
 			Id:   channel.Id,
 			Name: channel.Name.String,
 		}
 	}
 
-	return &pb.Channels{Channels: newChannels}, nil
+	return &generated.Channels{Channels: newChannels}, nil
 }
 
-func (s *BroadcastService) Send(ctx context.Context, req *pb.SendRequest) (*pb.SendResponse, error) {
+func (s *BroadcastService) Send(ctx context.Context, req *generated.SendRequest) (*generated.SendResponse, error) {
 	s.logger.Info(
 		"Send",
 		slog.String("channelId", req.GetChannelId()),

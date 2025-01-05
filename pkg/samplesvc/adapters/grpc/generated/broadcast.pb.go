@@ -4,7 +4,7 @@
 // 	protoc        v5.27.1
 // source: broadcast/broadcast.proto
 
-package broadcast
+package generated
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

@@ -10,8 +10,6 @@ This guide explains how this full-stack codebase is organized.
 | `ops/`          | Operations                  |
 | `pkg/`          | Packages                    |
 | `pkg/bliss/`    | Common go packages          |
-| `pkg/proto-go/` | Go protocol buffers         |
-| `specs/`        | Specification files         |
 | `tmp/`          | Temporary files             |
 
 - All command-line applications and packages are placed in the `cmd` and `pkg` folders, respectively. They are

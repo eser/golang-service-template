@@ -96,5 +96,4 @@ issues:
   exclude-use-default: false
   exclude-dirs:
     - ops
-    - specs
     - tmp
