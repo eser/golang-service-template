@@ -5,7 +5,10 @@ import (
 )
 
 type Config struct {
-	Addr              string        `conf:"ADDR"                default:":8080"`
+	Addr string `conf:"ADDR" default:":8080"`
+
+	CertString        string        `conf:"CERT_STRING"`
+	KeyString         string        `conf:"KEY_STRING"`
 	ReadHeaderTimeout time.Duration `conf:"READ_HEADER_TIMEOUT" default:"5s"`
 	ReadTimeout       time.Duration `conf:"READ_TIMEOUT"        default:"10s"`
 	WriteTimeout      time.Duration `conf:"WRITE_TIMEOUT"       default:"10s"`

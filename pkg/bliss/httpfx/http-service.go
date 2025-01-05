@@ -2,6 +2,7 @@ package httpfx
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -46,6 +47,18 @@ func NewHttpService(
 		Handler: router.GetMux(),
 	}
 
+	if config.CertString != "" && config.KeyString != "" {
+		cert, err := tls.X509KeyPair([]byte(config.CertString), []byte(config.KeyString))
+		if err != nil {
+			panic(fmt.Errorf("failed to load certificate: %w", err))
+		}
+
+		server.TLSConfig = &tls.Config{ //nolint:exhaustruct
+			Certificates: []tls.Certificate{cert},
+			MinVersion:   tls.VersionTLS12,
+		}
+	}
+
 	return &HttpServiceImpl{
 		InnerServer:  server,
 		InnerRouter:  router,
@@ -72,8 +85,16 @@ func (hs *HttpServiceImpl) Start(ctx context.Context) (func(), error) {
 	}
 
 	go func() {
-		if sErr := hs.InnerServer.Serve(listener); sErr != nil && !errors.Is(sErr, http.ErrServerClosed) {
-			hs.logger.ErrorContext(ctx, "HttpService Serve error: %w", slog.Any("error", sErr))
+		var sErr error
+
+		if hs.Server().TLSConfig != nil {
+			sErr = hs.InnerServer.ServeTLS(listener, "", "")
+		} else {
+			sErr = hs.InnerServer.Serve(listener)
+		}
+
+		if sErr != nil && !errors.Is(sErr, http.ErrServerClosed) {
+			hs.logger.ErrorContext(ctx, "HttpService ServeTLS error: %w", slog.Any("error", sErr))
 		}
 	}()
 

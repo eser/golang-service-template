@@ -50,14 +50,14 @@ type ConfigLoader interface {
 }
 ```
 
-### NewConfigLoader function
+### NewConfigManager function
 
 Creates a new `ConfigLoader` object based on the provided configuration.
 
 ```go
-// func NewConfigLoader() *ConfigLoaderImpl
+// func NewConfigManager() *ConfigManager
 
-cl := logfx.NewConfigLoader()
+cl := configfx.NewConfigManager()
 ```
 
 ### Load function
@@ -75,10 +75,10 @@ type AppConfig struct {
 	} `conf:"POSTGRES"`
 }
 
-func loadConfig() (*AppConfig, error) {
-  conf := &AppConfig{}
+func loadConfig() (*config.AppConfig, error) {
+  conf := &config.AppConfig{}
 
-  cl := logfx.NewConfigLoader()
+  cl := configfx.NewConfigManager()
 
   err := cl.Load(
 		conf,

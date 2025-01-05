@@ -2,6 +2,7 @@ package datafx
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 )
 
@@ -11,17 +12,22 @@ const (
 	ContextKeyUnitOfWork ContextKey = "unit-of-work"
 )
 
+type TransactionFinalizer interface {
+	Rollback() error
+	Commit() error
+}
+
 type UnitOfWork interface {
-	Scope() DbExecutorTx
+	TxScope() TransactionFinalizer
 	Context() context.Context
-	Bind(context context.Context, scope DbExecutorTx)
+	Bind(context context.Context, txScope TransactionFinalizer)
 	Commit() error
 	Close() error
 }
 
 type UnitOfWorkImpl struct {
 	context context.Context //nolint:containedctx
-	scope   DbExecutorTx
+	txScope TransactionFinalizer
 }
 
 var _ UnitOfWork = (*UnitOfWorkImpl)(nil)
@@ -30,7 +36,11 @@ var _ UnitOfWork = (*UnitOfWorkImpl)(nil)
 // 	return &UnitOfWorkImpl{}
 // }
 
-func UseUnitOfWork(ctx context.Context, db DbExecutorDb) (UnitOfWork, error) { //nolint:ireturn,varnamelen
+type TransactionStarter interface {
+	BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error)
+}
+
+func UseUnitOfWork(ctx context.Context, transactionStarter TransactionStarter) (UnitOfWork, error) { //nolint:ireturn,varnamelen,lll
 	uow, ok := ctx.Value(ContextKeyUnitOfWork).(UnitOfWork)
 	if ok {
 		return uow, nil
@@ -39,7 +49,7 @@ func UseUnitOfWork(ctx context.Context, db DbExecutorDb) (UnitOfWork, error) { /
 	uow = &UnitOfWorkImpl{} //nolint:exhaustruct
 	newCtx := context.WithValue(ctx, ContextKeyUnitOfWork, uow)
 
-	transaction, err := db.BeginTx(newCtx, nil)
+	transaction, err := transactionStarter.BeginTx(newCtx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to begin transaction: %w", err)
 	}
@@ -49,27 +59,27 @@ func UseUnitOfWork(ctx context.Context, db DbExecutorDb) (UnitOfWork, error) { /
 	return uow, nil
 }
 
-func (uow *UnitOfWorkImpl) Scope() DbExecutorTx { //nolint:ireturn
-	return uow.scope
+func (uow *UnitOfWorkImpl) TxScope() TransactionFinalizer { //nolint:ireturn
+	return uow.txScope
 }
 
 func (uow *UnitOfWorkImpl) Context() context.Context {
 	return uow.context
 }
 
-func (uow *UnitOfWorkImpl) Bind(context context.Context, scope DbExecutorTx) {
+func (uow *UnitOfWorkImpl) Bind(context context.Context, txScope TransactionFinalizer) {
 	uow.context = context
-	uow.scope = scope
+	uow.txScope = txScope
 }
 
 func (uow *UnitOfWorkImpl) Commit() error {
-	return uow.scope.Commit() //nolint:wrapcheck
+	return uow.txScope.Commit() //nolint:wrapcheck
 }
 
 func (uow *UnitOfWorkImpl) Close() error {
-	return uow.scope.Rollback() //nolint:wrapcheck
+	return uow.txScope.Rollback() //nolint:wrapcheck
 }
 
-func (uow *UnitOfWorkImpl) Use(fn func(DbExecutor) any) {
-	fn(uow.scope)
+func (uow *UnitOfWorkImpl) Use(fn func(TransactionFinalizer) any) {
+	fn(uow.txScope)
 }

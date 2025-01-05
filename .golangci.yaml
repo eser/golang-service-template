@@ -1,19 +1,8 @@
-severity:
-  default-severity: error
-
-  rules:
-    - linters:
-        - wsl
-        - errcheck
-      severity: warning
-    - linters:
-        - varnamelen
-      severity: low
-
 run:
-  timeout: 1m
+  timeout: 3m
   issues-exit-code: 1
   tests: true
+  allow-parallel-runners: true
   concurrency: 4
 
 output:
@@ -25,9 +14,7 @@ linters:
   enable-all: true
   disable:
     - godox
-    - gomnd
     - stylecheck
-    - execinquery
     - exportloopref
 
 linters-settings:
@@ -109,5 +96,4 @@ issues:
   exclude-use-default: false
   exclude-dirs:
     - ops
-    - specs
     - tmp

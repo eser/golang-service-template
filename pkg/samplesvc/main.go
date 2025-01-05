@@ -6,64 +6,99 @@ import (
 
 	"github.com/eser/go-service/pkg/bliss/configfx"
 	"github.com/eser/go-service/pkg/bliss/datafx"
-	"github.com/eser/go-service/pkg/bliss/di"
-	"github.com/eser/go-service/pkg/bliss/grpcfx"
+	"github.com/eser/go-service/pkg/bliss/httpfx"
+	"github.com/eser/go-service/pkg/bliss/httpfx/middlewares"
+	"github.com/eser/go-service/pkg/bliss/httpfx/modules/healthcheck"
+	"github.com/eser/go-service/pkg/bliss/httpfx/modules/openapi"
+	"github.com/eser/go-service/pkg/bliss/httpfx/modules/profiling"
 	"github.com/eser/go-service/pkg/bliss/lib"
 	"github.com/eser/go-service/pkg/bliss/logfx"
 	"github.com/eser/go-service/pkg/bliss/metricsfx"
+	"github.com/eser/go-service/pkg/samplesvc/adapters/config"
+	"github.com/eser/go-service/pkg/samplesvc/adapters/http"
 )
 
-func LoadConfig(loader configfx.ConfigLoader) (*AppConfig, *logfx.Config, *grpcfx.Config, *datafx.Config, error) {
-	appConfig := &AppConfig{} //nolint:exhaustruct
+func LoadConfig(loader configfx.ConfigLoader) (*config.AppConfig, *logfx.Config, *httpfx.Config, *datafx.Config, error) { //nolint:lll
+	appConfig := &config.AppConfig{} //nolint:exhaustruct
 
 	err := loader.LoadDefaults(appConfig)
 	if err != nil {
 		return nil, nil, nil, nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	return appConfig, &appConfig.Log, &appConfig.Grpc, &appConfig.Data, nil
+	return appConfig, &appConfig.Log, &appConfig.Http, &appConfig.Data, nil
+}
+
+func RegisterHttpMiddlewares(routes httpfx.Router, httpMetrics *httpfx.Metrics, appConfig *config.AppConfig) error {
+	routes.Use(middlewares.ErrorHandlerMiddleware())
+	routes.Use(middlewares.ResolveAddressMiddleware())
+	routes.Use(middlewares.ResponseTimeMiddleware())
+	routes.Use(middlewares.CorrelationIdMiddleware())
+	routes.Use(middlewares.CorsMiddleware())
+	routes.Use(middlewares.MetricsMiddleware(httpMetrics))
+
+	return nil
 }
 
 func Run() error {
-	err := di.RegisterFn(
-		di.Default,
-		configfx.RegisterDependencies,
-		LoadConfig,
+	// config
+	cl := configfx.NewConfigManager()
 
-		logfx.RegisterDependencies,
-		metricsfx.RegisterDependencies,
-		grpcfx.RegisterDependencies,
-		datafx.RegisterDependencies,
+	appConfig := &config.AppConfig{} //nolint:exhaustruct
 
-		RegisterGrpcService,
-	)
+	err := cl.LoadDefaults(appConfig)
 	if err != nil {
-		panic(err)
+		return err //nolint:wrapcheck
 	}
 
-	run := di.CreateInvoker(
-		di.Default,
-		func(
-			grpcService grpcfx.GrpcService,
-		) error {
-			ctx := context.Background()
+	// logger
+	logger, err := logfx.NewLoggerAsDefault(&appConfig.Log)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
-			cleanup, err := grpcService.Start(ctx)
-			if err != nil {
-				return err //nolint:wrapcheck
-			}
+	// metrics
+	mp := metricsfx.NewMetricsProvider()
 
-			lib.WaitForSignal()
+	// http service
+	routes := httpfx.NewRouter("/")
+	httpService := httpfx.NewHttpService(&appConfig.Http, routes, mp, logger)
 
-			cleanup()
+	// data
+	dataRegistry := datafx.NewRegistry(logger)
 
-			return nil
-		},
-	)
+	err = dataRegistry.LoadFromConfig(context.TODO(), &appConfig.Data)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
-	di.Seal(di.Default)
+	// http middlewares
+	routes.Use(middlewares.ErrorHandlerMiddleware())
+	routes.Use(middlewares.ResolveAddressMiddleware())
+	routes.Use(middlewares.ResponseTimeMiddleware())
+	routes.Use(middlewares.CorrelationIdMiddleware())
+	routes.Use(middlewares.CorsMiddleware())
+	routes.Use(middlewares.MetricsMiddleware(httpService.InnerMetrics))
 
-	err = run()
+	// http modules
+	healthcheck.RegisterHttpRoutes(routes, &appConfig.Http)
+	openapi.RegisterHttpRoutes(routes, &appConfig.Http)
+	profiling.RegisterHttpRoutes(routes, &appConfig.Http)
 
-	return err
+	// http routes
+	http.RegisterHttpRoutes(routes, appConfig, logger, dataRegistry)
+
+	// run
+	ctx := context.Background()
+
+	cleanup, err := httpService.Start(ctx)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	defer cleanup()
+
+	lib.WaitForSignal()
+
+	return nil
 }

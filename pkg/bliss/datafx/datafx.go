@@ -1,6 +1,7 @@
 package datafx
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
@@ -9,11 +10,11 @@ import (
 )
 
 func RegisterDependencies(container di.Container, config *Config, logger *slog.Logger) error {
-	dp := NewDataProvider(logger)
+	dr := NewRegistry(logger)
 
-	di.RegisterFor[DataProvider](container, dp)
+	di.RegisterFor[*Registry](container, dr)
 
-	err := dp.LoadFromConfig(config)
+	err := dr.LoadFromConfig(context.TODO(), config)
 	if err != nil {
 		return fmt.Errorf("failed to load database connections from config: %w", err)
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"os"
@@ -45,7 +46,7 @@ func main() {
 	run := di.CreateInvoker(
 		di.Default,
 		func(
-			dataProvider datafx.DataProvider,
+			dataRegistry *datafx.Registry,
 		) error {
 			allArgs := os.Args[1:]
 			if len(allArgs) == 0 {
@@ -55,17 +56,21 @@ func main() {
 			command := allArgs[0]
 			args := allArgs[1:]
 
-			database := dataProvider.GetDefault().Connection
-
-			if database == nil {
+			dataSource := dataRegistry.GetDefaultSql()
+			if dataSource == nil {
 				return errors.New("database is not initialized") //nolint:err113
+			}
+
+			sqlDb, isOk := dataSource.GetConnection().(*sql.DB)
+			if !isOk {
+				return errors.New("database is not an instance of *sql.DB") //nolint:err113
 			}
 
 			err := goose.RunWithOptionsContext(
 				context.Background(),
 				command,
-				database,
-				"./ops/migrations/",
+				sqlDb,
+				"./pkg/samplesvc/migrations/",
 				args,
 			)
 			if err != nil {
