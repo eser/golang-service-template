@@ -6,6 +6,6 @@ scrape_configs:
     static_configs:
       - targets: ["localhost:9090"]
 
-  - job_name: "samplehttp"
+  - job_name: "samplesvc"
     static_configs:
-      - targets: ["samplehttp:8080"]
+      - targets: ["samplesvc:8080"]

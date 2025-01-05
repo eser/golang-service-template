@@ -8,14 +8,6 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "cmd/samplesvc/"
-    },
-    {
-      "name": "Launch samplehttp",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "cwd": "${workspaceFolder}",
-      "program": "cmd/samplehttp/"
     }
   ]
 }

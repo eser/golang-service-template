@@ -1,4 +1,0 @@
-CREATE TABLE IF NOT EXISTS channel (
-    id TEXT PRIMARY KEY,
-    name TEXT
-);

@@ -75,8 +75,8 @@ type AppConfig struct {
 	} `conf:"POSTGRES"`
 }
 
-func loadConfig() (*AppConfig, error) {
-  conf := &AppConfig{}
+func loadConfig() (*config.AppConfig, error) {
+  conf := &config.AppConfig{}
 
   cl := configfx.NewConfigManager()
 
