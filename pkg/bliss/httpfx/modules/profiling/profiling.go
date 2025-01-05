@@ -6,16 +6,16 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 )
 
-func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) error {
+func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) {
 	if !config.ProfilingEnabled {
-		return nil
+		return
 	}
 
-	routes.GetMux().HandleFunc("/debug/pprof/", pprof.Index)
-	routes.GetMux().HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-	routes.GetMux().HandleFunc("/debug/pprof/profile", pprof.Profile)
-	routes.GetMux().HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-	routes.GetMux().HandleFunc("/debug/pprof/trace", pprof.Trace)
+	mux := routes.GetMux()
 
-	return nil
+	mux.HandleFunc("/debug/pprof/", pprof.Index)
+	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+	mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
+	mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+	mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
 }

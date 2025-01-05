@@ -4,11 +4,11 @@ For more information, refer to `ARCHITECTURE.md` located in the `.github/` direc
 
 You should obtain URLs, namespaces, and other relevant information about existing modules and packages from the `go.mod` and `sqlc.yaml` files. Additionally, environment variables and application configurations in Go can be accessed through the `configfx` module, and database connections obtained via configuration can be used through the `datafx` packages. Please use the same namespaces, conventions, and URLs consistently when adding or refactoring modules or packages.
 
-When generating or creating new components, you must refer to definitions like `samplehttp` and ensure that the necessary additions are made throughout the entire codebase, covering all relevant layers (full-stack). There should be no missing definitions, and code generation must always be comprehensive. Without additional input, always continue generating additional files such as service implementations, repositories, routes/procedures, entry points, etc. In the code sections, instead of placeholders like "to be added later" or "this will come here," the code should be as close as possible to production-ready, clearly utilizing existing objects. Even the simplest methods should be fully implemented; nothing should be left as a placeholder.
+When generating or creating new components, you must refer to definitions like `samplesvc` and ensure that the necessary additions are made throughout the entire codebase, covering all relevant layers (full-stack). There should be no missing definitions, and code generation must always be comprehensive. Without additional input, always continue generating additional files such as service implementations, repositories, routes/procedures, entry points, etc. In the code sections, instead of placeholders like "to be added later" or "this will come here," the code should be as close as possible to production-ready, clearly utilizing existing objects. Even the simplest methods should be fully implemented; nothing should be left as a placeholder.
 
 ### Service Modules
 
-Each **service module** is defined under the `pkg/` directory (e.g., `samplesvc` is a gRPC service, `samplehttp` is an HTTP service).
+Each **service module** is defined under the `pkg/` directory (e.g., `sample` is our sample service).
 
 Each service module should be suffixed with "svc" or "http" depending on its protocol and should have its own `sqlc` definitions, repositories, services, and other components. Service modules have their own entry points defined in the `cmd/` directory with the same name and corresponding `Makefile` targets for running the service locally. After creating a service module, you must update the unit tests and the README.
 

@@ -12,6 +12,11 @@ const (
 	ContextKeyUnitOfWork ContextKey = "unit-of-work"
 )
 
+type TransactionFinalizer interface {
+	Rollback() error
+	Commit() error
+}
+
 type UnitOfWork interface {
 	TxScope() TransactionFinalizer
 	Context() context.Context

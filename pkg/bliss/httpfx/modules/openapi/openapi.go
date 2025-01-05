@@ -9,9 +9,9 @@ type ApiIdentity struct {
 	version string
 }
 
-func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) error {
+func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) {
 	if !config.OpenApiEnabled {
-		return nil
+		return
 	}
 
 	routes.
@@ -27,6 +27,4 @@ func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) error {
 		}).
 		HasSummary("OpenAPI Spec").
 		HasDescription("OpenAPI Spec Endpoint")
-
-	return nil
 }

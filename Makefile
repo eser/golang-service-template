@@ -24,33 +24,18 @@ init: dep-tools
 	command -v gcov2lcov >/dev/null || go install github.com/jandelgado/gcov2lcov@latest
 	command -v goose >/dev/null || go install github.com/pressly/goose/v3/cmd/goose@latest
 	command -v govulncheck >/dev/null || go install golang.org/x/vuln/cmd/govulncheck@latest
+	command -v mockgen >/dev/null || go install go.uber.org/mock/mockgen@latest
 	command -v protoc-gen-go >/dev/null || go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	command -v protoc-gen-go-grpc >/dev/null || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	command -v stringer >/dev/null || go install golang.org/x/tools/cmd/stringer@latest
-
-.PHONY: dev-eserlivesvc
-dev-eserlivesvc:
-	air --build.bin "./tmp/eserlivesvc" --build.cmd "go build -o ./tmp/eserlivesvc ./cmd/eserlivesvc/"
 
 .PHONY: dev-samplesvc
 dev-samplesvc:
 	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
 
-.PHONY: dev-samplehttp
-dev-samplehttp:
-	air --build.bin "./tmp/samplehttp" --build.cmd "go build -o ./tmp/samplehttp ./cmd/samplehttp/"
-
-.PHONY: run-eserlivesvc
-run-eserlivesvc:
-	go run ./cmd/eserlivesvc/
-
 .PHONY: run-samplesvc
 run-samplesvc:
 	go run ./cmd/samplesvc/
-
-.PHONY: run-samplehttp
-run-samplehttp:
-	go run ./cmd/samplehttp/
 
 .PHONY: migrate
 migrate:
@@ -70,11 +55,11 @@ clean:
 
 .PHONY: test
 test:
-	go test -failfast -count 1 ./...
+	go test -failfast -race -count 1 ./...
 
 .PHONY: test-cov
 test-cov:
-	go test -failfast -count 1 -coverpkg=./... -coverprofile=${TMPDIR}cov_profile.out ./...
+	go test -failfast -race -count 1 -coverpkg=./... -coverprofile=${TMPDIR}cov_profile.out ./...
 	# `go env GOPATH`/bin/gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
 
 .PHONY: test-view-html
@@ -100,7 +85,7 @@ test-ci: test-cov
 
 .PHONY: lint
 lint:
-	`go env GOPATH`/bin/golangci-lint run
+	`go env GOPATH`/bin/golangci-lint run ./...
 
 .PHONY: check
 check:
@@ -153,13 +138,13 @@ container-logs:
 
 .PHONY: container-cli
 container-cli:
-	docker compose --file ./ops/docker/compose.yml exec samplehttp bash
+	docker compose --file ./ops/docker/compose.yml exec samplesvc bash
 
 .PHONY: container-push
 container-push:
 ifdef VERSION
-	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/samplehttp:v$(VERSION) .
-	docker push acikyazilim.registry.cpln.io/samplehttp:v$(VERSION)
+	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/samplesvc:v$(VERSION) .
+	docker push acikyazilim.registry.cpln.io/samplesvc:v$(VERSION)
 else
 	@echo "VERSION is not set"
 endif
