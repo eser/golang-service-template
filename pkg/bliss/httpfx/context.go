@@ -23,7 +23,7 @@ type Context struct {
 	// isAborted bool
 }
 
-func (c *Context) Next() Result { //nolint:ireturn
+func (c *Context) Next() Result {
 	c.index++
 
 	for c.index < len(c.handlers) {

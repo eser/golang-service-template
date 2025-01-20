@@ -8,52 +8,30 @@ import (
 type Provider func(args []any) any
 
 // Container interface defines the methods for dependency injection container.
-type Container interface {
-	SetValue(value any)
-	SetValueFor(interfaceType reflect.Type, value any)
-	SetValuesFromFunc(fns ...any) error
-
-	Seal()
-
-	Resolve(interfaceType reflect.Type) (DependencyTarget, bool)
-	MustResolve(interfaceType reflect.Type) DependencyTarget
-
-	CreateLister(interfaceType reflect.Type) func() []DependencyTarget
-	DynamicList(interfaceType reflect.Type) []DependencyTarget
-
-	CreateInvoker(fn any) func() error
-	DynamicInvoke(fn any) error
-}
-
 type DependencyTarget struct {
 	Value           any
 	ReflectionValue reflect.Value
 }
 
 // ContainerImpl is the concrete implementation of the Container interface.
-type ContainerImpl struct {
+type Container struct {
 	dependencies map[reflect.Type]DependencyTarget
 
 	isSealed bool
 }
 
-var _ Container = (*ContainerImpl)(nil)
-
-var (
-	reflectTypeError     = reflect.TypeFor[error]()     //nolint:gochecknoglobals
-	reflectTypeContainer = reflect.TypeFor[Container]() //nolint:gochecknoglobals
-)
+var reflectTypeError = reflect.TypeFor[error]() //nolint:gochecknoglobals
 
 // NewContainer creates a new dependency injection container.
-func NewContainer() *ContainerImpl {
-	return &ContainerImpl{
+func NewContainer() *Container {
+	return &Container{
 		isSealed: false,
 
 		dependencies: make(map[reflect.Type]DependencyTarget),
 	}
 }
 
-func (c *ContainerImpl) SetValue(value any) {
+func (c *Container) SetValue(value any) {
 	if c.isSealed {
 		panic("Container is sealed")
 	}
@@ -67,7 +45,7 @@ func (c *ContainerImpl) SetValue(value any) {
 	}
 }
 
-func (c *ContainerImpl) SetValueFor(interfaceType reflect.Type, value any) {
+func (c *Container) SetValueFor(interfaceType reflect.Type, value any) {
 	if c.isSealed {
 		panic("Container is sealed")
 	}
@@ -85,7 +63,7 @@ func (c *ContainerImpl) SetValueFor(interfaceType reflect.Type, value any) {
 	}
 }
 
-func (c *ContainerImpl) SetValuesFromFunc(fns ...any) error {
+func (c *Container) SetValuesFromFunc(fns ...any) error {
 	if c.isSealed {
 		panic("Container is sealed")
 	}
@@ -133,21 +111,25 @@ func (c *ContainerImpl) SetValuesFromFunc(fns ...any) error {
 	return nil
 }
 
-func (c *ContainerImpl) Seal() {
+func (c *Container) Seal() {
 	c.isSealed = true
 }
 
-func (c *ContainerImpl) Resolve(t reflect.Type) (DependencyTarget, bool) {
-	if t.Implements(reflectTypeContainer) {
-		return DependencyTarget{ReflectionValue: reflect.ValueOf(c), Value: c}, true
+func (c *Container) Resolve(t reflect.Type) (DependencyTarget, bool) {
+	target, isOk := c.dependencies[t]
+
+	if !isOk {
+		for _, target := range c.dependencies {
+			if target.ReflectionValue.Type().Implements(t) {
+				return target, true
+			}
+		}
 	}
 
-	target, ok := c.dependencies[t]
-
-	return target, ok
+	return target, isOk
 }
 
-func (c *ContainerImpl) MustResolve(t reflect.Type) DependencyTarget {
+func (c *Container) MustResolve(t reflect.Type) DependencyTarget {
 	value, ok := c.Resolve(t)
 
 	if !ok {
@@ -157,7 +139,7 @@ func (c *ContainerImpl) MustResolve(t reflect.Type) DependencyTarget {
 	return value
 }
 
-func (c *ContainerImpl) CreateLister(t reflect.Type) func() []DependencyTarget { //nolint:varnamelen
+func (c *Container) CreateLister(t reflect.Type) func() []DependencyTarget { //nolint:varnamelen
 	if c.isSealed {
 		panic("Container is sealed")
 	}
@@ -175,7 +157,7 @@ func (c *ContainerImpl) CreateLister(t reflect.Type) func() []DependencyTarget {
 	}
 }
 
-func (c *ContainerImpl) DynamicList(t reflect.Type) []DependencyTarget {
+func (c *Container) DynamicList(t reflect.Type) []DependencyTarget {
 	var implementations []DependencyTarget
 
 	for it, target := range c.dependencies {
@@ -187,7 +169,7 @@ func (c *ContainerImpl) DynamicList(t reflect.Type) []DependencyTarget {
 	return implementations
 }
 
-func (c *ContainerImpl) CreateInvoker(fn any) func() error {
+func (c *Container) CreateInvoker(fn any) func() error {
 	if c.isSealed {
 		panic("Container is sealed")
 	}
@@ -212,7 +194,7 @@ func (c *ContainerImpl) CreateInvoker(fn any) func() error {
 	}
 }
 
-func (c *ContainerImpl) DynamicInvoke(fn any) error {
+func (c *Container) DynamicInvoke(fn any) error {
 	fnValue := reflect.ValueOf(fn)
 
 	fnType := fnValue.Type()
@@ -230,7 +212,7 @@ func (c *ContainerImpl) DynamicInvoke(fn any) error {
 	return nil
 }
 
-func (c *ContainerImpl) resolveInArgs(fnType reflect.Type) []reflect.Value {
+func (c *Container) resolveInArgs(fnType reflect.Type) []reflect.Value {
 	numIn := fnType.NumIn()
 	args := make([]reflect.Value, numIn)
 

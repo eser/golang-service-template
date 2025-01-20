@@ -26,25 +26,6 @@ type Config struct {
 }
 ```
 
-## Bliss DI
-
-The `httpfx` package provides a `RegisterDependencies` function that can be used to integrate with the `bliss/di`
-package.
-
-```go
-import (
-  ...
-  "github.com/eser/go-service/pkg/bliss/di"
-	"github.com/eser/go-service/pkg/bliss/httpfx"
-  ...
-)
-
-err := di.RegisterFn(
-	httpfx.RegisterDependencies,                    // registers httpfx.HttpService and httpfx.Router
-	...
-)
-```
-
 ## API
 
 ### NewRouter function

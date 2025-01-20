@@ -1,17 +1,16 @@
 package httpfx
 
 import (
-	"github.com/eser/go-service/pkg/bliss/metricsfx"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
 type Metrics struct {
-	mp metricsfx.MetricsProvider
+	mp MetricsProvider
 
 	RequestsTotal *prometheus.CounterVec
 }
 
-func NewMetrics(mp metricsfx.MetricsProvider) *Metrics {
+func NewMetrics(mp MetricsProvider) *Metrics { //nolint:varnamelen
 	requestsTotal := prometheus.NewCounterVec(
 		prometheus.CounterOpts{ //nolint:exhaustruct
 			Name: "http_requests_total",

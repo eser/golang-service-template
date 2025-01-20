@@ -24,8 +24,8 @@ func Define(code string, message string, attributes ...slog.Attr) *Definition {
 	}
 }
 
-func (r *Definition) New(payload ...any) ResultImpl {
-	return ResultImpl{
+func (r *Definition) New(payload ...any) Result {
+	return Result{
 		Definition: r,
 
 		InnerError:      nil,
@@ -34,8 +34,8 @@ func (r *Definition) New(payload ...any) ResultImpl {
 	}
 }
 
-func (r *Definition) Wrap(err error, payload ...any) ResultImpl {
-	return ResultImpl{
+func (r *Definition) Wrap(err error, payload ...any) Result {
+	return Result{
 		Definition: r,
 
 		InnerError:      err,

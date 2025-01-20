@@ -3,6 +3,7 @@ package samplesvc
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/eser/go-service/pkg/bliss/configfx"
 	"github.com/eser/go-service/pkg/bliss/datafx"
@@ -54,7 +55,7 @@ func Run() error {
 	}
 
 	// logger
-	logger, err := logfx.NewLoggerAsDefault(&appConfig.Log)
+	logger, err := logfx.NewLoggerAsDefault(os.Stdout, &appConfig.Log)
 	if err != nil {
 		return err //nolint:wrapcheck
 	}

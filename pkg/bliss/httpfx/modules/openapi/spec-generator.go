@@ -5,7 +5,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
-func GenerateOpenApiSpec(identity *ApiIdentity, routes httpfx.Router) any {
+func GenerateOpenApiSpec(identity *ApiIdentity, routes *httpfx.Router) any {
 	spec := &openapi3.T{ //nolint:exhaustruct
 		OpenAPI: "3.0.0",
 		Info: &openapi3.Info{ //nolint:exhaustruct

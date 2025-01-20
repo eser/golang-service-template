@@ -1,6 +1,6 @@
 module github.com/eser/go-service
 
-go 1.23.4
+go 1.23.5
 
 require (
 	github.com/getkin/kin-openapi v0.128.0

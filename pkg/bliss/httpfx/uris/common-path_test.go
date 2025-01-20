@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCommonPath(t *testing.T) { //nolint:funlen
+func TestCommonPath(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {

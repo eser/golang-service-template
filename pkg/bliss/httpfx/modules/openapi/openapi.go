@@ -9,7 +9,7 @@ type ApiIdentity struct {
 	version string
 }
 
-func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) {
+func RegisterHttpRoutes(routes *httpfx.Router, config *httpfx.Config) {
 	if !config.OpenApiEnabled {
 		return
 	}

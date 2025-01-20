@@ -13,7 +13,7 @@ import (
 	"github.com/eser/go-service/pkg/samplesvc/business/channel"
 )
 
-func RegisterHttpRoutes(routes httpfx.Router, appConfig *config.AppConfig, logger *slog.Logger, dataRegistry *datafx.Registry) { //nolint:lll
+func RegisterHttpRoutes(routes *httpfx.Router, appConfig *config.AppConfig, logger *slog.Logger, dataRegistry *datafx.Registry) { //nolint:lll
 	routes.
 		Route("GET /channels", func(ctx *httpfx.Context) httpfx.Result {
 			dataSource := dataRegistry.GetDefaultSql()

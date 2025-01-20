@@ -9,25 +9,6 @@ package is designed to work seamlessly with the `bliss/di` package.
 The documentation below provides an overview of the package, its types, functions, and usage examples. For more detailed
 information, refer to the source code and tests.
 
-## Bliss DI
-
-The `configfx` package provides a `RegisterDependencies` function that can be used to integrate with the `bliss/di`
-package.
-
-```go
-import (
-  ...
-  "github.com/eser/go-service/pkg/bliss/di"
-	"github.com/eser/go-service/pkg/bliss/configfx"
-  ...
-)
-
-err := di.RegisterFn(
-	configfx.RegisterDependencies,                 // registers configfx.ConfigLoader
-	...
-)
-```
-
 ## API
 
 ### ConfigLoader interface

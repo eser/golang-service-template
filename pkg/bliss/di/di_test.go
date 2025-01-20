@@ -40,7 +40,8 @@ func TestRegisterAndGetValue(t *testing.T) {
 	c := di.NewContainer()
 
 	// Register the implementation
-	di.RegisterFor[Adder](c, AdderImpl{}) //nolint:exhaustruct
+	di.Register(c, AdderImpl{}) //nolint:exhaustruct
+	// di.RegisterFor[Adder](c, AdderImpl{}) //nolint:exhaustruct
 
 	// Get the implementation
 	adder, ok := di.Get[Adder](c)

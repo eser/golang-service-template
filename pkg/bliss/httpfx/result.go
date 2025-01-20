@@ -4,45 +4,34 @@ import (
 	"github.com/eser/go-service/pkg/bliss/results"
 )
 
-type Result interface {
-	results.Result
-
-	StatusCode() int
-	Body() []byte
-
-	RedirectToUri() string
-}
-
-type ResultImpl struct {
+type Result struct { //nolint:errname
 	InnerRedirectToUri string
-	results.ResultImpl
+	results.Result
 
 	InnerBody []byte
 
 	InnerStatusCode int
 }
 
-var _ Result = (*ResultImpl)(nil)
-
-func (r ResultImpl) StatusCode() int {
+func (r Result) StatusCode() int {
 	return r.InnerStatusCode
 }
 
-func (r ResultImpl) Body() []byte {
+func (r Result) Body() []byte {
 	return r.InnerBody
 }
 
-func (r ResultImpl) RedirectToUri() string {
+func (r Result) RedirectToUri() string {
 	return r.InnerRedirectToUri
 }
 
-func (r ResultImpl) WithStatusCode(statusCode int) ResultImpl {
+func (r Result) WithStatusCode(statusCode int) Result {
 	r.InnerStatusCode = statusCode
 
 	return r
 }
 
-func (r ResultImpl) WithBody(body string) ResultImpl {
+func (r Result) WithBody(body string) Result {
 	r.InnerBody = []byte(body)
 
 	return r

@@ -5,17 +5,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus/collectors"
 )
 
-type MetricsProvider interface {
-	GetRegistry() *prometheus.Registry
-}
-
-type MetricsProviderImpl struct {
+type MetricsProvider struct {
 	registry *prometheus.Registry
 }
 
-var _ MetricsProvider = (*MetricsProviderImpl)(nil)
-
-func NewMetricsProvider() *MetricsProviderImpl {
+func NewMetricsProvider() *MetricsProvider {
 	registry := prometheus.NewRegistry()
 
 	// Register the Go collector (which collects runtime metrics)
@@ -24,11 +18,11 @@ func NewMetricsProvider() *MetricsProviderImpl {
 	// Register the process collector (which collects process-level metrics)
 	registry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{})) //nolint:exhaustruct
 
-	return &MetricsProviderImpl{
+	return &MetricsProvider{
 		registry: registry,
 	}
 }
 
-func (mp *MetricsProviderImpl) GetRegistry() *prometheus.Registry {
+func (mp *MetricsProvider) GetRegistry() *prometheus.Registry {
 	return mp.registry
 }

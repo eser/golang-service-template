@@ -18,7 +18,7 @@ type SqlExecutor interface {
 
 type SqlDataSource interface {
 	GetConnection() SqlExecutor
-	UseUnitOfWork(ctx context.Context) (UnitOfWork, error)
+	UseUnitOfWork(ctx context.Context) (*UnitOfWork, error)
 }
 
 type Registry struct {

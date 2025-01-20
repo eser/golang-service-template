@@ -8,18 +8,7 @@ import (
 	"github.com/eser/go-service/pkg/bliss/lib"
 )
 
-type Router interface {
-	GetMux() *http.ServeMux
-	GetPath() string
-	GetHandlers() []Handler
-	GetRoutes() []*Route
-
-	Group(path string) Router
-	Use(handlers ...Handler)
-	Route(pattern string, handlers ...Handler) *Route
-}
-
-type RouterImpl struct {
+type Router struct {
 	mux  *http.ServeMux
 	path string
 
@@ -27,12 +16,10 @@ type RouterImpl struct {
 	routes   []*Route
 }
 
-var _ Router = (*RouterImpl)(nil)
-
-func NewRouter(path string) *RouterImpl {
+func NewRouter(path string) *Router {
 	mux := http.NewServeMux()
 
-	return &RouterImpl{
+	return &Router{
 		mux:  mux,
 		path: path,
 
@@ -41,31 +28,31 @@ func NewRouter(path string) *RouterImpl {
 	}
 }
 
-func (r *RouterImpl) GetMux() *http.ServeMux {
+func (r *Router) GetMux() *http.ServeMux {
 	return r.mux
 }
 
-func (r *RouterImpl) GetPath() string {
+func (r *Router) GetPath() string {
 	return r.path
 }
 
-func (r *RouterImpl) GetHandlers() []Handler {
+func (r *Router) GetHandlers() []Handler {
 	return r.handlers
 }
 
-func (r *RouterImpl) GetRoutes() []*Route {
+func (r *Router) GetRoutes() []*Route {
 	return r.routes
 }
 
-func (r *RouterImpl) Group(path string) Router { //nolint:ireturn
+func (r *Router) Group(path string) *Router {
 	return NewRouter(r.path + path)
 }
 
-func (r *RouterImpl) Use(handlers ...Handler) {
+func (r *Router) Use(handlers ...Handler) {
 	r.handlers = append(r.handlers, handlers...)
 }
 
-func (r *RouterImpl) Route(pattern string, handlers ...Handler) *Route {
+func (r *Router) Route(pattern string, handlers ...Handler) *Route {
 	parsed, err := uris.ParsePattern(pattern)
 	if err != nil {
 		panic(err)

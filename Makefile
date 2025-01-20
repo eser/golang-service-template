@@ -29,12 +29,12 @@ init: dep-tools
 	command -v protoc-gen-go-grpc >/dev/null || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	command -v stringer >/dev/null || go install golang.org/x/tools/cmd/stringer@latest
 
-.PHONY: dev-samplesvc
-dev-samplesvc:
+.PHONY: sample-dev
+sample-dev:
 	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
 
-.PHONY: run-samplesvc
-run-samplesvc:
+.PHONY: sample-run
+sample-run:
 	go run ./cmd/samplesvc/
 
 .PHONY: migrate
@@ -60,7 +60,7 @@ test:
 .PHONY: test-cov
 test-cov:
 	go test -failfast -race -count 1 -coverpkg=./... -coverprofile=${TMPDIR}cov_profile.out ./...
-	# `go env GOPATH`/bin/gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
+	# gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
 
 .PHONY: test-view-html
 test-view-html:
@@ -85,12 +85,17 @@ test-ci: test-cov
 
 .PHONY: lint
 lint:
-	`go env GOPATH`/bin/golangci-lint run ./...
+	golangci-lint run ./...
 
 .PHONY: check
 check:
-	`go env GOPATH`/bin/govulncheck ./...
-	`go env GOPATH`/bin/betteralign ./...
+	govulncheck ./...
+	betteralign ./...
+
+.PHONY: fix
+fix:
+	betteralign -apply ./...
+	go fmt ./...
 
 .PHONY: postgres-start
 postgres-start:

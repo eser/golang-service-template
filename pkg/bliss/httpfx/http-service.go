@@ -9,33 +9,28 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/eser/go-service/pkg/bliss/metricsfx"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
-type HttpService interface {
-	Server() *http.Server
-	Router() Router
-
-	Start(ctx context.Context) (func(), error)
-}
-
-type HttpServiceImpl struct {
+type HttpService struct {
 	InnerServer  *http.Server
-	InnerRouter  Router
+	InnerRouter  *Router
 	InnerMetrics *Metrics
 
 	Config *Config
 	logger *slog.Logger
 }
 
-var _ HttpService = (*HttpServiceImpl)(nil)
+type MetricsProvider interface {
+	GetRegistry() *prometheus.Registry
+}
 
 func NewHttpService(
 	config *Config,
-	router Router,
-	metricsProvider metricsfx.MetricsProvider,
+	router *Router,
+	metricsProvider MetricsProvider,
 	logger *slog.Logger,
-) *HttpServiceImpl {
+) *HttpService {
 	server := &http.Server{ //nolint:exhaustruct
 		ReadHeaderTimeout: config.ReadHeaderTimeout,
 		ReadTimeout:       config.ReadTimeout,
@@ -59,7 +54,7 @@ func NewHttpService(
 		}
 	}
 
-	return &HttpServiceImpl{
+	return &HttpService{
 		InnerServer:  server,
 		InnerRouter:  router,
 		InnerMetrics: NewMetrics(metricsProvider),
@@ -68,15 +63,15 @@ func NewHttpService(
 	}
 }
 
-func (hs *HttpServiceImpl) Server() *http.Server {
+func (hs *HttpService) Server() *http.Server {
 	return hs.InnerServer
 }
 
-func (hs *HttpServiceImpl) Router() Router { //nolint:ireturn
+func (hs *HttpService) Router() *Router {
 	return hs.InnerRouter
 }
 
-func (hs *HttpServiceImpl) Start(ctx context.Context) (func(), error) {
+func (hs *HttpService) Start(ctx context.Context) (func(), error) {
 	hs.logger.InfoContext(ctx, "HttpService is starting...", slog.String("addr", hs.Config.Addr))
 
 	listener, lnErr := net.Listen("tcp", hs.InnerServer.Addr)

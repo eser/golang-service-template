@@ -1,12 +1,12 @@
 package logfx
 
 import (
+	"io"
 	"log/slog"
-	"os"
 )
 
-func NewLogger(config *Config) (*slog.Logger, error) {
-	handler, err := NewHandler(os.Stderr, config)
+func NewLogger(w io.Writer, config *Config) (*slog.Logger, error) {
+	handler, err := NewHandler(w, config)
 	if err != nil {
 		return nil, err
 	}
@@ -14,8 +14,8 @@ func NewLogger(config *Config) (*slog.Logger, error) {
 	return slog.New(handler), nil
 }
 
-func NewLoggerAsDefault(config *Config) (*slog.Logger, error) {
-	logger, err := NewLogger(config)
+func NewLoggerAsDefault(w io.Writer, config *Config) (*slog.Logger, error) {
+	logger, err := NewLogger(w, config)
 	if err != nil {
 		return nil, err
 	}

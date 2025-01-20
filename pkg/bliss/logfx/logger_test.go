@@ -1,6 +1,7 @@
 package logfx_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/eser/go-service/pkg/bliss/logfx"
@@ -43,7 +44,7 @@ func TestRegisterLogger(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			logger, err := logfx.NewLogger(tt.config)
+			logger, err := logfx.NewLogger(os.Stdout, tt.config)
 
 			if tt.wantErr {
 				require.Error(t, err)

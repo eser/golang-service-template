@@ -22,25 +22,6 @@ type Config struct {
 }
 ```
 
-## Bliss DI
-
-The `logfx` package provides a `RegisterDependencies` function that can be used to integrate with the `bliss/di`
-package.
-
-```go
-import (
-  ...
-  "github.com/eser/go-service/pkg/bliss/di"
-	"github.com/eser/go-service/pkg/bliss/logfx"
-  ...
-)
-
-err := di.RegisterFn(
-	logfx.RegisterDependencies,
-	...
-)
-```
-
 ## API
 
 ### NewLogger function
@@ -48,9 +29,9 @@ err := di.RegisterFn(
 Creates a new `slog.Logger` object based on the provided configuration.
 
 ```go
-// func NewLogger(config *Config) (*slog.Logger, error)
+// func NewLogger(w io.Writer, config *Config) (*slog.Logger, error)
 
-logger, err := logfx.NewLogger(config)
+logger, err := logfx.NewLogger(os.Stdout, config)
 ```
 
 ### NewLoggerAsDefault function
@@ -58,9 +39,9 @@ logger, err := logfx.NewLogger(config)
 Creates a new `slog.Logger` object based on the provided configuration and makes it default slog instance.
 
 ```go
-// func NewLoggerAsDefault(config *Config) (*slog.Logger, error)
+// func NewLoggerAsDefault(w io.Writer, config *Config) (*slog.Logger, error)
 
-logger, err := logfx.NewLoggerAsDefault(config)
+logger, err := logfx.NewLoggerAsDefault(os.Stdout, config)
 ```
 
 ### Colored function

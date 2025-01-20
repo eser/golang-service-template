@@ -1,18 +1,17 @@
 package grpcfx
 
 import (
-	"github.com/eser/go-service/pkg/bliss/metricsfx"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
 type Metrics struct {
-	mp metricsfx.MetricsProvider
+	mp MetricsProvider
 
 	RequestsTotal   *prometheus.CounterVec
 	RequestDuration *prometheus.HistogramVec
 }
 
-func NewMetrics(metricsProvider metricsfx.MetricsProvider) *Metrics {
+func NewMetrics(metricsProvider MetricsProvider) *Metrics {
 	requestsTotal := prometheus.NewCounterVec(
 		prometheus.CounterOpts{ //nolint:exhaustruct
 			Name: "grpc_requests_total",

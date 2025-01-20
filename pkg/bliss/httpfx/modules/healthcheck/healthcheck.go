@@ -6,7 +6,7 @@ import (
 	"github.com/eser/go-service/pkg/bliss/httpfx"
 )
 
-func RegisterHttpRoutes(routes httpfx.Router, config *httpfx.Config) {
+func RegisterHttpRoutes(routes *httpfx.Router, config *httpfx.Config) {
 	if !config.HealthCheckEnabled {
 		return
 	}

@@ -17,36 +17,26 @@ type TransactionFinalizer interface {
 	Commit() error
 }
 
-type UnitOfWork interface {
-	TxScope() TransactionFinalizer
-	Context() context.Context
-	Bind(context context.Context, txScope TransactionFinalizer)
-	Commit() error
-	Close() error
-}
-
-type UnitOfWorkImpl struct {
+type UnitOfWork struct {
 	context context.Context //nolint:containedctx
 	txScope TransactionFinalizer
 }
 
-var _ UnitOfWork = (*UnitOfWorkImpl)(nil)
-
-// func NewUnitOfWork() *UnitOfWorkImpl {
-// 	return &UnitOfWorkImpl{}
+// func NewUnitOfWork() *UnitOfWork {
+// 	return &UnitOfWork{}
 // }
 
 type TransactionStarter interface {
 	BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error)
 }
 
-func UseUnitOfWork(ctx context.Context, transactionStarter TransactionStarter) (UnitOfWork, error) { //nolint:ireturn,varnamelen,lll
-	uow, ok := ctx.Value(ContextKeyUnitOfWork).(UnitOfWork)
+func UseUnitOfWork(ctx context.Context, transactionStarter TransactionStarter) (*UnitOfWork, error) {
+	uow, ok := ctx.Value(ContextKeyUnitOfWork).(*UnitOfWork)
 	if ok {
 		return uow, nil
 	}
 
-	uow = &UnitOfWorkImpl{} //nolint:exhaustruct
+	uow = &UnitOfWork{} //nolint:exhaustruct
 	newCtx := context.WithValue(ctx, ContextKeyUnitOfWork, uow)
 
 	transaction, err := transactionStarter.BeginTx(newCtx, nil)
@@ -59,27 +49,27 @@ func UseUnitOfWork(ctx context.Context, transactionStarter TransactionStarter) (
 	return uow, nil
 }
 
-func (uow *UnitOfWorkImpl) TxScope() TransactionFinalizer { //nolint:ireturn
+func (uow *UnitOfWork) TxScope() TransactionFinalizer { //nolint:ireturn
 	return uow.txScope
 }
 
-func (uow *UnitOfWorkImpl) Context() context.Context {
+func (uow *UnitOfWork) Context() context.Context {
 	return uow.context
 }
 
-func (uow *UnitOfWorkImpl) Bind(context context.Context, txScope TransactionFinalizer) {
+func (uow *UnitOfWork) Bind(context context.Context, txScope TransactionFinalizer) {
 	uow.context = context
 	uow.txScope = txScope
 }
 
-func (uow *UnitOfWorkImpl) Commit() error {
+func (uow *UnitOfWork) Commit() error {
 	return uow.txScope.Commit() //nolint:wrapcheck
 }
 
-func (uow *UnitOfWorkImpl) Close() error {
+func (uow *UnitOfWork) Close() error {
 	return uow.txScope.Rollback() //nolint:wrapcheck
 }
 
-func (uow *UnitOfWorkImpl) Use(fn func(TransactionFinalizer) any) {
+func (uow *UnitOfWork) Use(fn func(TransactionFinalizer) any) {
 	fn(uow.txScope)
 }

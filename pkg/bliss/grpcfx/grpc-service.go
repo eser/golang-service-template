@@ -7,27 +7,23 @@ import (
 	"net"
 	"time"
 
-	"github.com/eser/go-service/pkg/bliss/metricsfx"
+	"github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-type GrpcService interface {
-	Server() *grpc.Server
-	RegisterService(desc *grpc.ServiceDesc, impl any)
-	Start(ctx context.Context) (func(), error)
-}
-
-type GrpcServiceImpl struct {
+type GrpcService struct {
 	InnerServer  *grpc.Server
 	InnerMetrics *Metrics
 	Config       *Config
 	logger       *slog.Logger
 }
 
-var _ GrpcService = (*GrpcServiceImpl)(nil)
+type MetricsProvider interface {
+	GetRegistry() *prometheus.Registry
+}
 
-func NewGrpcService(config *Config, metricsProvider metricsfx.MetricsProvider, logger *slog.Logger) *GrpcServiceImpl {
+func NewGrpcService(config *Config, metricsProvider MetricsProvider, logger *slog.Logger) *GrpcService {
 	metrics := NewMetrics(metricsProvider)
 
 	server := grpc.NewServer(
@@ -41,7 +37,7 @@ func NewGrpcService(config *Config, metricsProvider metricsfx.MetricsProvider, l
 		reflection.Register(server)
 	}
 
-	return &GrpcServiceImpl{
+	return &GrpcService{
 		InnerServer:  server,
 		InnerMetrics: metrics,
 		Config:       config,
@@ -49,15 +45,15 @@ func NewGrpcService(config *Config, metricsProvider metricsfx.MetricsProvider, l
 	}
 }
 
-func (gs *GrpcServiceImpl) Server() *grpc.Server {
+func (gs *GrpcService) Server() *grpc.Server {
 	return gs.InnerServer
 }
 
-func (gs *GrpcServiceImpl) RegisterService(desc *grpc.ServiceDesc, impl any) {
+func (gs *GrpcService) RegisterService(desc *grpc.ServiceDesc, impl any) {
 	gs.InnerServer.RegisterService(desc, impl)
 }
 
-func (gs *GrpcServiceImpl) Start(ctx context.Context) (func(), error) {
+func (gs *GrpcService) Start(ctx context.Context) (func(), error) {
 	gs.logger.InfoContext(ctx, "GrpcService is starting...", slog.String("addr", gs.Config.Addr))
 
 	listener, err := net.Listen("tcp", gs.Config.Addr)
