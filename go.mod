@@ -7,7 +7,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/lib/pq v1.10.9
 	github.com/oklog/ulid/v2 v2.1.0
-	github.com/pressly/goose/v3 v3.24.0
+	github.com/pressly/goose/v3 v3.24.1
 	github.com/prometheus/client_golang v1.20.5
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/net v0.34.0
