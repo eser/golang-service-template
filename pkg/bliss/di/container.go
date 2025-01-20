@@ -7,13 +7,12 @@ import (
 
 type Provider func(args []any) any
 
-// Container interface defines the methods for dependency injection container.
 type DependencyTarget struct {
 	Value           any
 	ReflectionValue reflect.Value
 }
 
-// ContainerImpl is the concrete implementation of the Container interface.
+// Container defines the methods for dependency injection container.
 type Container struct {
 	dependencies map[reflect.Type]DependencyTarget
 

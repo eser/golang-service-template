@@ -61,7 +61,12 @@ func Run() error {
 	}
 
 	// metrics
-	mp := metricsfx.NewMetricsProvider()
+	mp := metricsfx.NewMetricsProvider() //nolint:varnamelen
+
+	err = mp.RegisterNativeCollectors()
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
 
 	// http service
 	routes := httpfx.NewRouter("/")

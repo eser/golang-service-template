@@ -3,18 +3,24 @@ TESTCOVERAGE_THRESHOLD=0
 
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
+default: help
+
+.PHONY: help
+help: # Show help for each of the Makefile recipes.
+	@grep -E '^[a-zA-Z0-9 -]+:.*#'  Makefile | sort | while read -r l; do printf "\033[1;32m$$(echo $$l | cut -f 1 -d':')\033[00m:$$(echo $$l | cut -f 2- -d'#')\n"; done
+
 .PHONY: dep
-dep:
+dep: # Download dependencies.
 	go mod download
 	go mod tidy
 
 .PHONY: dep-tools
-dep-tools: dep
+dep-tools: dep # Install tools.
 	@echo Installing tools from tools.go
 	@cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
 
 .PHONY: init
-init: dep-tools
+init: dep-tools # Initialize the project.
 	command -v pre-commit >/dev/null || brew install pre-commit
 	command -v make >/dev/null || brew install make
 	command -v protoc >/dev/null || brew install protobuf
@@ -34,41 +40,41 @@ sample-dev:
 	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
 
 .PHONY: sample-run
-sample-run:
+sample-run: # Run the sample service.
 	go run ./cmd/samplesvc/
 
 .PHONY: migrate
-migrate:
+migrate: # Run the migration command.
 	go run ./cmd/migrate/ $(ARGS)
 
 .PHONY: build
-build:
+build: # Build the entire codebase.
 	go build -v ./...
 
 .PHONY: generate
-generate:
+generate: # Run auto-generated code generation.
 	go generate ./...
 
 .PHONY: clean
-clean:
+clean: # Clean the entire codebase.
 	go clean
 
 .PHONY: test
-test:
+test: # Run the tests.
 	go test -failfast -race -count 1 ./...
 
 .PHONY: test-cov
-test-cov:
+test-cov: # Run the tests with coverage.
 	go test -failfast -race -count 1 -coverpkg=./... -coverprofile=${TMPDIR}cov_profile.out ./...
 	# gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
 
 .PHONY: test-view-html
-test-view-html:
+test-view-html: # View the test coverage in HTML.
 	go tool cover -html ${TMPDIR}cov_profile.out -o ${TMPDIR}cov_profile.html
 	open ${TMPDIR}cov_profile.html
 
 .PHONY: test-ci
-test-ci: test-cov
+test-ci: test-cov # Run the tests with coverage and check if it's above the threshold.
 	$(eval ACTUAL_COVERAGE := $(shell go tool cover -func=${TMPDIR}cov_profile.out | grep total | grep -Eo '[0-9]+\.[0-9]+'))
 
 	@echo "Quality Gate: checking test coverage is above threshold..."
@@ -84,69 +90,69 @@ test-ci: test-cov
   fi
 
 .PHONY: lint
-lint:
+lint: # Run the linting command.
 	golangci-lint run ./...
 
 .PHONY: check
-check:
+check: # Run the vulnerability and alignment checks.
 	govulncheck ./...
 	betteralign ./...
 
 .PHONY: fix
-fix:
+fix: # Fix the codebase.
 	betteralign -apply ./...
 	go fmt ./...
 
 .PHONY: postgres-start
-postgres-start:
+postgres-start: # Start the postgres container.
 	docker compose --file ./ops/docker/compose.yml up --detach postgres
 
 .PHONY: postgres-stop
-postgres-stop:
+postgres-stop: # Stop the postgres container.
 	docker compose --file ./ops/docker/compose.yml stop postgres
 
 .PHONY: container-start
-container-start:
+container-start: # Start the container.
 	docker compose --file ./ops/docker/compose.yml up --detach
 
 .PHONY: container-rebuild
-container-rebuild:
+container-rebuild: # Rebuild the container.
 	docker compose --file ./ops/docker/compose.yml up --detach --build
 
 .PHONY: container-restart
-container-restart:
+container-restart: # Restart the container.
 	docker compose --file ./ops/docker/compose.yml restart
 
 .PHONY: container-stop
-container-stop:
+container-stop: # Stop the container.
 	docker compose --file ./ops/docker/compose.yml stop
 
 .PHONY: container-destroy
-container-destroy:
+container-destroy: # Destroy the container.
 	docker compose --file ./ops/docker/compose.yml down
 
 .PHONY: container-update
-container-update:
+container-update: # Update the container.
 	docker compose --file ./ops/docker/compose.yml pull
 
 .PHONY: container-dev
-container-dev:
+container-dev: # Watch the container.
 	docker compose --file ./ops/docker/compose.yml watch
 
 .PHONY: container-ps
-container-ps:
+container-ps: # List all containers.
 	docker compose --file ./ops/docker/compose.yml ps --all
 
 .PHONY: container-logs
-container-logs:
+container-logs: # Show the logs of the container.
 	docker compose --file ./ops/docker/compose.yml logs
 
 .PHONY: container-cli
-container-cli:
+container-cli: # Open a shell in the container.
 	docker compose --file ./ops/docker/compose.yml exec samplesvc bash
 
 .PHONY: container-push
-container-push:
+container-push: # Push the container to the registry.
 ifdef VERSION
 	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/samplesvc:v$(VERSION) .
 	docker push acikyazilim.registry.cpln.io/samplesvc:v$(VERSION)
@@ -155,7 +161,7 @@ else
 endif
 
 .PHONY: generate-proto
-generate-proto:
+generate-proto: # Generate the proto stubs.
 	@{ \
 	  for f in ./specs/proto/*; do \
 	    current_proto="$$(basename $$f)"; \
