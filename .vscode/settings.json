@@ -37,13 +37,13 @@
   },
   "files.exclude": {
     "**/tmp": true,
-    ".vscode/extensions.json": true,
-    ".adr-dir": true,
-    ".air.toml": true,
-    ".editorconfig": true,
-    ".gitattributes": true,
-    "go.sum": true,
-    "LICENSE": true
+    ".vscode/extensions.json": false,
+    ".adr-dir": false,
+    ".air.toml": false,
+    ".editorconfig": false,
+    ".gitattributes": false,
+    "go.sum": false,
+    "LICENSE": false
   },
   "redhat.telemetry.enabled": false,
   "yaml.schemas": {

@@ -4,9 +4,9 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/eser/go-service/pkg/bliss/datafx"
-	"github.com/eser/go-service/pkg/bliss/di"
-	"github.com/eser/go-service/pkg/bliss/grpcfx"
+	"github.com/eser/ajan/datafx"
+	"github.com/eser/ajan/di"
+	"github.com/eser/ajan/grpcfx"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/grpc/generated"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/storage"
 	"github.com/eser/go-service/pkg/samplesvc/business/channel"

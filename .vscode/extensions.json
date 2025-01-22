@@ -4,6 +4,7 @@
     "EditorConfig.EditorConfig",
     "github.vscode-github-actions",
     "golang.go",
+    "ms-vscode.makefile-tools",
     "ryanluker.vscode-coverage-gutters"
   ]
 }

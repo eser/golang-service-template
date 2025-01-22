@@ -1,6 +1,0 @@
-{
-  "test": "env",
-  "test2": {
-    "test3": "env!"
-  }
-}

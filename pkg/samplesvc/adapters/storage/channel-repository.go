@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/eser/go-service/pkg/bliss/datafx"
+	"github.com/eser/ajan/datafx"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/storage/data"
 	"github.com/eser/go-service/pkg/samplesvc/business/channel"
 )

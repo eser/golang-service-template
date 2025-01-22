@@ -30,6 +30,7 @@ linters-settings:
           - google.golang.org/grpc
           - google.golang.org/grpc/reflection
           - google.golang.org/grpc/status
+          - github.com/eser/ajan
           - github.com/eser/go-service
           - github.com/oklog/ulid/v2
           - github.com/go-playground/validator/v10

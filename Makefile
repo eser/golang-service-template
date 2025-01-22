@@ -6,8 +6,15 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 default: help
 
 .PHONY: help
-help: # Show help for each of the Makefile recipes.
-	@grep -E '^[a-zA-Z0-9 -]+:.*#'  Makefile | sort | while read -r l; do printf "\033[1;32m$$(echo $$l | cut -f 1 -d':')\033[00m:$$(echo $$l | cut -f 2- -d'#')\n"; done
+help: # Shows help for each of the Makefile recipes.
+	@echo "\033[00mCommand\033[00m\t\t\t Description"
+	@echo "-------\t\t\t -----------"
+	@grep -E '^[a-zA-Z0-9 -]+:.*#' Makefile | \
+		while read -r l; do \
+			cmd=$$(echo $$l | cut -f 1 -d':'); \
+			desc=$$(echo $$l | cut -f 2- -d'#'); \
+			printf "\033[1;32m%-16s\033[00m\t%s\n" "$$cmd" "$$desc"; \
+		done
 
 .PHONY: dep
 dep: # Download dependencies.
@@ -35,13 +42,9 @@ init: dep-tools # Initialize the project.
 	command -v protoc-gen-go-grpc >/dev/null || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	command -v stringer >/dev/null || go install golang.org/x/tools/cmd/stringer@latest
 
-.PHONY: sample-dev
-sample-dev:
-	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
-
-.PHONY: sample-run
-sample-run: # Run the sample service.
-	go run ./cmd/samplesvc/
+.PHONY: generate
+generate: # Run auto-generated code generation.
+	go generate ./...
 
 .PHONY: migrate
 migrate: # Run the migration command.
@@ -51,13 +54,17 @@ migrate: # Run the migration command.
 build: # Build the entire codebase.
 	go build -v ./...
 
-.PHONY: generate
-generate: # Run auto-generated code generation.
-	go generate ./...
-
 .PHONY: clean
 clean: # Clean the entire codebase.
 	go clean
+
+.PHONY: sample-dev
+sample-dev: # Runs the sample service in development mode.
+	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
+
+.PHONY: sample-run
+sample-run: # Runs the sample service.
+	go run ./cmd/samplesvc/
 
 .PHONY: test
 test: # Run the tests.
@@ -97,6 +104,7 @@ lint: # Run the linting command.
 check: # Run the vulnerability and alignment checks.
 	govulncheck ./...
 	betteralign ./...
+	go vet ./...
 
 .PHONY: fix
 fix: # Fix the codebase.

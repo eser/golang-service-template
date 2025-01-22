@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/eser/go-service/pkg/bliss/datafx"
-	"github.com/eser/go-service/pkg/bliss/httpfx"
+	"github.com/eser/ajan/datafx"
+	"github.com/eser/ajan/httpfx"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/config"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/storage"
 	"github.com/eser/go-service/pkg/samplesvc/business/channel"

@@ -1,10 +1,10 @@
 package config
 
 import (
-	"github.com/eser/go-service/pkg/bliss"
+	"github.com/eser/ajan"
 )
 
 type AppConfig struct {
 	AppName string `conf:"NAME" default:"samplesvc"`
-	bliss.BaseConfig
+	ajan.BaseConfig
 }

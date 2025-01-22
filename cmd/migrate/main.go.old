@@ -7,16 +7,16 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/eser/go-service/pkg/bliss"
-	"github.com/eser/go-service/pkg/bliss/configfx"
-	"github.com/eser/go-service/pkg/bliss/datafx"
-	"github.com/eser/go-service/pkg/bliss/di"
-	"github.com/eser/go-service/pkg/bliss/logfx"
-	"github.com/eser/go-service/pkg/bliss/metricsfx"
+	"github.com/eser/ajan"
+	"github.com/eser/ajan/configfx"
+	"github.com/eser/ajan/datafx"
+	"github.com/eser/ajan/di"
+	"github.com/eser/ajan/logfx"
+	"github.com/eser/ajan/metricsfx"
 	"github.com/pressly/goose/v3"
 )
 
-type AppConfig bliss.BaseConfig
+type AppConfig ajan.BaseConfig
 
 func LoadConfig(loader configfx.ConfigLoader) (*AppConfig, *logfx.Config, *datafx.Config, error) {
 	appConfig := &AppConfig{} //nolint:exhaustruct
