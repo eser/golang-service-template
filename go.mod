@@ -4,7 +4,7 @@ go 1.23.5
 
 require (
 	github.com/eser/ajan v0.6.1
-	google.golang.org/grpc v1.69.4
+	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.3
 )
 
