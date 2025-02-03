@@ -8,8 +8,8 @@ plugins:
 
 sql:
   - engine: "postgresql"
-    queries: "pkg/samplesvc/data/queries/channels.sql"
-    schema: "pkg/samplesvc/data/migrations"
+    queries: "etc/data/queries/channels.sql"
+    schema: "etc/data/migrations"
     rules:
       - sqlc/db-prepare
     codegen:
@@ -27,7 +27,7 @@ sql:
           json_tags_case_style: "camel"
           output_models_package: "channel"
           output_models_file_name: "business/channel/types.go"
-          output_db_package: "data"
-          output_db_file_name: "adapters/storage/data/db.go"
-          output_files_package: "data"
-          output_files_prefix: "adapters/storage/data/"
+          output_db_package: "storage"
+          output_db_file_name: "adapters/storage/db.go"
+          output_files_package: "storage"
+          output_files_prefix: "adapters/storage/"

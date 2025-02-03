@@ -17,7 +17,7 @@ func RegisterHttpRoutes(routes *httpfx.Router, appConfig *config.AppConfig, logg
 	routes.
 		Route("GET /channels", func(ctx *httpfx.Context) httpfx.Result {
 			dataSource := dataRegistry.GetDefaultSql()
-			repo := storage.NewChannelRepository(dataSource)
+			repo := storage.New(dataSource.GetConnection())
 			service := channel.NewService(repo)
 
 			channels, err := service.List(ctx.Request.Context())

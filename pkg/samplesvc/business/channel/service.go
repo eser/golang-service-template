@@ -2,16 +2,17 @@ package channel
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 )
 
 type Repository interface {
-	GetById(ctx context.Context, id string) (*Channel, error)
-	GetByName(ctx context.Context, name string) (*Channel, error)
-	List(ctx context.Context) ([]*Channel, error)
-	Create(ctx context.Context, channel *Channel) (*Channel, error)
-	Update(ctx context.Context, channel *Channel) error
-	SoftDelete(ctx context.Context, id string) error
+	GetChannelById(ctx context.Context, id string) (*Channel, error)
+	GetChannelByName(ctx context.Context, name sql.NullString) (*Channel, error)
+	ListChannels(ctx context.Context) ([]*Channel, error)
+	// CreateChannel(ctx context.Context, arg CreateChannelParams) (*Channel, error)
+	// UpdateChannel(ctx context.Context, arg UpdateChannelParams) (int64, error)
+	// DeleteChannel(ctx context.Context, id string) (int64, error)
 }
 
 type Service struct {
@@ -23,7 +24,7 @@ func NewService(repo Repository) *Service {
 }
 
 func (s *Service) GetById(ctx context.Context, id string) (*Channel, error) {
-	channel, err := s.repo.GetById(ctx, id)
+	channel, err := s.repo.GetChannelById(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get channel by id: %w", err)
 	}
@@ -32,7 +33,7 @@ func (s *Service) GetById(ctx context.Context, id string) (*Channel, error) {
 }
 
 func (s *Service) GetByName(ctx context.Context, name string) (*Channel, error) {
-	channel, err := s.repo.GetByName(ctx, name)
+	channel, err := s.repo.GetChannelByName(ctx, sql.NullString{String: name, Valid: true})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get channel by name: %w", err)
 	}
@@ -41,7 +42,7 @@ func (s *Service) GetByName(ctx context.Context, name string) (*Channel, error) 
 }
 
 func (s *Service) List(ctx context.Context) ([]*Channel, error) {
-	channels, err := s.repo.List(ctx)
+	channels, err := s.repo.ListChannels(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list channels: %w", err)
 	}
@@ -49,11 +50,11 @@ func (s *Service) List(ctx context.Context) ([]*Channel, error) {
 	return channels, nil
 }
 
-func (s *Service) Create(ctx context.Context, channel *Channel) (*Channel, error) {
-	channel, err := s.repo.Create(ctx, channel)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create channel: %w", err)
-	}
+// func (s *Service) Create(ctx context.Context, channel *Channel) (*Channel, error) {
+// 	channel, err := s.repo.CreateChannel(ctx, channel)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("failed to create channel: %w", err)
+// 	}
 
-	return channel, nil
-}
+// 	return channel, nil
+// }

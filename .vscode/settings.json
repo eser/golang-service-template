@@ -1,5 +1,5 @@
 {
-  "coverage-gutters.coverageBaseDir": "./test/",
+  "coverage-gutters.coverageBaseDir": "./",
   "coverage-gutters.coverageFileNames": [
     "cov_profile.lcov"
   ],
@@ -31,6 +31,7 @@
     ],
     "ui.semanticTokens": true
   },
+  "makefile.configureOnOpen": false,
   "files.associations": {
     "*.mdoc": "markdown",
     "*.mdx": "markdown"

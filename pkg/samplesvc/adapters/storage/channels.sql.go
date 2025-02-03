@@ -3,7 +3,7 @@
 //   sqlc v1.28.0
 // source: channels.sql
 
-package data
+package storage
 
 import (
 	"context"

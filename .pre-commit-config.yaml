@@ -6,7 +6,7 @@ repos:
         args: ["--maxkb=1024"]
         exclude: |
           (?x)^(
-            bin/sqlc-gen-go.wasm|
+            bin/sqlc-gen-go.wasm
           )$
       - id: check-case-conflict
       - id: check-executables-have-shebangs
@@ -29,7 +29,7 @@ repos:
         args: ["--autofix", "--no-ensure-ascii", "--no-sort-keys"]
       - id: trailing-whitespace
   - repo: https://github.com/crate-ci/typos
-    rev: v1.29.4
+    rev: v1.29.5
     hooks:
       - id: typos
         verbose: true
@@ -59,19 +59,23 @@ repos:
         pass_filenames: false
         types:
           - go
-      - id: kebab-case-files-only
-        name: kebab-case files only
-        entry: filenames must be kebab-case only
+      - id: snake-case-files-only
+        name: snake_case files only
+        entry: filenames must be snake_case only
         language: fail
-        files: '(?!(_test\.go|_grpc\.pb\.go)$)[^a-z0-9.\/\[\]@-]'
+        files: '[^a-z0-9_\.\/\[\]@]'
         exclude: |
           (?x)^(
             .github/.*|
+            bin/sqlc-gen-go.wasm|
+            ops/docker/resources/fluentd/Dockerfile|
+            ops/docker/Dockerfile|
+            .adr-dir|
+            .pre-commit-config.yaml|
+            .tool-versions|
             LICENSE|
             Makefile|
-            README.md|
-            ops/docker/Dockerfile|
-            ops/docker/resources/fluentd/Dockerfile
+            README.md
           )$
       - id: run-tests
         name: run tests

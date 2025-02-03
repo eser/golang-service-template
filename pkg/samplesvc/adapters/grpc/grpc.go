@@ -33,7 +33,7 @@ func NewBroadcastService(logger *slog.Logger, dataRegistry *datafx.Registry) *Br
 
 func (s *BroadcastService) GetById(ctx context.Context, req *generated.GetByIdRequest) (*generated.Channel, error) {
 	dataSource := s.dataRegistry.GetDefaultSql()
-	repo := storage.NewChannelRepository(dataSource)
+	repo := storage.New(dataSource.GetConnection())
 	service := channel.NewService(repo)
 
 	channel, err := service.GetById(ctx, req.GetId())
@@ -51,7 +51,7 @@ func (s *BroadcastService) GetById(ctx context.Context, req *generated.GetByIdRe
 
 func (s *BroadcastService) List(ctx context.Context, req *generated.ListRequest) (*generated.Channels, error) {
 	dataSource := s.dataRegistry.GetDefaultSql()
-	repo := storage.NewChannelRepository(dataSource)
+	repo := storage.New(dataSource.GetConnection())
 	service := channel.NewService(repo)
 
 	channels, err := service.List(ctx)

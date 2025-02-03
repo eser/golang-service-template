@@ -109,10 +109,10 @@ services:
     user: "0"
     configs:
       - source: loki-config
-        target: /etc/loki/local-config.yaml
+        target: /etc/loki/local_config.yaml
     volumes:
       - loki-data:/var/loki
-    command: -config.file=/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local_config.yaml
     networks:
       - acik-io-network
     ports:
@@ -140,7 +140,7 @@ configs:
   fluentd-config:
     file: ./resources/fluentd/fluentd.conf
   loki-config:
-    file: ./resources/loki/local-config.yaml
+    file: ./resources/loki/local_config.yaml
 
 volumes:
   postgres-data:

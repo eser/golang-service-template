@@ -6,28 +6,22 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 default: help
 
 .PHONY: help
-help: # Shows help for each of the Makefile recipes.
-	@echo "\033[00mCommand\033[00m\t\t\t Description"
-	@echo "-------\t\t\t -----------"
-	@grep -E '^[a-zA-Z0-9 -]+:.*#' Makefile | \
-		while read -r l; do \
-			cmd=$$(echo $$l | cut -f 1 -d':'); \
-			desc=$$(echo $$l | cut -f 2- -d'#'); \
-			printf "\033[1;32m%-16s\033[00m\t%s\n" "$$cmd" "$$desc"; \
-		done
+help: ## Shows help for each of the Makefile recipes.
+	@echo 'Commands:'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: dep
-dep: # Download dependencies.
+dep: ## Downloads dependencies.
 	go mod download
 	go mod tidy
 
 .PHONY: dep-tools
-dep-tools: dep # Install tools.
+dep-tools: dep # Installs tools.
 	@echo Installing tools from tools.go
 	@cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
 
 .PHONY: init
-init: dep-tools # Initialize the project.
+init: dep-tools # Initializes the project.
 	command -v pre-commit >/dev/null || brew install pre-commit
 	command -v make >/dev/null || brew install make
 	command -v protoc >/dev/null || brew install protobuf
@@ -41,47 +35,48 @@ init: dep-tools # Initialize the project.
 	command -v protoc-gen-go >/dev/null || go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	command -v protoc-gen-go-grpc >/dev/null || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	command -v stringer >/dev/null || go install golang.org/x/tools/cmd/stringer@latest
+	# cp -n .env.example .env || true
 
 .PHONY: generate
-generate: # Run auto-generated code generation.
+generate: ## Runs auto-generated code generation tools.
 	go generate ./...
 
 .PHONY: migrate
-migrate: # Run the migration command.
+migrate: ## Runs the migration command.
 	go run ./cmd/migrate/ $(ARGS)
 
 .PHONY: build
-build: # Build the entire codebase.
+build: ## Builds the entire codebase.
 	go build -v ./...
 
 .PHONY: clean
-clean: # Clean the entire codebase.
+clean: ## Cleans the entire codebase.
 	go clean
 
 .PHONY: sample-dev
-sample-dev: # Runs the sample service in development mode.
+sample-dev: ## Runs the sample service in development mode.
 	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
 
 .PHONY: sample-run
-sample-run: # Runs the sample service.
+sample-run: ## Runs the sample service.
 	go run ./cmd/samplesvc/
 
 .PHONY: test
-test: # Run the tests.
+test: ## Runs the tests.
 	go test -failfast -race -count 1 ./...
 
 .PHONY: test-cov
-test-cov: # Run the tests with coverage.
+test-cov: ## Runs the tests with coverage.
 	go test -failfast -race -count 1 -coverpkg=./... -coverprofile=${TMPDIR}cov_profile.out ./...
 	# gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
 
 .PHONY: test-view-html
-test-view-html: # View the test coverage in HTML.
+test-view-html: ## Views the test coverage in HTML.
 	go tool cover -html ${TMPDIR}cov_profile.out -o ${TMPDIR}cov_profile.html
 	open ${TMPDIR}cov_profile.html
 
 .PHONY: test-ci
-test-ci: test-cov # Run the tests with coverage and check if it's above the threshold.
+test-ci: test-cov # Runs the tests with coverage and check if it's above the threshold.
 	$(eval ACTUAL_COVERAGE := $(shell go tool cover -func=${TMPDIR}cov_profile.out | grep total | grep -Eo '[0-9]+\.[0-9]+'))
 
 	@echo "Quality Gate: checking test coverage is above threshold..."
@@ -97,70 +92,70 @@ test-ci: test-cov # Run the tests with coverage and check if it's above the thre
   fi
 
 .PHONY: lint
-lint: # Run the linting command.
+lint: ## Runs the linting command.
 	golangci-lint run ./...
 
 .PHONY: check
-check: # Run the vulnerability and alignment checks.
+check: ## Runs static analysis tools.
 	govulncheck ./...
 	betteralign ./...
 	go vet ./...
 
 .PHONY: fix
-fix: # Fix the codebase.
+fix: ## Fixes code formatting and alignment.
 	betteralign -apply ./...
 	go fmt ./...
 
 .PHONY: postgres-start
-postgres-start: # Start the postgres container.
+postgres-start: ## Starts the postgres container.
 	docker compose --file ./ops/docker/compose.yml up --detach postgres
 
 .PHONY: postgres-stop
-postgres-stop: # Stop the postgres container.
+postgres-stop: ## Stops the postgres container.
 	docker compose --file ./ops/docker/compose.yml stop postgres
 
 .PHONY: container-start
-container-start: # Start the container.
+container-start: ## Starts the container.
 	docker compose --file ./ops/docker/compose.yml up --detach
 
 .PHONY: container-rebuild
-container-rebuild: # Rebuild the container.
+container-rebuild: ## Rebuilds the container.
 	docker compose --file ./ops/docker/compose.yml up --detach --build
 
 .PHONY: container-restart
-container-restart: # Restart the container.
+container-restart: ## Restarts the container.
 	docker compose --file ./ops/docker/compose.yml restart
 
 .PHONY: container-stop
-container-stop: # Stop the container.
+container-stop: ## Stops the container.
 	docker compose --file ./ops/docker/compose.yml stop
 
 .PHONY: container-destroy
-container-destroy: # Destroy the container.
+container-destroy: ## Destroys the container.
 	docker compose --file ./ops/docker/compose.yml down
 
 .PHONY: container-update
-container-update: # Update the container.
+container-update: ## Updates the container.
 	docker compose --file ./ops/docker/compose.yml pull
 
 .PHONY: container-dev
-container-dev: # Watch the container.
+container-dev: ## Watches the container.
 	docker compose --file ./ops/docker/compose.yml watch
 
 .PHONY: container-ps
-container-ps: # List all containers.
+container-ps: ## Lists all containers.
 	docker compose --file ./ops/docker/compose.yml ps --all
 
 .PHONY: container-logs
-container-logs: # Show the logs of the container.
+container-logs: ## Shows the logs of the container.
 	docker compose --file ./ops/docker/compose.yml logs
 
 .PHONY: container-cli
-container-cli: # Open a shell in the container.
+container-cli: ## Opens a shell in the container.
 	docker compose --file ./ops/docker/compose.yml exec samplesvc bash
 
 .PHONY: container-push
-container-push: # Push the container to the registry.
+container-push: ## Pushes the container to the registry.
 ifdef VERSION
 	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/samplesvc:v$(VERSION) .
 	docker push acikyazilim.registry.cpln.io/samplesvc:v$(VERSION)
@@ -169,7 +164,7 @@ else
 endif
 
 .PHONY: generate-proto
-generate-proto: # Generate the proto stubs.
+generate-proto: ## Generates the proto stubs.
 	@{ \
 	  for f in ./specs/proto/*; do \
 	    current_proto="$$(basename $$f)"; \
