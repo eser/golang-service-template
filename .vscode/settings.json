@@ -7,8 +7,7 @@
   "coverage-gutters.showLineCoverage": true,
   "coverage-gutters.showRulerCoverage": true,
   "go.testFlags": [
-    "-failfast",
-    "-count 1"
+    "-failfast"
   ],
   "go.toolsManagement.autoUpdate": true,
   "go.useLanguageServer": true,

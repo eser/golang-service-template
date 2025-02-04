@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -8,12 +9,17 @@ import (
 
 	"github.com/eser/ajan/datafx"
 	"github.com/eser/ajan/httpfx"
-	"github.com/eser/go-service/pkg/samplesvc/adapters/config"
+	"github.com/eser/ajan/httpfx/middlewares"
+	"github.com/eser/ajan/httpfx/modules/healthcheck"
+	"github.com/eser/ajan/httpfx/modules/openapi"
+	"github.com/eser/ajan/httpfx/modules/profiling"
+	"github.com/eser/ajan/lib"
+	"github.com/eser/ajan/metricsfx"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/storage"
 	"github.com/eser/go-service/pkg/samplesvc/business/channel"
 )
 
-func RegisterHttpRoutes(routes *httpfx.Router, appConfig *config.AppConfig, logger *slog.Logger, dataRegistry *datafx.Registry) { //nolint:lll
+func RegisterHttpRoutes(routes *httpfx.Router, logger *slog.Logger, dataRegistry *datafx.Registry) {
 	routes.
 		Route("GET /channels", func(ctx *httpfx.Context) httpfx.Result {
 			dataSource := dataRegistry.GetDefaultSql()
@@ -55,4 +61,37 @@ func RegisterHttpRoutes(routes *httpfx.Router, appConfig *config.AppConfig, logg
 		HasSummary("Send a message to a channel").
 		HasDescription("Send a message to a channel.").
 		HasResponse(http.StatusOK)
+}
+
+func Run(ctx context.Context, config *httpfx.Config, metricsProvider *metricsfx.MetricsProvider, logger *slog.Logger, dataRegistry *datafx.Registry) error { //nolint:lll
+	routes := httpfx.NewRouter("/")
+	httpService := httpfx.NewHttpService(config, routes, metricsProvider, logger)
+
+	// http middlewares
+	routes.Use(middlewares.ErrorHandlerMiddleware())
+	routes.Use(middlewares.ResolveAddressMiddleware())
+	routes.Use(middlewares.ResponseTimeMiddleware())
+	routes.Use(middlewares.CorrelationIdMiddleware())
+	routes.Use(middlewares.CorsMiddleware())
+	routes.Use(middlewares.MetricsMiddleware(httpService.InnerMetrics))
+
+	// http modules
+	healthcheck.RegisterHttpRoutes(routes, config)
+	openapi.RegisterHttpRoutes(routes, config)
+	profiling.RegisterHttpRoutes(routes, config)
+
+	// http routes
+	RegisterHttpRoutes(routes, logger, dataRegistry) //nolint:contextcheck
+
+	// run
+	cleanup, err := httpService.Start(ctx)
+	if err != nil {
+		return err //nolint:wrapcheck
+	}
+
+	defer cleanup()
+
+	lib.WaitForSignal()
+
+	return nil
 }
