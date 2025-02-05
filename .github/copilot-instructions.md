@@ -1,27 +1,56 @@
-This codebase consists of several interconnected Golang and JavaScript projects that share a common root folder. All packages and application modules, regardless of language or runtime, are located under the `pkg/` directory. The `cmd/` directory includes codebase tooling and console commands. The `ops/` directory contains specifications and configurations for Kubernetes, Docker, and other tools.
+When working with this codebase, please follow these architectural principles and guidelines:
 
-For more information, refer to `ARCHITECTURE.md` located in the `.github/` directory. Before adding code to this codebase using generative AI, you must thoroughly understand the existing structure. Changes should be made without disrupting design decisions and must maintain consistency. Preserving conventions is of utmost importance.
+1. Hexagonal Architecture
+- The codebase follows strict hexagonal architecture (ports and adapters) principles
+- Business logic in pkg/samplesvc/business/ must not have external dependencies
+- All external interactions must go through interfaces (ports) defined in the business layer
+- Adapters in pkg/samplesvc/adapters/ implement these interfaces
+- Ports exist as interfaces in the business layer
 
-You should obtain URLs, namespaces, and other relevant information about existing modules and packages from the `go.mod` and `sqlc.yaml` files. Additionally, environment variables and application configurations in Go can be accessed through the `configfx` module, and database connections obtained via configuration can be used through the `datafx` packages. Please use the same namespaces, conventions, and URLs consistently when adding or refactoring modules or packages.
+1. Dependency Rules
+- Business logic can only depend on other business logic
+- Adapters can only depend on business interfaces they implement
+- No circular dependencies allowed
+- Entry points (cmd/) wire everything together using dependency injection
 
-When generating or creating new components, you must refer to definitions like `samplesvc` and ensure that the necessary additions are made throughout the entire codebase, covering all relevant layers (full-stack). There should be no missing definitions, and code generation must always be comprehensive. Without additional input, always continue generating additional files such as service implementations, repositories, routes/procedures, entry points, etc. In the code sections, instead of placeholders like "to be added later" or "this will come here," the code should be as close as possible to production-ready, clearly utilizing existing objects. Even the simplest methods should be fully implemented; nothing should be left as a placeholder.
+1. Package Structure
+- Business logic packages should define their interfaces and types first
+- Each business domain should have its own package under pkg/samplesvc/business/
+- Adapters should be organized by technology (http, storage, etc.)
+- Configuration should be injected via the appcontext
 
-### Service Modules
-
-Each **service module** is defined under the `pkg/` directory (e.g., `sample` is our sample service).
-
-Each service module should be suffixed with "svc" or "http" depending on its protocol and should have its own `sqlc` definitions, repositories, services, and other components. Service modules have their own entry points defined in the `cmd/` directory with the same name and corresponding `Makefile` targets for running the service locally. After creating a service module, you must update the unit tests and the README.
-
-### Domain Entities
-
-Each **domain entity** (or **domain object**) belongs to a business layer. Because domain entities are exposed to different services, each should define RPC methods for gRPC, route definitions for HTTP, and the necessary Data Definition Language (DDL) and Data Manipulation Language (DML) definitions in `sqlc` for the database. The `sqlc` configuration can be found in `sqlc.yaml`, and existing configurations must be considered. Each `sqlc` definition is organized per service module; if a service module already has its own `sqlc` definitions, you should use them; otherwise, create a new `sqlc` definition for that service module. Additionally, create repositories that use these generated `sqlc` methods, along with services that utilize unit-of-work patterns with these repositories.
-
-For any new domain entities created, you must update the documentation in the `docs/` folder, the unit tests and the README.
-
-### Conventions
-
-**Language Independent**:
-- Use kebab-case for file names.
-
-**Golang**:
+1. Conventions
+- Use snake_case for file names.
 - Follow idiomatic Go conventions.
+
+1. Code Generation
+- Database code is generated using sqlc
+- Maintain clean separation between generated and hand-written code
+
+1. Error Handling
+- Business errors should be defined in the business layer
+- Wrap external errors before returning them
+- Use meaningful error types and messages
+- Avoid panic as much as possible (especially in business logic)
+
+1. Testing
+- Business logic must have unit tests
+- Adapters should have integration tests
+- Use interfaces for mocking in tests
+- Test files should be next to their tested code with package names prefixed with _test
+
+1. Configuration
+- Use environment variables for runtime configuration
+- Keep secrets out of the codebase
+- Use .env.local and config.local.json for development overrides
+
+1. Database
+- All SQL queries should be in etc/data/queries/
+- Use migrations for schema changes
+- Keep migrations forward-only
+- Document schema changes
+
+Remember:
+- Business logic is sacred - keep it clean and dependency-free
+- All external interactions must go through well-defined interfaces
+- Maintain clear separation between layers

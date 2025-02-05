@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/eser/ajan"
 	"github.com/eser/go-service/pkg/samplesvc/adapters/appcontext"
 	"github.com/pressly/goose/v3"
 )
@@ -19,8 +18,6 @@ var (
 	ErrDatabaseNotSqlDb         = errors.New("database is not an instance of *sql.DB")
 	ErrFailedToRunGoose         = errors.New("failed to run goose")
 )
-
-type AppConfig ajan.BaseConfig
 
 func run(ctx context.Context, args []string) error {
 	if len(args) < 1 {
@@ -44,6 +41,13 @@ func run(ctx context.Context, args []string) error {
 
 	command := args[0]
 	rest := args[1:]
+
+	dialect := string(defaultSql.GetDialect())
+
+	err = goose.SetDialect(dialect)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrFailedToRunGoose, err)
+	}
 
 	err = goose.RunContext(ctx, command, db, "./etc/data/migrations", rest...)
 	if err != nil {

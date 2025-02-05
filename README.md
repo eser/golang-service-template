@@ -6,11 +6,8 @@ a unified understanding across disciplines. It empowers teams to quickly adopt
 best practices and streamline the project setup, ensuring consistency and
 clarity from the very start.
 
-## Local development
 
-Clone this repository into your projects folder
-
-### Structure
+## Structure
 
 This project inherits the
 [Standard Go Project Layout](https://github.com/golang-standards/project-layout)
@@ -26,16 +23,53 @@ have extensive experience. Additionally, it is flexible enough to evolve into
 more structured or complex systems, such as Clean Architecture, as project
 requirements grow.
 
-### Directories
 
-- The `pkg` directory contains packages for project modules. The absence of a
-  direct `internal` folder helps us maintain a mentally isolated modular
-  structure.
-- The `ops` directory contains local and remote infrastructure configuration
-  files, such as `compose.yml`.
-- The `cmd` directory contains the entrypoint for the project binaries.
+## Hexagonal Architecture Overview
 
-### Installation
+This project follows hexagonal architecture principles, also known as ports and adapters pattern:
+
+### Business Logic (`pkg/samplesvc/business/`)
+- Contains domain entities and business rules
+- Defines interfaces (ports) that the outside world must implement
+- No external dependencies, pure business logic
+- Example: `channel.Service` interface in `pkg/samplesvc/business/channel/service.go`
+
+### Adapters (`pkg/samplesvc/adapters/`)
+- Implements interfaces defined by the business logic
+- Handles external concerns (HTTP, GRPC, database, etc.)
+- Organized by technology/concern:
+  - `appcontext/`: Application configuration and context
+  - `storage/`: Database repositories
+  - `http/`: HTTP server and handlers
+  - `grpc/`: GRPC server and handlers
+
+
+## Directories
+
+```
+.
+├── cmd/                     # Application entry points
+│   ├── migrate/             # Database migration tool (based on goose)
+│   └── samplesvc/           # Main service entry point
+├── pkg/
+│   └── samplesvc/           # Our application code
+│       ├── adapters/        # Implementation of ports (adapters)
+│       │   ├── appcontext/  # Application context and configuration
+│       │   ├── http/        # HTTP server and handlers
+│       │   ├── grpc/        # GRPC server and handlers
+│       │   └── storage/     # Database repositories
+│       └── business/        # Business logic and domain models
+│           ├── channel/     # Channel-related business objects
+│           └── tenant/      # Tenant-related business objects
+├── etc/
+│   └── data/                # Database-related files
+│       ├── migrations/      # SQL migration files
+│       └── queries/         # SQL query definitions
+└── ops/                     # Operational configurations
+    └── docker/              # Docker-related files
+```
+
+## Installation
 
 - 1️⃣ Ensure that `golang` tools are _properly_ installed on your machine
 
@@ -152,9 +186,9 @@ requirements grow.
   $ pre-commit run --all-files
   ```
 
-### Execution
+## Execution
 
-#### Running the project
+### Running the project
 
 Before running any command, please make sure that you have configured your
 environment regarding your own settings first. You may found the related entries
@@ -167,19 +201,19 @@ $ make run
 
 - You can access http://localhost:8080/ to check if the project is running
 
-### Running the project (with hot-reloading development mode)
+## Running the project (with hot-reloading development mode)
 
 ```bash
 $ make dev
 ```
 
-### Testing the project
+## Testing the project
 
 ```bash
 $ make test
 ```
 
-### Development (with Docker Compose)
+## Development (with Docker Compose)
 
 ```bash
 # first start freshly built containers in background (daemon mode)
@@ -189,7 +223,7 @@ $ make container-start
 $ make container-dev
 ```
 
-### Contribution
+## Contribution
 
 - Create a new branch for your feature
 - Make your changes
@@ -200,8 +234,14 @@ $ make container-dev
 - Wait for review and merge
 - Delete your branch
 
+
 ## More Information
 
 This project is bootstrapped from
 https://github.com/eser/golang-service-template. See the source repository for
 further details.
+
+
+## License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
