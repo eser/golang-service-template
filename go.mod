@@ -6,7 +6,7 @@ require (
 	github.com/eser/ajan v0.6.4
 	github.com/pressly/goose/v3 v3.24.1
 	google.golang.org/grpc v1.70.0
-	google.golang.org/protobuf v1.36.4
+	google.golang.org/protobuf v1.36.5
 )
 
 require (
