@@ -1,9 +1,8 @@
 module github.com/eser/go-service
 
 go 1.23.5
-
 require (
-	github.com/eser/ajan v0.6.4
+	github.com/eser/ajan v0.6.10
 	github.com/pressly/goose/v3 v3.24.1
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.4
@@ -30,6 +29,7 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
