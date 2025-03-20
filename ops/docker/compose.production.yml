@@ -1,7 +1,7 @@
 name: production
 
 services:
-  samplesvc:
+  sample:
     tty: true
     stdin_open: true
     restart: unless-stopped

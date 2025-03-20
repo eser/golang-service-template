@@ -1,0 +1,61 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+*
+
+concurrency:
+  group: ${{ github.ref }}-deployment
+  cancel-in-progress: true
+
+jobs:
+  deployment:
+    name: Deployment
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Determine Variables
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+
+          if [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            DEPLOY_ENV=production
+          elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-rc(\.[0-9]+)?$ ]]; then
+            DEPLOY_ENV=stage
+          elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-dev(\.[0-9]+)?$ ]]; then
+            DEPLOY_ENV=test
+          else
+            echo "Error: Unrecognized tag format: $TAG"
+            exit 1
+          fi
+
+          IMAGE_TAG=${GITHUB_REF#refs/tags/}
+          if [ -z "$IMAGE_TAG" ]; then
+            IMAGE_TAG=$(git rev-parse --short HEAD)
+          fi
+
+          IMAGE_NAME=gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.APP_NAME }}:$IMAGE_TAG
+
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "DEPLOY_ENV=$DEPLOY_ENV" >> $GITHUB_ENV
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Show Results
+        run: |
+          echo "TAG=$TAG"
+          echo "DEPLOY_ENV=$DEPLOY_ENV"
+          echo "IMAGE_NAME=$IMAGE_NAME"
+          echo "IMAGE_TAG=$IMAGE_TAG"

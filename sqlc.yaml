@@ -4,19 +4,22 @@ plugins:
 - name: golang
   wasm:
     url: file://./bin/sqlc-gen-go.wasm
-    sha256: ""
+    sha256: "4fa2c7de11bd2ced2a0cbdf29fb737ff8c93ce65e8ab0fd78c532a8d7f64bd52"
 
 sql:
+  # ------------------------------------------------------------
+  # Default
+  # ------------------------------------------------------------
   - engine: "postgresql"
-    queries: "etc/data/queries/channels.sql"
-    schema: "etc/data/migrations"
+    queries: "etc/data/default/queries/channels.sql"
+    schema: "etc/data/default/migrations"
     rules:
       - sqlc/db-prepare
     codegen:
       - plugin: golang
-        out: "pkg/samplesvc"
+        out: "pkg/sample"
         options:
-          module: "github.com/eser/go-service/pkg/samplesvc"
+          module: "github.com/eser/go-service/pkg/sample"
           sql_package: "database/sql"
           initialisms: []
           emit_empty_slices: true
@@ -25,9 +28,9 @@ sql:
           emit_sql_as_comment: true
           emit_result_struct_pointers: true
           json_tags_case_style: "camel"
-          output_models_package: "channel"
-          output_models_file_name: "business/channel/types.go"
+          output_models_package: "channels"
+          output_models_file_name: "business/channels/types_gen.go"
           output_db_package: "storage"
-          output_db_file_name: "adapters/storage/db.go"
+          output_db_file_name: "adapters/storage/db_gen.go"
           output_files_package: "storage"
           output_files_prefix: "adapters/storage/"

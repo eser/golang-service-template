@@ -28,13 +28,13 @@ requirements grow.
 
 This project follows hexagonal architecture principles, also known as ports and adapters pattern:
 
-### Business Logic (`pkg/samplesvc/business/`)
+### Business Logic (`pkg/sample/business/`)
 - Contains domain entities and business rules
 - Defines interfaces (ports) that the outside world must implement
 - No external dependencies, pure business logic
-- Example: `channel.Service` interface in `pkg/samplesvc/business/channel/service.go`
+- Example: `channels.Service` interface in `pkg/sample/business/channels/service.go`
 
-### Adapters (`pkg/samplesvc/adapters/`)
+### Adapters (`pkg/sample/adapters/`)
 - Implements interfaces defined by the business logic
 - Handles external concerns (HTTP, GRPC, database, etc.)
 - Organized by technology/concern:
@@ -50,9 +50,9 @@ This project follows hexagonal architecture principles, also known as ports and 
 .
 ├── cmd/                     # Application entry points
 │   ├── migrate/             # Database migration tool (based on goose)
-│   └── samplesvc/           # Main service entry point
+│   └── serve/               # Main service entry point
 ├── pkg/
-│   └── samplesvc/           # Our application code
+│   └── sample/              # Our application code
 │       ├── adapters/        # Implementation of ports (adapters)
 │       │   ├── appcontext/  # Application context and configuration
 │       │   ├── http/        # HTTP server and handlers

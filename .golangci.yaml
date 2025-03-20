@@ -41,6 +41,7 @@ linters-settings:
           - github.com/prometheus/client_golang/prometheus
           - github.com/pressly/goose/v3
           - github.com/lib/pq
+          - github.com/spf13/cobra
   revive:
     # enable-all-rules: true
     ignore-generated-header: true

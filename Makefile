@@ -15,26 +15,29 @@ dep: ## Downloads dependencies.
 	go mod download
 	go mod tidy
 
-.PHONY: dep-tools
-dep-tools: dep # Installs tools.
-	@echo Installing tools from tools.go
-	@cat tools.go | grep _ | awk -F'"' '{print $$2}' | xargs -tI % go install %
-
-.PHONY: init
-init: dep-tools # Initializes the project.
+.PHONY: init-tools
+init-tools: ## Initializes tools.
 	command -v pre-commit >/dev/null || brew install pre-commit
 	command -v make >/dev/null || brew install make
-	command -v protoc >/dev/null || brew install protobuf
+	command -v act >/dev/null || brew install act
+	# command -v protoc >/dev/null || brew install protobuf
 	[ -f .git/hooks/pre-commit ] || pre-commit install
-	command -v air >/dev/null || go install github.com/air-verse/air@latest
-	command -v betteralign >/dev/null || go install github.com/dkorunic/betteralign/cmd/betteralign@latest
-	command -v gcov2lcov >/dev/null || go install github.com/jandelgado/gcov2lcov@latest
-	command -v goose >/dev/null || go install github.com/pressly/goose/v3/cmd/goose@latest
-	command -v govulncheck >/dev/null || go install golang.org/x/vuln/cmd/govulncheck@latest
-	command -v mockgen >/dev/null || go install go.uber.org/mock/mockgen@latest
-	command -v protoc-gen-go >/dev/null || go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	command -v protoc-gen-go-grpc >/dev/null || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	command -v stringer >/dev/null || go install golang.org/x/tools/cmd/stringer@latest
+	go tool -n air >/dev/null || go get -tool github.com/air-verse/air@latest
+	go tool -n sqlc >/dev/null || go get -tool github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+	go tool -n mockery > /dev/null || go get -tool github.com/vektra/mockery/v2@v2.52.3
+	go tool -n stringer >/dev/null || go get -tool golang.org/x/tools/cmd/stringer@latest
+	go tool -n gcov2lcov >/dev/null || go get -tool github.com/jandelgado/gcov2lcov@latest
+	go tool -n protoc-gen-go >/dev/null || go get -tool google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	go tool -n protoc-gen-go-grpc >/dev/null || go get -tool google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+.PHONY: init-checkers
+init-checkers: ## Initializes checkers.
+	go tool -n golangci-lint >/dev/null || go get -tool github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go tool -n betteralign >/dev/null || go get -tool github.com/dkorunic/betteralign/cmd/betteralign@latest
+	go tool -n govulncheck >/dev/null || go get -tool golang.org/x/vuln/cmd/govulncheck@latest
+
+.PHONY: init
+init: init-tools init-checkers dep # Initializes the project.
 	# cp -n .env.example .env || true
 
 .PHONY: generate
@@ -53,13 +56,13 @@ build: ## Builds the entire codebase.
 clean: ## Cleans the entire codebase.
 	go clean
 
-.PHONY: sample-dev
-sample-dev: ## Runs the sample service in development mode.
-	air --build.bin "./tmp/samplesvc" --build.cmd "go build -o ./tmp/samplesvc ./cmd/samplesvc/"
+.PHONY: dev
+dev: ## Runs the sample service in development mode.
+	air --build.bin "./tmp/serve" --build.cmd "go build -o ./tmp/serve ./cmd/serve/"
 
-.PHONY: sample-run
-sample-run: ## Runs the sample service.
-	go run ./cmd/samplesvc/
+.PHONY: run
+run: ## Runs the sample service.
+	go run ./cmd/serve/
 
 .PHONY: test
 test: ## Runs the tests.
@@ -68,7 +71,7 @@ test: ## Runs the tests.
 .PHONY: test-cov
 test-cov: ## Runs the tests with coverage.
 	go test -failfast -race -count 1 -coverpkg=./... -coverprofile=${TMPDIR}cov_profile.out ./...
-	# gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
+	# go tool gcov2lcov -infile ${TMPDIR}cov_profile.out -outfile ./cov_profile.lcov
 
 .PHONY: test-view-html
 test-view-html: ## Views the test coverage in HTML.
@@ -93,17 +96,17 @@ test-ci: test-cov # Runs the tests with coverage and check if it's above the thr
 
 .PHONY: lint
 lint: ## Runs the linting command.
-	golangci-lint run ./...
+	go tool golangci-lint run ./...
 
 .PHONY: check
 check: ## Runs static analysis tools.
-	govulncheck ./...
-	betteralign ./...
+	go tool govulncheck ./...
+	go tool betteralign ./...
 	go vet ./...
 
 .PHONY: fix
 fix: ## Fixes code formatting and alignment.
-	betteralign -apply ./...
+	go tool betteralign -apply ./...
 	go fmt ./...
 
 .PHONY: postgres-start
@@ -152,13 +155,13 @@ container-logs: ## Shows the logs of the container.
 
 .PHONY: container-cli
 container-cli: ## Opens a shell in the container.
-	docker compose --file ./ops/docker/compose.yml exec samplesvc bash
+	docker compose --file ./ops/docker/compose.yml exec sample bash
 
 .PHONY: container-push
 container-push: ## Pushes the container to the registry.
 ifdef VERSION
-	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/samplesvc:v$(VERSION) .
-	docker push acikyazilim.registry.cpln.io/samplesvc:v$(VERSION)
+	docker build --platform=linux/amd64 -t acikyazilim.registry.cpln.io/sample:v$(VERSION) .
+	docker push acikyazilim.registry.cpln.io/sample:v$(VERSION)
 else
 	@echo "VERSION is not set"
 endif
