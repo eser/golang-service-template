@@ -1,4 +1,8 @@
 {
+  "name": "sample",
+  "features": {
+    "dummy": true
+  },
   "data": {
     "sources": {
       "default": {
