@@ -69,8 +69,8 @@ FROM upstream-runner AS runner-production
 
 # Copy the binary from the builder-production container
 COPY --from=builder-production --chown=nonroot:nonroot /app/serve /
-COPY --from=builder-production /bin/sh /bin/sh
-COPY --from=builder-production /bin/cat /bin/cat
+# COPY --from=builder-production /bin/sh /bin/sh
+# COPY --from=builder-production /bin/cat /bin/cat
 
 # Run as a non-root user
 USER nonroot
