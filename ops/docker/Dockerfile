@@ -68,7 +68,7 @@ RUN go build ./cmd/serve/
 FROM upstream-runner AS runner-production
 
 # Copy the binary from the builder-production container
-COPY --from=builder-production --chown=nonroot:nonroot /app/sample /
+COPY --from=builder-production --chown=nonroot:nonroot /app/serve /
 # COPY --from=builder-production /bin/sh /bin/sh
 # COPY --from=builder-production /bin/cat /bin/cat
 

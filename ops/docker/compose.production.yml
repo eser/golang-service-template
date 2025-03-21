@@ -6,12 +6,13 @@ services:
     stdin_open: true
     restart: unless-stopped
     build:
-      context: ../
-      dockerfile: ./Dockerfile
+      context: ../../
+      dockerfile: ./ops/docker/Dockerfile
       target: runner-production
     environment:
       PORT: 8080
-      POSTGRES_CONNSTR: postgres://postgres:s3cr3t@postgresql:5432/postgres
+      DATA__SOURCES__DEFAULT__DSN: postgres://postgres:s3cr3t@postgres:5432/postgres?sslmode=disable
+      LOG__PRETTY: false
     networks:
       - acik-io-network
     ports:
