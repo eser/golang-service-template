@@ -50,6 +50,7 @@ This project follows hexagonal architecture principles, also known as ports and 
 .
 ├── cmd/                     # Application entry points
 │   ├── migrate/             # Database migration tool (based on goose)
+│   ├── manage/              # Manages codebase and app-related resources
 │   └── serve/               # Main service entry point
 ├── pkg/
 │   └── sample/              # Our application code
@@ -59,12 +60,13 @@ This project follows hexagonal architecture principles, also known as ports and 
 │       │   ├── grpc/        # GRPC server and handlers
 │       │   └── storage/     # Database repositories
 │       └── business/        # Business logic and domain models
-│           ├── channel/     # Channel-related business objects
-│           └── tenant/      # Tenant-related business objects
+│           ├── channels/    # Channel-related business objects
+│           └── tenants/     # Tenant-related business objects
 ├── etc/
-│   └── data/                # Database-related files
-│       ├── migrations/      # SQL migration files
-│       └── queries/         # SQL query definitions
+│   └── data/                # Data source-related files
+│       └── default/         # Data source name
+│           ├── migrations/  # SQL migration files
+│           └── queries/     # SQL query definitions
 └── ops/                     # Operational configurations
     └── docker/              # Docker-related files
 ```
@@ -107,13 +109,10 @@ This project follows hexagonal architecture principles, also known as ports and 
 
   - Install and enable [pre-commit](https://pre-commit.com/#install)
   - Install [GNU make](https://www.gnu.org/software/make/)
+  - Install [act](https://nektosact.com/installation/index.html)
   - Install [protobuf](https://github.com/protocolbuffers/protobuf/releases)
   - Install [Air](https://github.com/air-verse/air#installation)
-  - Install [govulncheck](https://go.googlesource.com/vuln)
-  - Install [betteralign](https://github.com/dkorunic/betteralign#installation)
-  - Install [gcov2lcov](https://github.com/jandelgado/gcov2lcov#installation)
-  - Install [protoc-gen-go](https://github.com/protocolbuffers/protobuf-go)
-  - Install [protoc-gen-go-grpc](https://github.com/grpc/grpc-go#installation)
+  - Install generators and checkers via `go tool`
 
   ```bash
   $ brew install pre-commit
@@ -123,11 +122,21 @@ This project follows hexagonal architecture principles, also known as ports and 
   ==> Installing pre-commit
   ...
 
+  $ pre-commit install
+  pre-commit installed at .git/hooks/pre-commit
+
   $ brew install make
   ==> Fetching dependencies for make
   ==> Fetching make
   ==> Installing dependencies for make
   ==> Installing make
+  ...
+
+  $ brew install act
+  ==> Fetching dependencies for act
+  ==> Fetching act
+  ==> Installing dependencies for act
+  ==> Installing act
   ...
 
   $ brew install protobuf
@@ -137,26 +146,18 @@ This project follows hexagonal architecture principles, also known as ports and 
   ==> Installing protobuf
   ...
 
-  $ pre-commit install
-  pre-commit installed at .git/hooks/pre-commit
-
-  $ go install github.com/air-verse/air@latest
-  go: downloading github.com/air-verse/air v0.0.0
-
-  $ go install golang.org/x/vuln/cmd/govulncheck@latest
-  go: downloading golang.org/x/vuln/cmd/govulncheck v0.0.0
-
-  $ go install github.com/dkorunic/betteralign/cmd/betteralign@latest
-  go: downloading github.com/dkorunic/betteralign/cmd/betteralign v0.0.0
-
-  $ go install github.com/jandelgado/gcov2lcov@latest
+  $ make init-generators
+  go: downloading github.com/sqlc-dev/sqlc/cmd/sqlc v0.0.0
+  go: downloading github.com/vektra/mockery/v2 v0.0.0
+  go: downloading golang.org/x/tools/cmd/stringer v0.0.0
   go: downloading github.com/jandelgado/gcov2lcov v0.0.0
-
-  $ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
   go: downloading google.golang.org/protobuf/cmd/protoc-gen-go v0.0.0
-
-  $ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
   go: downloading google.golang.org/grpc/cmd/protoc-gen-go-grpc v0.0.0
+
+  $ make init-checkers
+  go: downloading github.com/golangci/golangci-lint/cmd/golangci-lint v0.0.0
+  go: downloading github.com/dkorunic/betteralign/cmd/betteralign v0.0.0
+  go: downloading golang.org/x/vuln/cmd/govulncheck v0.0.0
   ```
 
 - 3️⃣ (Optional) Ensure that you can access private dependencies
@@ -196,7 +197,10 @@ that can be configured in `.env` file.
 
 ```bash
 $ make run
-17:05:20.311 INFO HttpService is starting... {"addr":":8080"}
+02:27:53.026 INFO adding datasource connection {"name":"default","dialect":"postgres"}
+02:27:53.563 INFO successfully added datasource connection {"name":"default"}
+02:27:53.563 INFO Starting service {"name":"sample","environment":"development","features":{"Dummy":true}}
+02:27:53.564 INFO HttpService is starting... {"addr":":8080"}
 ```
 
 - You can access http://localhost:8080/ to check if the project is running

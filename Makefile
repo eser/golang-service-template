@@ -18,13 +18,16 @@ dep: ## Downloads dependencies.
 .PHONY: init-tools
 init-tools: ## Initializes tools.
 	command -v pre-commit >/dev/null || brew install pre-commit
+	[ -f .git/hooks/pre-commit ] || pre-commit install
 	command -v make >/dev/null || brew install make
 	command -v act >/dev/null || brew install act
-	# command -v protoc >/dev/null || brew install protobuf
-	[ -f .git/hooks/pre-commit ] || pre-commit install
+	command -v protoc >/dev/null || brew install protobuf
 	go tool -n air >/dev/null || go get -tool github.com/air-verse/air@latest
+
+.PHONY: init-generators
+init-generators: ## Initializes generators.
 	go tool -n sqlc >/dev/null || go get -tool github.com/sqlc-dev/sqlc/cmd/sqlc@latest
-	go tool -n mockery > /dev/null || go get -tool github.com/vektra/mockery/v2@v2.52.3
+	go tool -n mockery > /dev/null || go get -tool github.com/vektra/mockery/v2@latest
 	go tool -n stringer >/dev/null || go get -tool golang.org/x/tools/cmd/stringer@latest
 	go tool -n gcov2lcov >/dev/null || go get -tool github.com/jandelgado/gcov2lcov@latest
 	go tool -n protoc-gen-go >/dev/null || go get -tool google.golang.org/protobuf/cmd/protoc-gen-go@latest
@@ -37,7 +40,7 @@ init-checkers: ## Initializes checkers.
 	go tool -n govulncheck >/dev/null || go get -tool golang.org/x/vuln/cmd/govulncheck@latest
 
 .PHONY: init
-init: init-tools init-checkers dep # Initializes the project.
+init: init-tools init-generators init-checkers dep # Initializes the project.
 	# cp -n .env.example .env || true
 
 .PHONY: generate
@@ -58,7 +61,7 @@ clean: ## Cleans the entire codebase.
 
 .PHONY: dev
 dev: ## Runs the sample service in development mode.
-	air --build.bin "./tmp/serve" --build.cmd "go build -o ./tmp/serve ./cmd/serve/"
+	go tool air --build.bin "./tmp/serve" --build.cmd "go build -o ./tmp/serve ./cmd/serve/"
 
 .PHONY: run
 run: ## Runs the sample service.

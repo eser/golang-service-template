@@ -21,6 +21,7 @@ func main() {
 		"Starting service",
 		slog.String("name", appContext.Config.AppName),
 		slog.String("environment", appContext.Config.AppEnv),
+		slog.Any("features", appContext.Config.Features),
 	)
 
 	err = http.Run(ctx, &appContext.Config.Http, appContext.Metrics, appContext.Logger, appContext.Data)
