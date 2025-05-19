@@ -1,6 +1,6 @@
 module github.com/eser/go-service
 
-go 1.24.1
+go 1.24.2
 
 require (
 	github.com/eser/ajan v0.6.21
