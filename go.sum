@@ -163,8 +163,8 @@ github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkp
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/eser/ajan v0.6.23 h1:btwA4YcJ7vkK0FA1+LxtacxR4+oZ9Ftpi7b8QzcDvI0=
-github.com/eser/ajan v0.6.23/go.mod h1:9nZDur0QJYmsmTHTGXL9Zd8D6OPYRSCjgp6qGZWD7r8=
+github.com/eser/ajan v0.6.28 h1:x4VIog/GzSdqPG/W4p/GPt9U7q/BzoaxF5ZvXO+oxe8=
+github.com/eser/ajan v0.6.28/go.mod h1:fKqIn/fdbRsqdJubbWMcjm4fJ+mxzg8ZgPZoDIs2xI0=
 github.com/ettle/strcase v0.2.0 h1:fGNiVF21fHXpX1niBgk0aROov1LagYsOwV/xqKDKR/Q=
 github.com/ettle/strcase v0.2.0/go.mod h1:DajmHElDSaX76ITe3/VHVyMin4LWSJN5Z909Wp+ED1A=
 github.com/evanw/esbuild v0.23.1 h1:ociewhY6arjTarKLdrXfDTgy25oxhTZmzP8pfuBTfTA=
