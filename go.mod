@@ -3,7 +3,7 @@ module github.com/eser/go-service
 go 1.24.2
 
 require (
-	github.com/eser/ajan v0.6.23
+	github.com/eser/ajan v0.6.28
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/spf13/cobra v1.9.1
 	google.golang.org/grpc v1.72.1
