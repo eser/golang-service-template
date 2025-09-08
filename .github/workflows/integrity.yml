@@ -65,7 +65,7 @@ jobs:
           python-version: "3.x"
 
       - name: Setup Golang ${{ matrix.golang-version }}
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.golang-version }}
           cache: true
